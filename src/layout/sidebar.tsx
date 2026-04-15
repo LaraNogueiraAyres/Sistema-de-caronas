@@ -1,4 +1,4 @@
-import { User, History, Settings, LogOut, X, Navigation, ChevronLeft, Home} from 'lucide-react';
+import { User, History, LogOut, X, Navigation, ChevronLeft, Home} from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router';
 import { mockCurrentUser } from '../mocks';
 
@@ -131,7 +131,7 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
               <History className="w-5 h-5 text-[#1D3557] flex-shrink-0" />
               {!isCollapsed && <span className="text-[#1D3557] font-medium">Histórico</span>}
             </button>
-
+{/* 
             <button
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left ${
                 isCollapsed ? 'justify-center' : ''
@@ -140,7 +140,7 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
             >
               <Settings className="w-5 h-5 text-[#1D3557] flex-shrink-0" />
               {!isCollapsed && <span className="text-[#1D3557] font-medium">Configurações</span>}
-            </button>
+            </button> */}
           </nav>
 
           {/* Sidebar Footer */}
