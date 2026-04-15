@@ -9,6 +9,7 @@ import { HomePage } from "../../pages/HomePage";
 // import { OfferRide } from "./components/offer-ride";
 // import { MyRides } from "./components/my-rides";
 // import { History } from "./components/history";
+import { ConstructionPage } from "../../pages/ConstructionPage";
 
 export const router = createBrowserRouter([
 //   {
@@ -27,26 +28,26 @@ export const router = createBrowserRouter([
         path: "/home",
         Component: HomePage,
       },
-    //   {
-    //     path: "/find-ride",
-    //     Component: FindRide,
-    //   },
-    //   {
-    //     path: "/profile",
-    //     Component: Profile,
-    //   },
-    //   {
-    //     path: "/offer-ride",
-    //     Component: OfferRide,
-    //   },
-    //   {
-    //     path: "/my-rides",
-    //     Component: MyRides,
-    //   },
-    //   {
-    //     path: "/history",
-    //     Component: History,
-    //   },
+      {
+        path: "/find-ride",
+        Component: ConstructionPage,
+      },
+      {
+        path: "/profile",
+        Component: ConstructionPage,
+      },
+      {
+        path: "/offer-ride",
+        Component: ConstructionPage,
+      },
+      {
+        path: "/my-rides",
+        Component: ConstructionPage,
+      },
+      {
+        path: "/history",
+        Component: ConstructionPage,
+      },
     ],
   },
 ]);

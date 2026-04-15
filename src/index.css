@@ -1,8 +1,8 @@
-/* @tailwind base; */
-/* @tailwind components;
-@tailwind utilities; */
+@import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+/* diz pro Tailwind onde escanear */
+@source "./src/**/*.{js,ts,jsx,tsx}";
+
 
 :root {
   --font-size: 16px;
