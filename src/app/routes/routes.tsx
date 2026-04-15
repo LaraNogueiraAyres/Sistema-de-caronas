@@ -27,10 +27,6 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/home",
-        Component: Onboarding,
-      },
-      {
-        path: "/home",
         Component: HomePage,
       },
       {
