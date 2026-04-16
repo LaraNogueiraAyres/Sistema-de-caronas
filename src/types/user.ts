@@ -1,4 +1,4 @@
-export type Gender = "Masculino" | "Feminino" | "Outro";
+import type { Gender } from "./ride";
 
 export interface User {
   id: string;

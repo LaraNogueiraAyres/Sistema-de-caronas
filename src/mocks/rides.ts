@@ -1,4 +1,4 @@
-import type { Ride } from "../types";
+import type { Ride } from "../types/ride";
 
 export const mockRides: Ride[] = [
   {

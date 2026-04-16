@@ -1,16 +1,16 @@
 import { createBrowserRouter } from "react-router";
 import { Onboarding } from "../../pages/Onboarding";
-// import { Login } from "./components/login";
+import { LoginPage } from "../../pages/LoginPage";
 import { Layout } from "../../layout/layout";
 import { HomePage } from "../../pages/HomePage";
-import { LoginPage } from "../../pages/LoginPage";
-// import { Home } from "./components/home";
-// import { FindRide } from "./components/find-ride";
-// import { Profile } from "./components/profile";
-// import { OfferRide } from "./components/offer-ride";
-// import { MyRides } from "./components/my-rides";
-// import { History } from "./components/history";
-import { ConstructionPage } from "../../pages/ConstructionPage";
+import { FindRide } from "../../pages/FindRidePage";
+import { Profile } from "../../pages/ProfilePage";
+import { OfferRide } from "../../pages/OfferRidePage";
+import { MyRides } from "../../pages/MyRidesPage";
+import { History } from "../../pages/HistoryPage";
+// import { ConstructionPage } from "../../pages/ConstructionPage";
+import { PublicProfile } from "../../pages/PublicProfilePage";
+
 
 export const router = createBrowserRouter([
   {
@@ -31,23 +31,27 @@ export const router = createBrowserRouter([
       },
       {
         path: "/find-ride",
-        Component: ConstructionPage,
+        Component: FindRide,
       },
       {
         path: "/profile",
-        Component: ConstructionPage,
+        Component: Profile,
       },
       {
         path: "/offer-ride",
-        Component: ConstructionPage,
+        Component: OfferRide,
       },
       {
         path: "/my-rides",
-        Component: ConstructionPage,
+        Component: MyRides,
       },
       {
         path: "/history",
-        Component: ConstructionPage,
+        Component: History,
+      },
+       {
+        path: "/user/:userId",
+        Component: PublicProfile,
       },
     ],
   },
