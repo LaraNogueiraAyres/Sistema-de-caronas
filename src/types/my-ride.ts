@@ -30,3 +30,25 @@ export interface MyRide {
   confirmedPassengers: PassengerRequest[];
   createdAt: string;
 }
+
+// Tipo para caronas recebidas (como passageiro)
+export interface MyRideAsPassenger {
+  id: string;
+  origin: string;
+  destination: string;
+  date: string;
+  departureTimeStart: string;
+  departureTimeEnd: string;
+  price: number;
+  routeName: string;
+  status: "pending" | "confirmed" | "cancelled";
+  sameGenderOnly: boolean;
+  driver: {
+    id: string;
+    name: string;
+    rating: number;
+    totalRatings: number;
+    phone: string;
+  };
+  requestedAt: string;
+}

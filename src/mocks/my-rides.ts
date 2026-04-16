@@ -1,4 +1,4 @@
-import type { MyRide } from "../types/my-ride";
+import type { MyRide, MyRideAsPassenger } from "../types/my-ride";
 
 export const mockMyRides: MyRide[] = [
   {
@@ -20,11 +20,11 @@ export const mockMyRides: MyRide[] = [
       {
         id: "req-1",
         passenger: {
-          id: "passenger-1",
-          name: "Ana Silva",
+          id: "user-3",
+          name: "Maria Oliveira",
           gender: "Feminino",
-          rating: 4.9,
-          totalRatings: 45,
+          rating: 4.7,
+          totalRatings: 93,
           phone: "(82) 99876-5432",
         },
         status: "pending",
@@ -33,11 +33,11 @@ export const mockMyRides: MyRide[] = [
       {
         id: "req-2",
         passenger: {
-          id: "passenger-2",
-          name: "Pedro Oliveira",
+          id: "user-6",
+          name: "Pedro Almeida",
           gender: "Masculino",
-          rating: 4.7,
-          totalRatings: 32,
+          rating: 4.5,
+          totalRatings: 62,
           phone: "(82) 99234-5678",
         },
         status: "pending",
@@ -48,11 +48,11 @@ export const mockMyRides: MyRide[] = [
       {
         id: "confirmed-1",
         passenger: {
-          id: "passenger-3",
-          name: "Maria Santos",
-          gender: "Feminino",
-          rating: 5.0,
-          totalRatings: 28,
+          id: "user-2",
+          name: "Carlos Silva",
+          gender: "Masculino",
+          rating: 4.9,
+          totalRatings: 128,
           phone: "(82) 99345-6789",
         },
         status: "accepted",
@@ -61,11 +61,11 @@ export const mockMyRides: MyRide[] = [
       {
         id: "confirmed-2",
         passenger: {
-          id: "passenger-4",
-          name: "João Costa",
+          id: "user-4",
+          name: "João Santos",
           gender: "Masculino",
-          rating: 4.8,
-          totalRatings: 51,
+          rating: 4.6,
+          totalRatings: 76,
           phone: "(82) 99456-7890",
         },
         status: "accepted",
@@ -111,11 +111,11 @@ export const mockMyRides: MyRide[] = [
       {
         id: "confirmed-3",
         passenger: {
-          id: "passenger-5",
-          name: "Carla Mendes",
+          id: "user-5",
+          name: "Beatriz Costa",
           gender: "Feminino",
           rating: 4.9,
-          totalRatings: 38,
+          totalRatings: 154,
           phone: "(82) 99567-8901",
         },
         status: "accepted",
@@ -124,16 +124,80 @@ export const mockMyRides: MyRide[] = [
       {
         id: "confirmed-4",
         passenger: {
-          id: "passenger-6",
-          name: "Rafael Souza",
+          id: "user-4",
+          name: "João Santos",
           gender: "Masculino",
           rating: 4.6,
-          totalRatings: 24,
+          totalRatings: 76,
           phone: "(82) 99678-9012",
         },
         status: "accepted",
         requestedAt: "2026-04-07T11:00:00Z",
       },
     ],
+  },
+];
+
+// Caronas recebidas (como passageiro)
+export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
+  {
+    id: "received-ride-1",
+    origin: "Rio Largo",
+    destination: "UFAL - Campus A.C. Simões",
+    date: "2026-04-18",
+    departureTimeStart: "07:00",
+    departureTimeEnd: "07:30",
+    price: 7.0,
+    routeName: "Via BR-104",
+    status: "confirmed",
+    sameGenderOnly: false,
+    driver: {
+      id: "user-2",
+      name: "Carlos Silva",
+      rating: 4.9,
+      totalRatings: 128,
+      phone: "(82) 99345-6789",
+    },
+    requestedAt: "2026-04-15T10:00:00Z",
+  },
+  {
+    id: "received-ride-2",
+    origin: "Maceió Shopping",
+    destination: "UFAL - Campus A.C. Simões",
+    date: "2026-04-20",
+    departureTimeStart: "13:00",
+    departureTimeEnd: "13:30",
+    price: 5.0,
+    routeName: "Via Menino Marcelo",
+    status: "confirmed",
+    sameGenderOnly: true,
+    driver: {
+      id: "user-5",
+      name: "Beatriz Costa",
+      rating: 4.9,
+      totalRatings: 154,
+      phone: "(82) 99567-8901",
+    },
+    requestedAt: "2026-04-16T14:00:00Z",
+  },
+  {
+    id: "received-ride-3",
+    origin: "Cruz das Almas",
+    destination: "UFAL - Campus A.C. Simões",
+    date: "2026-04-22",
+    departureTimeStart: "08:00",
+    departureTimeEnd: "08:30",
+    price: 6.0,
+    routeName: "Via Avenida Gustavo Paiva",
+    status: "pending",
+    sameGenderOnly: false,
+    driver: {
+      id: "user-4",
+      name: "João Santos",
+      rating: 4.6,
+      totalRatings: 76,
+      phone: "(82) 99678-9012",
+    },
+    requestedAt: "2026-04-17T09:00:00Z",
   },
 ];
