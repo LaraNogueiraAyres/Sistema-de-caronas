@@ -1,45 +1,135 @@
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema, type LoginFormData } from '../features/auth/auth.ts'
+import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router";
 
 export function LoginPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  })
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  async function onSubmit(data: LoginFormData) {
-    console.log('dados do login', data)
-  }
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+.[^\s@]+$/.test(email);
+  };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setError("Digite um e-mail válido");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres");
+      return;
+    }
+
+    navigate("/home");
+  };
+  const isDisabled = !email || !password;
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="min-h-screen bg-white flex flex-col lg:flex-row">
+      {/* LADO ESQUERDO - DESKTOP */}
+      <div className="hidden lg:flex w-1/2 bg-primary text-white items-center justify-center p-12">
+        <div className="max-w-md">
+          <h1 className="text-4xl font-bold mb-4">Bem-vinda 👋</h1>
+          <p className="text-lg opacity-90">
+            Entre na sua conta e comece a encontrar caronas de forma simples e
+            segura.
+          </p>
+        </div>
+      </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="email">E-mail</label>
-          <input id="email" type="email" {...register('email')} />
-          {errors.email && <p>{errors.email.message}</p>}
+      {/* LADO DIREITO */}
+      <div
+        className="flex-1 flex flex-col 
+      px-6 pt-10 pb-6 
+      lg:justify-center lg:px-20 lg:py-12"
+      >
+        {/* BOTÃO VOLTAR */}
+        <div className="mb-6 lg:mb-8">
+          <Link to="/">
+            <button className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition">
+              <ArrowLeft className="w-6 h-6 text-primary" />
+            </button>
+          </Link>
         </div>
 
-        <div>
-          <label htmlFor="password">Senha</label>
-          <input id="password" type="password" {...register('password')} />
-          {errors.password && <p>{errors.password.message}</p>}
-        </div>
+        <div className="w-full max-w-md mx-auto">
+          <h1 className="text-primary text-3xl font-semibold mb-2 lg:text-3xl">
+            Entrar ou criar conta
+          </h1>
 
-        <button type="submit" disabled={isSubmitting}>
-          Entrar
-        </button>
-      </form>
+          <p className="text-gray-600 mb-8 text-base lg:text-base">
+            Insira seu e-mail e senha para começar
+          </p>
+
+          <form onSubmit={handleSubmit}>
+            {/* EMAIL */}
+            <div className="mb-4 lg:mb-5">
+              <label className="block text-sm font-medium mb-2 text-primary">
+                E-mail
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+                className={`w-full px-4 py-4 rounded-xl border-2 outline-none transition ${
+                  emailFocused ? "border-accent" : "border-gray-200"
+                }`}
+                placeholder="seu@email.com"
+              />
+            </div>
+
+            {/* SENHA */}
+            <div className="mb-4 lg:mb-5">
+              <label className="block text-base font-medium mb-2 text-primary">
+                Senha
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
+                className={`w-full px-4 py-3 rounded-lg border-2 outline-none transition ${
+                  passwordFocused ? "border-accent" : "border-gray-200"
+                }`}
+                placeholder="••••••••"
+              />
+
+              {error && <p className="text-sm text-red-500 mt-2">{error}</p>}
+            </div>
+
+            {/* ESQUECI SENHA */}
+            <button
+              type="button"
+              className="text-sm text-accent mb-6 hover:underline"
+            >
+              Esqueceu a senha?
+            </button>
+
+            {/* BOTÃO */}
+            <button
+              type="submit"
+              disabled={isDisabled}
+              className={`w-full py-4 rounded-2xl text-white text-base font-semibold transition
+  ${
+    isDisabled
+      ? "bg-muted-foreground cursor-not-allowed hover:bg-muted-foreground/80"
+      : "bg-primary hover:opacity-90 active:scale-[0.98] cursor-pointer"
+  }`}
+            >
+              Entrar
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
