@@ -61,52 +61,20 @@ export function Profile() {
     });
   };
 
-  return (
-    // <div className="h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
-    //   {/* Header */}
-    //   <div className="w-full px-6 pt-12 pb-6 bg-[#1D3557] text-white flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
-    //     <div className="flex items-center justify-between">
-    //       <div className="flex items-center gap-2">
-    //         <button
-    //           onClick={() => setSidebarOpen(true)}
-    //           className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"
-    //         >
-    //           <Menu className="w-6 h-6" />
-    //         </button>
-    //         <button
-    //           onClick={() => navigate(-1)}
-    //           className="p-2 hover:bg-white/10 rounded-lg transition-colors hidden lg:block"
-    //         >
-    //           <ArrowLeft className="w-6 h-6" />
-    //         </button>
-    //       </div>
-    //       <h1 className="text-xl font-semibold">Meu Perfil</h1>
-    //       {!isEditing ? (
-    //         <button
-    //           onClick={() => setIsEditing(true)}
-    //           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-    //         >
-    //           <Edit2 className="w-5 h-5" />
-    //         </button>
-    //       ) : (
-    //         <div className="w-9" />
-    //       )}
-    //     </div>
-    //   </div>
-
-    <div className="h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
+  return ( 
+    <div className="min-h-screen overflow-y-auto bg-secondary flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="w-full px-6 pt-12 pb-6 bg-[#1D3557] text-white flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
           >
             <Menu className="w-6 h-6" />
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors hidden lg:block"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors hidden lg:block"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -114,7 +82,7 @@ export function Profile() {
           {!isEditing ? (
             <button
               onClick={() => setIsEditing(true)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-2 hover:bg-background/10 rounded-lg transition-colors"
             >
               <Edit2 className="w-5 h-5" />
             </button>
@@ -126,12 +94,12 @@ export function Profile() {
 
       <div className="flex-1 px-6 py-6 lg:max-w-4xl lg:mx-auto lg:w-full">
         {/* Profile Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+        <div className="bg-background rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-6">
           {/* Avatar Section */}
-          <div className="relative bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] px-6 pt-8 pb-20">
+          <div className="relative bg-gradient-to-br from-primary to-accent px-6 pt-8 pb-20">
             <div className="flex flex-col items-center">
-              <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30 mb-3">
-                <User className="w-12 h-12 text-white" />
+              <div className="w-24 h-24 bg-background/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30 mb-3">
+                <User className="w-12 h-12 text-primary-foreground" />
               </div>
             </div>
           </div>
@@ -140,12 +108,12 @@ export function Profile() {
           <div className="px-6 pb-6 -mt-12 relative z-10">
             {/* Rating Badge */}
             <div className="flex justify-center mb-4">
-              <div className="bg-white rounded-full px-5 py-2.5 shadow-md border border-gray-100 inline-flex items-center gap-2">
-                <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                <span className="text-[#1D3557] font-bold text-lg">
+              <div className="bg-background rounded-full px-5 py-2.5 shadow-md border border-gray-100 inline-flex items-center gap-2">
+                <Star className="w-5 h-5 text-warning-foreground fill-yellow-500" />
+                <span className="text-foreground font-bold text-lg">
                   {mockCurrentUser.rating.toFixed(1)}
                 </span>
-                <span className="text-gray-500 text-sm">
+                <span className="text-secondary-foreground text-sm">
                   ({mockCurrentUser.totalRatings} avaliações)
                 </span>
               </div>
@@ -155,7 +123,7 @@ export function Profile() {
             <div className="space-y-4">
               {/* Name */}
               <div>
-                <label className="text-xs text-gray-500 uppercase tracking-wide mb-1 block font-medium">
+                <label className="text-xs text-foreground uppercase tracking-wide mb-1 block font-medium">
                   Nome completo
                 </label>
                 {isEditing ? (
@@ -168,10 +136,10 @@ export function Profile() {
                         name: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                    className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                   />
                 ) : (
-                  <p className="text-[#1D3557] font-semibold text-lg">
+                  <p className="text-foreground font-semibold text-lg">
                     {mockCurrentUser.name}
                   </p>
                 )}
@@ -179,7 +147,7 @@ export function Profile() {
 
               {/* Email */}
               <div>
-                <label className="text-xs text-gray-500 uppercase tracking-wide mb-1 block font-medium">
+                <label className="text-xs text-secondary-foreground uppercase tracking-wide mb-1 block font-medium">
                   E-mail
                 </label>
                 {isEditing ? (
@@ -194,7 +162,7 @@ export function Profile() {
                           email: e.target.value,
                         })
                       }
-                      className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                      className="w-full pl-11 pr-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                     />
                   </div>
                 ) : (
@@ -209,7 +177,7 @@ export function Profile() {
 
               {/* Gender */}
               <div>
-                <label className="text-xs text-gray-500 uppercase tracking-wide mb-1 block font-medium">
+                <label className="text-xs text-secondary-foreground uppercase tracking-wide mb-1 block font-medium">
                   Gênero
                 </label>
                 {isEditing ? (
@@ -224,7 +192,7 @@ export function Profile() {
                           | "Outro",
                       })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                    className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                   >
                     <option value="Masculino">Masculino</option>
                     <option value="Feminino">Feminino</option>
@@ -239,7 +207,7 @@ export function Profile() {
 
               {/* Birth Date */}
               <div>
-                <label className="text-xs text-gray-500 uppercase tracking-wide mb-1 block font-medium">
+                <label className="text-xs text-secondary-foreground uppercase tracking-wide mb-1 block font-medium">
                   Data de nascimento
                 </label>
                 {isEditing ? (
@@ -254,7 +222,7 @@ export function Profile() {
                           birthDate: e.target.value,
                         })
                       }
-                      className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                      className="w-full pl-11 pr-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                     />
                   </div>
                 ) : (
@@ -273,8 +241,8 @@ export function Profile() {
         </div>
 
         {/* Bio Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-          <label className="text-xs text-gray-500 uppercase tracking-wide mb-3 block font-medium">
+        <div className="bg-background rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
+          <label className="text-xs text-secondary-foreground uppercase tracking-wide mb-3 block font-medium">
             Sobre mim
           </label>
           {isEditing ? (
@@ -289,7 +257,7 @@ export function Profile() {
               rows={4}
               maxLength={200}
               placeholder="Conte um pouco sobre você..."
-              className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none resize-none"
             />
           ) : (
             <p className="text-gray-700 leading-relaxed">
@@ -309,14 +277,14 @@ export function Profile() {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={handleCancel}
-              className="py-3.5 rounded-xl border-2 border-gray-300 font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
+              className="py-3.5 rounded-xl border-2 border-muted-foreground font-semibold text-gray-700 hover:bg-gray-50 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
             >
               <X className="w-5 h-5" />
               Cancelar
             </button>
             <button
               onClick={handleSave}
-              className="py-3.5 rounded-xl bg-[#E63946] font-semibold text-white hover:bg-[#d63340] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
+              className="py-3.5 rounded-xl bg-accent font-semibold text-accent-foreground hover:bg-accent-hover active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2"
             >
               <Save className="w-5 h-5" />
               Salvar

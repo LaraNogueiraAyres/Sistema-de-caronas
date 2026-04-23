@@ -1,22 +1,22 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "class", // importante pro .dark funcionar
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  darkMode: "class",
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: "var(--primary)",
-        accent: "var(--accent)",
+        accent: {
+          DEFAULT: "var(--accent)",
+          hover: "var(--accent-hover)",
+        },
         border: "var(--border)",
-
-        // seus custom
-        "app-primary": "var(--app-primary)",
-        "app-accent": "var(--app-accent)",
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          hover: "var(--destructive-hover)", // Agora acessível via 'bg-destructive-hover'
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -24,4 +24,4 @@ export default {
     },
   },
   plugins: [],
-}
+};

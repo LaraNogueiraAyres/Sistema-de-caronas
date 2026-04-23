@@ -31,11 +31,11 @@ export function LoginPage() {
   };
   const isDisabled = !email || !password;
   return (
-    <div className="min-h-screen bg-white flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
       {/* LADO ESQUERDO - DESKTOP */}
-      <div className="hidden lg:flex w-1/2 bg-primary text-white items-center justify-center p-12">
+      <div className="hidden lg:flex w-1/2 bg-primary text-primary-foreground items-center justify-center p-12">
         <div className="max-w-md">
-          <h1 className="text-4xl font-bold mb-4">Bem-vinda 👋</h1>
+          <h1 className="text-4xl font-bold mb-4">Bem-vindo 👋</h1>
           <p className="text-lg opacity-90">
             Entre na sua conta e comece a encontrar caronas de forma simples e
             segura.
@@ -53,13 +53,13 @@ export function LoginPage() {
         <div className="mb-6 lg:mb-8">
           <Link to="/">
             <button className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition">
-              <ArrowLeft className="w-6 h-6 text-primary" />
+              <ArrowLeft className="w-6 h-6 text-foreground" />
             </button>
           </Link>
         </div>
 
         <div className="w-full max-w-md mx-auto">
-          <h1 className="text-primary text-3xl font-semibold mb-2 lg:text-3xl">
+          <h1 className="text-foreground text-3xl font-semibold mb-2 lg:text-3xl">
             Entrar ou criar conta
           </h1>
 
@@ -70,7 +70,7 @@ export function LoginPage() {
           <form onSubmit={handleSubmit}>
             {/* EMAIL */}
             <div className="mb-4 lg:mb-5">
-              <label className="block text-sm font-medium mb-2 text-primary">
+              <label className="block text-sm font-medium mb-2 text-foreground">
                 E-mail
               </label>
               <input
@@ -80,7 +80,7 @@ export function LoginPage() {
                 onFocus={() => setEmailFocused(true)}
                 onBlur={() => setEmailFocused(false)}
                 className={`w-full px-4 py-4 rounded-xl border-2 outline-none transition ${
-                  emailFocused ? "border-accent" : "border-gray-200"
+                  emailFocused ? "border-primary" : "border-gray-200"
                 }`}
                 placeholder="seu@email.com"
               />
@@ -88,7 +88,7 @@ export function LoginPage() {
 
             {/* SENHA */}
             <div className="mb-4 lg:mb-5">
-              <label className="block text-base font-medium mb-2 text-primary">
+              <label className="block text-base font-medium mb-2 text-foreground">
                 Senha
               </label>
               <input
@@ -98,7 +98,7 @@ export function LoginPage() {
                 onFocus={() => setPasswordFocused(true)}
                 onBlur={() => setPasswordFocused(false)}
                 className={`w-full px-4 py-3 rounded-lg border-2 outline-none transition ${
-                  passwordFocused ? "border-accent" : "border-gray-200"
+                  passwordFocused ? "border-primary" : "border-gray-200"
                 }`}
                 placeholder="••••••••"
               />
@@ -118,11 +118,11 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={isDisabled}
-              className={`w-full py-4 rounded-2xl text-white text-base font-semibold transition
+              className={`w-full py-4 rounded-2xl text-base font-semibold transition
   ${
     isDisabled
-      ? "bg-muted-foreground cursor-not-allowed hover:bg-muted-foreground/80"
-      : "bg-primary hover:opacity-90 active:scale-[0.98] cursor-pointer"
+      ? "bg-muted text-muted-foreground cursor-not-allowed hover:bg-muted-hover"
+      : "bg-accent text-accent-foreground hover:bg-accent-hover active:scale-[0.98] cursor-pointer"
   }`}
             >
               Entrar

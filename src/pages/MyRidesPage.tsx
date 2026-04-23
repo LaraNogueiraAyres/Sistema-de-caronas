@@ -171,19 +171,19 @@ export function MyRides() {
   };
 
   return (
-    <div className="h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
+    <div className="h-screen bg-secondary flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="w-full px-6 pt-12 pb-6 bg-[#1D3557] text-white flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
           >
             <Menu className="w-6 h-6" />
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors hidden lg:block"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors hidden lg:block"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -196,13 +196,13 @@ export function MyRides() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6 lg:max-w-7xl lg:mx-auto lg:w-full">
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 bg-white rounded-xl p-1 shadow-sm">
+        <div className="flex gap-2 mb-6 bg-background rounded-xl p-1 shadow-sm">
           <button
             onClick={() => setActiveTab("offered")}
             className={`flex-1 py-3 rounded-lg font-medium text-sm transition-all ${
               activeTab === "offered"
-                ? "bg-[#1D3557] text-white shadow-md"
-                : "text-gray-600 hover:bg-gray-50"
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "text-gray-600 hover:bg-secondary"
             }`}
           >
             Caronas oferecidas
@@ -211,8 +211,8 @@ export function MyRides() {
             onClick={() => setActiveTab("received")}
             className={`flex-1 py-3 rounded-lg font-medium text-sm transition-all ${
               activeTab === "received"
-                ? "bg-[#1D3557] text-white shadow-md"
-                : "text-gray-600 hover:bg-gray-50"
+                ? "bg-primary text-primary-foreground shadow-md"
+                : "text-gray-600 hover:bg-secondary"
             }`}
           >
             Caronas recebidas
@@ -228,7 +228,7 @@ export function MyRides() {
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Navigation className="w-10 h-10 text-gray-400" />
                   </div>
-                  <h3 className="text-[#1D3557] font-semibold text-lg mb-2">
+                  <h3 className="text-foreground font-semibold text-lg mb-2">
                     Nenhuma carona ativa
                   </h3>
                   <p className="text-gray-600 text-sm mb-6">
@@ -236,7 +236,7 @@ export function MyRides() {
                   </p>
                   <button
                     onClick={() => navigate("/offer-ride")}
-                    className="px-6 py-3 bg-[#E63946] text-white font-medium rounded-lg hover:bg-[#d63340] transition-colors"
+                    className="px-6 py-3 bg-accent text-primary-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors"
                   >
                     Oferecer carona
                   </button>
@@ -246,13 +246,13 @@ export function MyRides() {
               rides.map((ride) => (
                 <div
                   key={ride.id}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100"
+                  className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-[#1D3557] font-semibold text-lg">
+                        <h3 className="text-foreground font-semibold text-lg">
                           {formatDate(ride.date)}
                         </h3>
                         {ride.sameGenderOnly && (
@@ -288,13 +288,13 @@ export function MyRides() {
                   {/* Route */}
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
                       <p className="text-sm text-gray-700">
                         {ride.origin}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
+                      <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
                       <p className="text-sm text-gray-700">
                         {ride.destination}
                       </p>
@@ -304,27 +304,27 @@ export function MyRides() {
                   {/* Info Grid */}
                   <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-gray-100">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-500" />
+                      <Clock className="w-4 h-4 text-secondary-foreground" />
                       <span className="text-sm text-gray-700">
                         {ride.departureTimeStart} -{" "}
                         {ride.departureTimeEnd}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-500" />
+                      <DollarSign className="w-4 h-4 text-secondary-foreground" />
                       <span className="text-sm text-gray-700">
                         R$ {ride.price.toFixed(2)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-500" />
+                      <Users className="w-4 h-4 text-secondary-foreground" />
                       <span className="text-sm text-gray-700">
                         {ride.availableSeats}/{ride.totalSeats}{" "}
                         vagas
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-gray-500" />
+                      <User className="w-4 h-4 text-secondary-foreground" />
                       <span className="text-sm text-gray-700">
                         {ride.confirmedPassengers.length}{" "}
                         confirmado(s)
@@ -339,16 +339,16 @@ export function MyRides() {
                         setSelectedRide(ride);
                         setModalType("requests");
                       }}
-                      className="w-full p-3 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition-colors flex items-center justify-between"
+                      className="w-full p-3 bg-warning border border-yellow-200 rounded-lg hover:bg-warning-hover transition-colors flex items-center justify-between"
                     >
                       <div className="flex items-center gap-2">
-                        <AlertCircle className="w-5 h-5 text-yellow-600" />
-                        <span className="text-sm font-medium text-yellow-700">
+                        <AlertCircle className="w-5 h-5 text-warning-foreground" />
+                        <span className="text-sm font-medium text-warning-foreground">
                           {ride.requests.length} nova(s)
                           solicitação(ões)
                         </span>
                       </div>
-                      <span className="text-yellow-600">→</span>
+                      <span className="text-warning-foreground">→</span>
                     </button>
                   )}
 
@@ -371,15 +371,15 @@ export function MyRides() {
                                 }
                                 className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
                               >
-                                <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                                  <User className="w-5 h-5 text-white" />
+                                <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                                  <User className="w-5 h-5 text-primary-foreground" />
                                 </div>
                                 <div>
                                   <p className="text-sm font-medium text-gray-900">
                                     {passenger.passenger.name}
                                   </p>
                                   <div className="flex items-center gap-1">
-                                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                    <Star className="w-3 h-3 text-warning-foreground fill-yellow-500" />
                                     <span className="text-xs text-gray-600">
                                       {passenger.passenger.rating}
                                     </span>
@@ -418,7 +418,7 @@ export function MyRides() {
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Navigation className="w-10 h-10 text-gray-400" />
                   </div>
-                  <h3 className="text-[#1D3557] font-semibold text-lg mb-2">
+                  <h3 className="text-foreground font-semibold text-lg mb-2">
                     Nenhuma carona recebida
                   </h3>
                   <p className="text-gray-600 text-sm mb-6">
@@ -430,13 +430,13 @@ export function MyRides() {
               ridesAsPassenger.map((ride) => (
                 <div
                   key={ride.id}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100"
+                  className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-[#1D3557] font-semibold text-lg">
+                        <h3 className="text-foreground font-semibold text-lg">
                           {formatDate(ride.date)}
                         </h3>
                         {ride.sameGenderOnly && (
@@ -464,13 +464,13 @@ export function MyRides() {
                   {/* Route */}
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
                       <p className="text-sm text-gray-700">
                         {ride.origin}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
+                      <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
                       <p className="text-sm text-gray-700">
                         {ride.destination}
                       </p>
@@ -480,14 +480,14 @@ export function MyRides() {
                   {/* Info Grid */}
                   <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-gray-100">
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-500" />
+                      <Clock className="w-4 h-4 text-secondary-foreground" />
                       <span className="text-sm text-gray-700">
                         {ride.departureTimeStart} -{" "}
                         {ride.departureTimeEnd}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-500" />
+                      <DollarSign className="w-4 h-4 text-secondary-foreground" />
                       <span className="text-sm text-gray-700">
                         R$ {ride.price.toFixed(2)}
                       </span>
@@ -503,15 +503,15 @@ export function MyRides() {
                       onClick={() => navigate(`/user/${ride.driver.id}`)}
                       className="w-full flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left"
                     >
-                      <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-primary-foreground" />
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-medium text-gray-900">
                           {ride.driver.name}
                         </p>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                          <Star className="w-3 h-3 text-warning-foreground fill-yellow-500" />
                           <span className="text-xs text-gray-600">
                             {ride.driver.rating} ({ride.driver.totalRatings})
                           </span>
@@ -529,13 +529,13 @@ export function MyRides() {
       {/* Delete Modal */}
       {modalType === "delete" && selectedRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
                 <Trash2 className="w-6 h-6 text-red-600" />
               </div>
               <div>
-                <h2 className="text-[#1D3557] font-semibold text-lg">
+                <h2 className="text-foreground font-semibold text-lg">
                   Excluir carona
                 </h2>
                 <p className="text-gray-600 text-sm">
@@ -544,23 +544,23 @@ export function MyRides() {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+            <div className="bg-secondary rounded-xl p-4 mb-6">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-700">
+                  <Calendar className="w-4 h-4 text-secondary-foreground" />
+                  <span className="text-sm ">
                     {formatDate(selectedRide.date)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-700">
+                  <Clock className="w-4 h-4 text-secondary-foreground" />
+                  <span className="text-sm ">
                     {selectedRide.departureTimeStart} -{" "}
                     {selectedRide.departureTimeEnd}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <MapPin className="w-4 h-4 text-secondary-foreground" />
                   <span className="text-sm text-gray-700">
                     {selectedRide.origin} →{" "}
                     {selectedRide.destination}
@@ -588,7 +588,7 @@ export function MyRides() {
                   setModalType(null);
                   setSelectedRide(null);
                 }}
-                className="flex-1 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                className="flex-1 py-3 bg-muted text-muted-foreground font-medium rounded-lg hover:bg-muted-hover transition-colors"
               >
                 Cancelar
               </button>
@@ -596,7 +596,7 @@ export function MyRides() {
                 onClick={() =>
                   handleDeleteRide(selectedRide.id)
                 }
-                className="flex-1 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                className="flex-1 py-3 bg-destructive text-primary-foreground font-medium rounded-lg hover:bg-destructive-hover transition-colors"
               >
                 Sim, excluir
               </button>
@@ -608,9 +608,9 @@ export function MyRides() {
       {/* Edit Modal */}
       {modalType === "edit" && selectedRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#1D3557] font-semibold text-lg">
+              <h2 className="text-foreground font-semibold text-lg">
                 Editar carona
               </h2>
               <button
@@ -620,13 +620,13 @@ export function MyRides() {
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-secondary-foreground" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
+                <label className="text-sm text-foreground mb-2 block font-medium">
                   Data
                 </label>
                 <input
@@ -638,12 +638,12 @@ export function MyRides() {
                       date: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
+                <label className="text-sm text-foreground mb-2 block font-medium">
                   Horário de partida
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -656,7 +656,7 @@ export function MyRides() {
                         timeStart: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                    className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                   />
                   <input
                     type="time"
@@ -667,13 +667,13 @@ export function MyRides() {
                         timeEnd: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                    className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
+                <label className="text-sm text-foreground mb-2 block font-medium">
                   Preço por pessoa
                 </label>
                 <input
@@ -687,12 +687,12 @@ export function MyRides() {
                       price: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
+                <label className="text-sm text-foreground mb-2 block font-medium">
                   Total de vagas
                 </label>
                 <select
@@ -703,7 +703,7 @@ export function MyRides() {
                       totalSeats: e.target.value,
                     })
                   }
-                  className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
+                  className="w-full px-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none"
                 >
                   <option value="1">1 vaga</option>
                   <option value="2">2 vagas</option>
@@ -712,8 +712,8 @@ export function MyRides() {
                 </select>
               </div>
 
-              <div className="bg-blue-50 rounded-lg p-3">
-                <p className="text-xs text-blue-700">
+              <div className="bg-warning rounded-lg p-3">
+                <p className="text-xs text-warning-foreground">
                   <strong>Nota:</strong> Você não pode editar a
                   origem, destino ou rota após criar a carona.
                 </p>
@@ -726,13 +726,13 @@ export function MyRides() {
                   setModalType(null);
                   setSelectedRide(null);
                 }}
-                className="flex-1 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                className="flex-1 py-3 bg-muted text-muted-foreground font-medium rounded-lg hover:bg-muted-hover transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="flex-1 py-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors"
+                className="flex-1 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors"
               >
                 Salvar alterações
               </button>
@@ -743,10 +743,10 @@ export function MyRides() {
 
       {/* Requests Modal */}
       {modalType === "requests" && selectedRide && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#1D3557] font-semibold text-lg">
+              <h2 className="text-foreground font-semibold text-lg">
                 Solicitações ({selectedRide.requests.length})
               </h2>
               <button
@@ -756,7 +756,7 @@ export function MyRides() {
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-secondary-foreground" />
               </button>
             </div>
 
@@ -778,25 +778,25 @@ export function MyRides() {
                       onClick={() => navigate(`/user/${request.passenger.id}`)}
                       className="flex items-start gap-3 mb-3 w-full text-left hover:opacity-80 transition-opacity"
                     >
-                      <div className="w-12 h-12 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="w-6 h-6 text-white" />
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center flex-shrink-0">
+                        <User className="w-6 h-6 text-primary-foreground" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-[#1D3557] font-semibold">
+                        <h3 className="text-foreground font-semibold">
                           {request.passenger.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
                           <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                            <Star className="w-4 h-4 text-warning-foreground fill-yellow-500" />
                             <span className="text-sm font-medium text-gray-700">
                               {request.passenger.rating}
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-secondary-foreground">
                               ({request.passenger.totalRatings})
                             </span>
                           </div>
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-secondary-foreground mt-1">
                           {request.passenger.gender}
                         </p>
                       </div>
@@ -807,7 +807,7 @@ export function MyRides() {
                       <span>{request.passenger.phone}</span>
                     </div>
 
-                    <p className="text-xs text-gray-500 mb-3">
+                    <p className="text-xs text-secondary-foreground mb-3">
                       Solicitado em{" "}
                       {new Date(
                         request.requestedAt,
@@ -829,7 +829,7 @@ export function MyRides() {
                               request.id,
                             )
                           }
-                          className="flex-1 py-2 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 py-2 px-4 bg-muted text-muted-foreground font-medium rounded-lg hover:bg-muted-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <X className="w-4 h-4" />
                           Recusar
@@ -841,7 +841,7 @@ export function MyRides() {
                               request.id,
                             )
                           }
-                          className="flex-1 py-2 px-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 py-2 px-4 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <Check className="w-4 h-4" />
                           Aceitar

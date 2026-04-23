@@ -32,9 +32,9 @@ export function RouteMap({ routes, selectedRoute, onSelectRoute }: RouteMapProps
   };
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+    <div className="bg-background rounded-2xl overflow-hidden shadow-sm border border-gray-100">
       {/* Map Header */}
-      <div className="px-4 py-3 bg-gradient-to-r from-[#1D3557] to-[#2d4a6f] text-white flex items-center justify-between">
+      <div className="px-4 py-3 bg-gradient-to-r from-primary to-accent text-primary-foreground flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Navigation className="w-4 h-4" />
           <span className="text-sm font-medium">Visualização das rotas</span>
@@ -43,7 +43,7 @@ export function RouteMap({ routes, selectedRoute, onSelectRoute }: RouteMapProps
       </div>
 
       {/* SVG Map */}
-      <div className="relative bg-[#F0F4F8] aspect-[4/3]">
+      <div className="relative bg-background aspect-[4/3]">
         <svg
           viewBox="0 0 400 300"
           className="w-full h-full"
@@ -157,19 +157,19 @@ export function RouteMap({ routes, selectedRoute, onSelectRoute }: RouteMapProps
         </svg>
 
         {/* Legend */}
-        <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg shadow-md p-3 space-y-1.5">
+        <div className="absolute bottom-3 left-3 bg-background/95 backdrop-blur-sm rounded-lg shadow-md p-3 space-y-1.5">
           <div className="flex items-center gap-2 text-xs">
-            <div className="w-3 h-3 bg-[#1D3557] rounded-full"></div>
+            <div className="w-3 h-3 bg-primary rounded-full"></div>
             <span className="text-gray-700 font-medium">Origem</span>
           </div>
           <div className="flex items-center gap-2 text-xs">
-            <MapPin className="w-3 h-3 text-[#E63946]" />
+            <MapPin className="w-3 h-3 text-accent" />
             <span className="text-gray-700 font-medium">Destino</span>
           </div>
         </div>
 
         {/* Route Legend */}
-        <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg shadow-md p-3 space-y-1.5">
+        <div className="absolute bottom-3 right-3 bg-background/95 backdrop-blur-sm rounded-lg shadow-md p-3 space-y-1.5">
           {routes.map((route, index) => (
             <button
               key={route.id}
@@ -198,7 +198,7 @@ export function RouteMap({ routes, selectedRoute, onSelectRoute }: RouteMapProps
         <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
           <div className="flex items-center justify-between text-xs">
             <span className="text-gray-600">Rota selecionada:</span>
-            <span className="text-[#1D3557] font-semibold">
+            <span className="text-foreground font-semibold">
               {routes.find(r => r.id === selectedRoute)?.name}
             </span>
           </div>

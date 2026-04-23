@@ -7,7 +7,7 @@ export function Layout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white flex lg:overflow-hidden">
+    <div className="min-h-screen bg-background flex lg:overflow-hidden">
       <Sidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

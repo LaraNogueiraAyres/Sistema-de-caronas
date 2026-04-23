@@ -9,19 +9,19 @@ export function ConstructionPage() {
         </div>
 
         {/* Título */}
-        <h1 className="text-3xl font-semibold mb-3 text-primary">
+        <h1 className="text-3xl font-semibold mb-3 text-foreground">
           Página em construção
         </h1>
 
         {/* Descrição */}
-        <p className="text-muted-foreground mb-6">
+        <p className="text-muted-foreground-foreground mb-6">
           Estamos trabalhando para trazer essa funcionalidade o mais rápido possível.
         </p>
 
         {/* Botão */}
         <button
           onClick={() => window.history.back()}
-          className="bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-all duration-200"
+          className="bg-primary text-foreground-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition-all duration-200"
         >
           Voltar
         </button>

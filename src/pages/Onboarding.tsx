@@ -4,10 +4,10 @@ import illustration from "../assets/ride.png"; // ajusta o caminho
 
 export function Onboarding() {
   return (
-    <div className="min-h-screen bg-white flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-background flex flex-col lg:flex-row">
 
       {/* LADO ESQUERDO - DESKTOP */}
-      <div className="hidden lg:flex w-1/2 bg-white items-center justify-center p-12">
+      <div className="hidden lg:flex w-1/2 bg-background items-center justify-center p-12">
   <img
     src={illustration}
     alt="Ilustração de carona"
@@ -27,12 +27,12 @@ export function Onboarding() {
           </h1>
 
           <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center bg-primary shadow-lg">
-            <Car className="w-8 h-8 text-white lg:w-10 lg:h-10" />
+            <Car className="w-8 h-8 text-primary-foreground lg:w-10 lg:h-10" />
           </div>
         </div>
 
         {/* TEXTO PRINCIPAL */}
-        <h2 className="text-primary text-3xl font-semibold max-w-sm mt-6 lg:text-4xl lg:max-w-md">
+        <h2 className="text-foreground text-3xl font-semibold max-w-sm mt-6 lg:text-4xl lg:max-w-md">
           Peça uma carona em minutos
         </h2>
 
@@ -45,21 +45,21 @@ export function Onboarding() {
         <div className="flex-1" />
 
         {/* TERMOS */}
-        <p className="text-xs text-gray-500 leading-relaxed mb-6 max-w-sm lg:text-sm">
+        <p className="text-xs text-secondary-foreground leading-relaxed mb-6 max-w-sm lg:text-sm">
           Ao continuar, você concorda com os{" "}
-          <a href="#" className="font-medium underline text-primary">
+          <a href="#" className="font-medium underline text-foreground">
             Termos de Uso
           </a>{" "}
           e{" "}
-          <a href="#" className="font-medium underline text-primary">
+          <a href="#" className="font-medium underline text-foreground">
             Política de Privacidade
           </a>
         </p>
 
         {/* BOTÃO */}
         <Link to="/login" className="w-full max-w-sm">
-          <button className="w-full py-4 rounded-xl font-semibold text-primary bg-muted-foreground 
-          hover:bg-muted-foreground/80 active:scale-[0.98] transition-all duration-200 
+          <button className="w-full py-4 rounded-xl font-semibold text-muted-foreground bg-muted 
+          hover:bg-muted-hover active:scale-[0.98] transition-all duration-200 
           lg:max-w-xs">
             Continuar
           </button>
