@@ -7,10 +7,7 @@
   --font-size: 16px;
   --background: #ffffff;
   --foreground: #1d3557;
-
-  --card: #ffffff;
-  --card-foreground: #1d3557;
-
+ 
   --primary: #1d3557;
   --primary-foreground: #ffffff;
 
@@ -26,8 +23,14 @@
   --accent-foreground: #ffffff;
 
   --destructive: #e63946;
+  --destructive-muted: #fce5e8;
   --destructive-hover: #c52e3b;
   --destructive-foreground: #ffffff;
+
+  
+  --info: #ecf3ff;
+  --info-muted: #e3eeff; 
+  --info-foreground: #013e94;
 
   --warning: #fffbc5;
   --warning-hover: #fffde0;
@@ -60,9 +63,7 @@
 
 .dark {
   --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
+  --foreground: oklch(0.985 0 0); 
   --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.205 0 0);
   --secondary: oklch(0.269 0 0);
@@ -90,9 +91,7 @@
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-foreground: var(--foreground); 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -103,9 +102,17 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
+  
   --color-destructive: var(--destructive);
   --color-destructive-hover: var(--destructive-hover);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-muted: var(--destructive-muted);
+
+  --color-info: var(--info);
+  --color-info-hover: var(--info-hover);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-muted: var(--info-muted);
+
   --color-warning: var(--warning);
   --color-warning-hover: var(--warning-hover);
   --color-warning-foreground: var(--warning-foreground);

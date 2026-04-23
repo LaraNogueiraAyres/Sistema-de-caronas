@@ -36,9 +36,7 @@ export function OfferRide() {
   const [seats, setSeats] = useState("");
   const [sameGenderOnly, setSameGenderOnly] = useState(false);
   const [showRoutes, setShowRoutes] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState<
-    string | null
-  >(null);
+  const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,9 +65,9 @@ export function OfferRide() {
       case "light":
         return "text-green-600 bg-green-50";
       case "moderate":
-        return "text-yellow-600 bg-yellow-50";
+        return "text-warning-foreground bg-yellow-50";
       case "heavy":
-        return "text-red-600 bg-red-50";
+        return "text-destructive bg-destructive-muted";
     }
   };
 
@@ -108,7 +106,7 @@ export function OfferRide() {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <h1 className="text-xl font-semibold">
-            {showRoutes ? 'Escolha a melhor rota' : 'Oferecer carona'}
+            {showRoutes ? "Escolha a melhor rota" : "Oferecer carona"}
           </h1>
         </div>
       </div>
@@ -188,9 +186,7 @@ export function OfferRide() {
                     <input
                       type="time"
                       value={timeStart}
-                      onChange={(e) =>
-                        setTimeStart(e.target.value)
-                      }
+                      onChange={(e) => setTimeStart(e.target.value)}
                       placeholder="Das"
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none text-sm"
                       required
@@ -204,9 +200,7 @@ export function OfferRide() {
                     <input
                       type="time"
                       value={timeEnd}
-                      onChange={(e) =>
-                        setTimeEnd(e.target.value)
-                      }
+                      onChange={(e) => setTimeEnd(e.target.value)}
                       placeholder="Até"
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-secondary border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none text-sm"
                       required
@@ -275,20 +269,14 @@ export function OfferRide() {
                   </div>
                   <button
                     type="button"
-                    onClick={() =>
-                      setSameGenderOnly(!sameGenderOnly)
-                    }
+                    onClick={() => setSameGenderOnly(!sameGenderOnly)}
                     className={`ml-3 relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                      sameGenderOnly
-                        ? "bg-primary"
-                        : "bg-muted"
+                      sameGenderOnly ? "bg-primary" : "bg-muted"
                     }`}
                   >
                     <span
                       className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform duration-200 ${
-                        sameGenderOnly
-                          ? "translate-x-6"
-                          : "translate-x-1"
+                        sameGenderOnly ? "translate-x-6" : "translate-x-1"
                       }`}
                     />
                   </button>
@@ -304,21 +292,6 @@ export function OfferRide() {
               </button>
             </form>
           </div>
-
-          {/* Info Card */}
-          {/* <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm text-blue-900 font-medium mb-1">
-                Dica importante
-              </p>
-              <p className="text-xs text-blue-700">
-                Escolha uma rota que seja conveniente para você e seus
-                passageiros. Você poderá confirmar a publicação após selecionar
-                a melhor opção.
-              </p>
-            </div>
-          </div> */}
         </div>
       ) : (
         /* Routes Section */
@@ -422,7 +395,7 @@ export function OfferRide() {
                             </span>
                           )}
                           {route.isShortest && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-info-muted text-info-foreground text-xs font-medium rounded-full">
                               <TrendingUp className="w-3 h-3" />
                               Mais curta
                             </span>

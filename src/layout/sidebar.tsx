@@ -147,7 +147,7 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
           <div className="border-t border-gray-200">
             <button
               onClick={handleLogout}
-              className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-red-50 transition-colors text-left ${
+              className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-destructive-muted transition-colors text-left ${
                 isCollapsed ? 'justify-center' : ''
               }`}
               title={isCollapsed ? 'Sair' : ''}

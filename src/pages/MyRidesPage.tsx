@@ -269,18 +269,18 @@ export function MyRides() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEditRide(ride)}
-                        className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-2 hover:bg-info rounded-lg transition-colors"
                       >
-                        <Edit className="w-5 h-5 text-blue-600" />
+                        <Edit className="w-5 h-5 text-info-foreground" />
                       </button>
                       <button
                         onClick={() => {
                           setSelectedRide(ride);
                           setModalType("delete");
                         }}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
                       >
-                        <Trash2 className="w-5 h-5 text-red-600" />
+                        <Trash2 className="w-5 h-5 text-destructive" />
                       </button>
                     </div>
                   </div>
@@ -393,9 +393,9 @@ export function MyRides() {
                                     passenger.id,
                                   )
                                 }
-                                className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+                                className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
                               >
-                                <X className="w-4 h-4 text-red-600" />
+                                <X className="w-4 h-4 text-destructive" />
                               </button>
                             </div>
                           ),
@@ -501,7 +501,7 @@ export function MyRides() {
                     </h4>
                     <button
                       onClick={() => navigate(`/user/${ride.driver.id}`)}
-                      className="w-full flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left"
+                      className="w-full flex items-center gap-3 p-3 bg-info border border-blue-200 rounded-lg hover:bg-info-muted transition-colors text-left"
                     >
                       <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-primary-foreground" />
@@ -531,8 +531,8 @@ export function MyRides() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
           <div className="bg-background rounded-2xl p-6 max-w-md w-full">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <Trash2 className="w-6 h-6 text-red-600" />
+              <div className="w-12 h-12 bg-destructive-muted rounded-full flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-destructive" />
               </div>
               <div>
                 <h2 className="text-foreground font-semibold text-lg">
@@ -815,8 +815,8 @@ export function MyRides() {
                     </p>
 
                     {selectedRide.availableSeats === 0 ? (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                        <p className="text-xs text-red-700">
+                      <div className="bg-destructive-muted border border-red-200 rounded-lg p-3">
+                        <p className="text-xs text-destructive">
                           Não há mais vagas disponíveis
                         </p>
                       </div>
