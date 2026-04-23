@@ -63,9 +63,9 @@ export function OfferRide() {
   const getTrafficColor = (traffic: RouteOption["traffic"]) => {
     switch (traffic) {
       case "light":
-        return "text-green-600 bg-green-50";
+        return "text-success-foreground bg-success";
       case "moderate":
-        return "text-warning-foreground bg-yellow-50";
+        return "text-warning-foreground bg-warning";
       case "heavy":
         return "text-destructive bg-destructive-muted";
     }
@@ -389,7 +389,7 @@ export function OfferRide() {
                             {route.name}
                           </h3>
                           {route.isFastest && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
                               <Zap className="w-3 h-3" />
                               Mais rápida
                             </span>

@@ -32,6 +32,11 @@
   --info-muted: #e3eeff; 
   --info-foreground: #013e94;
 
+  
+  --success: #ecfff8;
+  --success-muted: #e3fff9; 
+  --success-foreground: #019441;
+
   --warning: #fffbc5;
   --warning-hover: #fffde0;
   --warning-foreground: #b98407;
@@ -108,8 +113,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-muted: var(--destructive-muted);
 
-  --color-info: var(--info);
-  --color-info-hover: var(--info-hover);
+  --color-info: var(--info); 
   --color-info-foreground: var(--info-foreground);
   --color-info-muted: var(--info-muted);
 
@@ -117,6 +121,10 @@
   --color-warning-hover: var(--warning-hover);
   --color-warning-foreground: var(--warning-foreground);
 
+  --color-success: var(--success);
+  --color-success-hover: var(--success-hover);
+  --color-success-hover: var(--success-hover);
+  --color-success-foreground: var(--success-foreground);
 
   --color-border: var(--border);
   --color-input: var(--input);

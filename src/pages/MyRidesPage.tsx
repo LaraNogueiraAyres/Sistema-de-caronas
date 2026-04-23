@@ -363,7 +363,7 @@ export function MyRides() {
                           (passenger) => (
                             <div
                               key={passenger.id}
-                              className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg"
+                              className="flex items-center justify-between p-3 bg-success border border-green-200 rounded-lg"
                             >
                               <button
                                 onClick={() =>
@@ -445,7 +445,7 @@ export function MyRides() {
                           </span>
                         )}
                         {ride.status === "confirmed" && (
-                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
                             Confirmada
                           </span>
                         )}
@@ -762,7 +762,7 @@ export function MyRides() {
 
             {selectedRide.requests.length === 0 ? (
               <div className="text-center py-8">
-                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <CheckCircle2 className="w-12 h-12 text-success-foreground mx-auto mb-3" />
                 <p className="text-gray-600">
                   Todas as solicitações foram processadas!
                 </p>
