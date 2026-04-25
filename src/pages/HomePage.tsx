@@ -110,7 +110,7 @@ export function HomePage() {
                   </div>
                   <div className="flex-1 text-left">
                     <h3 className="text-foreground font-semibold text-lg mb-1">
-                      Pegar carona
+                      Buscar carona
                     </h3>
                     <p className="text-gray-600 text-sm">
                       Encontre uma carona disponível
