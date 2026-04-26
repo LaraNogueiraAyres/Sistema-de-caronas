@@ -10,6 +10,7 @@ import { MyRides } from "../../pages/MyRidesPage";
 import { History } from "../../pages/HistoryPage";
 // import { ConstructionPage } from "../../pages/ConstructionPage";
 import { PublicProfile } from "../../pages/PublicProfilePage";
+import { Settings } from "../../pages/SettingsPage";
 
 
 export const router = createBrowserRouter([
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
        {
         path: "/user/:userId",
         Component: PublicProfile,
+      },
+      {
+        path: "/settings",
+        Component: Settings,
       },
     ],
   },
