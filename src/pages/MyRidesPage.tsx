@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { mockMyRides, mockMyRidesAsPassenger } from "../mocks/my-rides";
-import type { MyRide, PassengerRequest, MyRideAsPassenger } from "../types/my-ride";
+import type { MyRide, MyRideAsPassenger } from "../types/my-ride";
 import { ChatModal } from "./chat-modal";
 
 interface LayoutContext {
@@ -42,11 +42,10 @@ export function MyRides() {
   const [rides, setRides] = useState<MyRide[]>(
     mockMyRides.filter((ride) => ride.status === "active"),
   );
-  const [ridesAsPassenger, setRidesAsPassenger] = useState<MyRideAsPassenger[]>(
+  const [ridesAsPassenger] = useState<MyRideAsPassenger[]>(
     mockMyRidesAsPassenger,
   );
-  const [selectedRide, setSelectedRide] =
-    useState<MyRide | null>(null);
+  const [selectedRide, setSelectedRide] = useState<MyRide | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
   const [editForm, setEditForm] = useState({
     date: "",
@@ -110,22 +109,15 @@ export function MyRides() {
     }
   };
 
-  const handleAcceptRequest = (
-    rideId: string,
-    requestId: string,
-  ) => {
+  const handleAcceptRequest = (rideId: string, requestId: string) => {
     setRides(
       rides.map((ride) => {
         if (ride.id === rideId) {
-          const request = ride.requests.find(
-            (r) => r.id === requestId,
-          );
+          const request = ride.requests.find((r) => r.id === requestId);
           if (request && ride.availableSeats > 0) {
             return {
               ...ride,
-              requests: ride.requests.filter(
-                (r) => r.id !== requestId,
-              ),
+              requests: ride.requests.filter((r) => r.id !== requestId),
               confirmedPassengers: [
                 ...ride.confirmedPassengers,
                 { ...request, status: "accepted" as const },
@@ -139,37 +131,28 @@ export function MyRides() {
     );
   };
 
-  const handleRejectRequest = (
-    rideId: string,
-    requestId: string,
-  ) => {
+  const handleRejectRequest = (rideId: string, requestId: string) => {
     setRides(
       rides.map((ride) =>
         ride.id === rideId
           ? {
               ...ride,
-              requests: ride.requests.filter(
-                (r) => r.id !== requestId,
-              ),
+              requests: ride.requests.filter((r) => r.id !== requestId),
             }
           : ride,
       ),
     );
   };
 
-  const handleRemovePassenger = (
-    rideId: string,
-    passengerId: string,
-  ) => {
+  const handleRemovePassenger = (rideId: string, passengerId: string) => {
     setRides(
       rides.map((ride) =>
         ride.id === rideId
           ? {
               ...ride,
-              confirmedPassengers:
-                ride.confirmedPassengers.filter(
-                  (p) => p.id !== passengerId,
-                ),
+              confirmedPassengers: ride.confirmedPassengers.filter(
+                (p) => p.id !== passengerId,
+              ),
               availableSeats: ride.availableSeats + 1,
             }
           : ride,
@@ -198,7 +181,10 @@ export function MyRides() {
     });
   };
 
-  const openChat = (user: { id: string; name: string; rating: number }, rideInfo: { date: string; origin: string; destination: string }) => {
+  const openChat = (
+    user: { id: string; name: string; rating: number },
+    rideInfo: { date: string; origin: string; destination: string },
+  ) => {
     setChatUser(user);
     setChatRideInfo(rideInfo);
     setChatOpen(true);
@@ -221,9 +207,7 @@ export function MyRides() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-xl font-semibold">
-            Minhas caronas
-          </h1>
+          <h1 className="text-xl font-semibold">Minhas caronas</h1>
         </div>
       </div>
 
@@ -295,9 +279,7 @@ export function MyRides() {
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-600 text-sm">
-                        {ride.routeName}
-                      </p>
+                      <p className="text-gray-600 text-sm">{ride.routeName}</p>
                     </div>
 
                     <div className="flex gap-2">
@@ -323,9 +305,7 @@ export function MyRides() {
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
-                      <p className="text-sm text-gray-700">
-                        {ride.origin}
-                      </p>
+                      <p className="text-sm text-gray-700">{ride.origin}</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
@@ -340,8 +320,7 @@ export function MyRides() {
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.departureTimeStart} -{" "}
-                        {ride.departureTimeEnd}
+                        {ride.departureTimeStart} - {ride.departureTimeEnd}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -353,8 +332,8 @@ export function MyRides() {
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.availableSeats}/{ride.totalSeats}{" "}
-                        vagas disponíveis
+                        {ride.availableSeats}/{ride.totalSeats} vagas
+                        disponíveis
                       </span>
                     </div>
                   </div>
@@ -371,8 +350,7 @@ export function MyRides() {
                       <div className="flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-yellow-600" />
                         <span className="text-sm font-medium text-yellow-700">
-                          {ride.requests.length} nova(s)
-                          solicitação(ões)
+                          {ride.requests.length} nova(s) solicitação(ões)
                         </span>
                       </div>
                       <span className="text-yellow-600">→</span>
@@ -389,7 +367,8 @@ export function MyRides() {
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className="w-5 h-5 text-green-600" />
                           <span className="text-sm font-medium text-green-700">
-                            {ride.confirmedPassengers.length} passageiro(s) confirmado(s)
+                            {ride.confirmedPassengers.length} passageiro(s)
+                            confirmado(s)
                           </span>
                         </div>
                         {expandedRides.has(ride.id) ? (
@@ -401,68 +380,63 @@ export function MyRides() {
 
                       {expandedRides.has(ride.id) && (
                         <div className="space-y-2 mt-3">
-                          {ride.confirmedPassengers.map(
-                            (passenger) => (
-                              <div
-                                key={passenger.id}
-                                className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
+                          {ride.confirmedPassengers.map((passenger) => (
+                            <div
+                              key={passenger.id}
+                              className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
+                            >
+                              <button
+                                onClick={() =>
+                                  navigate(`/user/${passenger.passenger.id}`)
+                                }
+                                className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
                               >
+                                <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
+                                  <User className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {passenger.passenger.name}
+                                  </p>
+                                  <div className="flex items-center gap-1">
+                                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                    <span className="text-xs text-gray-600">
+                                      {passenger.passenger.rating}
+                                    </span>
+                                  </div>
+                                </div>
+                              </button>
+                              <div className="flex gap-2">
                                 <button
                                   onClick={() =>
-                                    navigate(`/user/${passenger.passenger.id}`)
+                                    openChat(
+                                      {
+                                        id: passenger.passenger.id,
+                                        name: passenger.passenger.name,
+                                        rating: passenger.passenger.rating,
+                                      },
+                                      {
+                                        date: ride.date,
+                                        origin: ride.origin,
+                                        destination: ride.destination,
+                                      },
+                                    )
                                   }
-                                  className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
+                                  className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
                                 >
-                                  <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                                    <User className="w-5 h-5 text-white" />
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-900">
-                                      {passenger.passenger.name}
-                                    </p>
-                                    <div className="flex items-center gap-1">
-                                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                                      <span className="text-xs text-gray-600">
-                                        {passenger.passenger.rating}
-                                      </span>
-                                    </div>
-                                  </div>
+                                  <MessageCircle className="w-4 h-4 text-blue-600" />
                                 </button>
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={() =>
-                                      openChat(
-                                        {
-                                          id: passenger.passenger.id,
-                                          name: passenger.passenger.name,
-                                          rating: passenger.passenger.rating,
-                                        },
-                                        {
-                                          date: ride.date,
-                                          origin: ride.origin,
-                                          destination: ride.destination,
-                                        }
-                                      )
-                                    }
-                                    className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                                  >
-                                    <MessageCircle className="w-4 h-4 text-blue-600" />
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      handleRemovePassenger(
-                                        ride.id,
-                                        passenger.id,
-                                      )
-                                    }
-                                    className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                                  >
-                                    <X className="w-4 h-4 text-red-600" />
-                                  </button>
-                                </div>
+                                <button
+                                  onClick={() =>
+                                    handleRemovePassenger(ride.id, passenger.id)
+                                  }
+                                  className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                >
+                                  <X className="w-4 h-4 text-red-600" />
+                                </button>
                               </div>
-                            ),
-                          )}
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -519,9 +493,7 @@ export function MyRides() {
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-600 text-sm">
-                        {ride.routeName}
-                      </p>
+                      <p className="text-gray-600 text-sm">{ride.routeName}</p>
                     </div>
                   </div>
 
@@ -529,9 +501,7 @@ export function MyRides() {
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
-                      <p className="text-sm text-gray-700">
-                        {ride.origin}
-                      </p>
+                      <p className="text-sm text-gray-700">{ride.origin}</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
@@ -546,8 +516,7 @@ export function MyRides() {
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.departureTimeStart} -{" "}
-                        {ride.departureTimeEnd}
+                        {ride.departureTimeStart} - {ride.departureTimeEnd}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -563,23 +532,16 @@ export function MyRides() {
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
                       Motorista
                     </h4>
-                    <button
-                      onClick={() => navigate(`/user/${ride.driver.id}`)}
-                      className="w-full flex items-center gap-3 p-3 bg-info border border-blue-200 rounded-lg hover:bg-info-muted transition-colors text-left"
-                    >
-                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-primary-foreground" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
-                          {ride.driver.name}
-                        </p>
-                        <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-warning-foreground fill-yellow-500" />
-                          <span className="text-xs text-gray-600">
-                            {ride.driver.rating} ({ride.driver.totalRatings})
-                          </span>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => navigate(`/user/${ride.driver.id}`)}
+                        className="flex-1 flex items-center gap-3 p-3 bg-info border border-blue-200 rounded-lg hover:bg-info-muted transition-colors text-left"
+                      >
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                          <User className="w-5 h-5 text-primary-foreground" />
                         </div>
+
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
                             {ride.driver.name}
@@ -592,6 +554,7 @@ export function MyRides() {
                           </div>
                         </div>
                       </button>
+
                       {ride.status === "confirmed" && (
                         <button
                           onClick={() =>
@@ -605,7 +568,7 @@ export function MyRides() {
                                 date: ride.date,
                                 origin: ride.origin,
                                 destination: ride.destination,
-                              }
+                              },
                             )
                           }
                           className="p-3 bg-[#1D3557] hover:bg-[#2d4a6f] rounded-lg transition-colors"
@@ -658,8 +621,7 @@ export function MyRides() {
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-700">
-                    {selectedRide.origin} →{" "}
-                    {selectedRide.destination}
+                    {selectedRide.origin} → {selectedRide.destination}
                   </span>
                 </div>
               </div>
@@ -670,9 +632,8 @@ export function MyRides() {
                 <div className="flex gap-2">
                   <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
                   <p className="text-sm text-yellow-700">
-                    Há {selectedRide.confirmedPassengers.length}{" "}
-                    passageiro(s) confirmado(s). Eles serão
-                    notificados sobre o cancelamento.
+                    Há {selectedRide.confirmedPassengers.length} passageiro(s)
+                    confirmado(s). Eles serão notificados sobre o cancelamento.
                   </p>
                 </div>
               </div>
@@ -689,9 +650,7 @@ export function MyRides() {
                 Cancelar
               </button>
               <button
-                onClick={() =>
-                  handleDeleteRide(selectedRide.id)
-                }
+                onClick={() => handleDeleteRide(selectedRide.id)}
                 className="flex-1 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
               >
                 Sim, excluir
@@ -810,8 +769,8 @@ export function MyRides() {
 
               <div className="bg-blue-50 rounded-lg p-3">
                 <p className="text-xs text-blue-700">
-                  <strong>Nota:</strong> Você não pode editar a
-                  origem, destino ou rota após criar a carona.
+                  <strong>Nota:</strong> Você não pode editar a origem, destino
+                  ou rota após criar a carona.
                 </p>
               </div>
             </div>
@@ -905,9 +864,7 @@ export function MyRides() {
 
                     <p className="text-xs text-gray-500 mb-3">
                       Solicitado em{" "}
-                      {new Date(
-                        request.requestedAt,
-                      ).toLocaleString("pt-BR")}
+                      {new Date(request.requestedAt).toLocaleString("pt-BR")}
                     </p>
 
                     {selectedRide.availableSeats === 0 ? (
@@ -920,10 +877,7 @@ export function MyRides() {
                       <div className="flex gap-2">
                         <button
                           onClick={() =>
-                            handleRejectRequest(
-                              selectedRide.id,
-                              request.id,
-                            )
+                            handleRejectRequest(selectedRide.id, request.id)
                           }
                           className="flex-1 py-2 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                         >
@@ -932,10 +886,7 @@ export function MyRides() {
                         </button>
                         <button
                           onClick={() =>
-                            handleAcceptRequest(
-                              selectedRide.id,
-                              request.id,
-                            )
+                            handleAcceptRequest(selectedRide.id, request.id)
                           }
                           className="flex-1 py-2 px-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                         >
