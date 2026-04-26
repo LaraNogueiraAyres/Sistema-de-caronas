@@ -9,7 +9,6 @@ import {
   Star,
   Calendar,
   Navigation,
-  Edit,
   Trash2,
   Check,
   X,
@@ -23,8 +22,9 @@ import {
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { mockMyRides, mockMyRidesAsPassenger } from "../mocks/my-rides";
-import type { MyRide, MyRideAsPassenger } from "../types/my-ride";
+import type { MyRide, PassengerRequest, MyRideAsPassenger, Rating } from "../types/my-ride";
 import { ChatModal } from "./chat-modal";
+import { RatingModal } from "./RatingPage";
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -32,7 +32,7 @@ interface LayoutContext {
   sidebarCollapsed: boolean;
 }
 
-type ModalType = "delete" | "edit" | "requests" | null;
+type ModalType = "delete" | "requests" | "complete" | "cancel-passenger" | null;
 type TabType = "offered" | "received";
 
 export function MyRides() {
@@ -40,20 +40,14 @@ export function MyRides() {
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
   const [activeTab, setActiveTab] = useState<TabType>("offered");
   const [rides, setRides] = useState<MyRide[]>(
-    mockMyRides.filter((ride) => ride.status === "active"),
+    mockMyRides.filter((ride) => ride.status !== "completed"),
   );
-  const [ridesAsPassenger] = useState<MyRideAsPassenger[]>(
-    mockMyRidesAsPassenger,
+  const [ridesAsPassenger, setRidesAsPassenger] = useState<MyRideAsPassenger[]>(
+    mockMyRidesAsPassenger.filter((ride) => ride.status !== "completed"),
   );
   const [selectedRide, setSelectedRide] = useState<MyRide | null>(null);
+  const [selectedPassengerRide, setSelectedPassengerRide] = useState<MyRideAsPassenger | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
-  const [editForm, setEditForm] = useState({
-    date: "",
-    timeStart: "",
-    timeEnd: "",
-    price: "",
-    totalSeats: "",
-  });
   const [expandedRides, setExpandedRides] = useState<Set<string>>(new Set());
   const [chatOpen, setChatOpen] = useState(false);
   const [chatUser, setChatUser] = useState<{
@@ -66,58 +60,158 @@ export function MyRides() {
     origin: string;
     destination: string;
   } | null>(null);
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [currentRatingUser, setCurrentRatingUser] = useState<{
+    id: string;
+    name: string;
+    rating: number;
+  } | null>(null);
+  const [currentRatingType, setCurrentRatingType] = useState<"driver" | "passenger">("passenger");
+  const [passengersToRate, setPassengersToRate] = useState<PassengerRequest[]>([]);
+  const [currentPassengerIndex, setCurrentPassengerIndex] = useState(0);
+
+  const isRidePast = (date: string, timeEnd: string): boolean => {
+    const now = new Date();
+    const rideDateTime = new Date(`${date}T${timeEnd}`);
+    return rideDateTime < now;
+  };
+
+  const getHoursUntilRide = (date: string, timeStart: string): number => {
+    const now = new Date();
+    const rideDateTime = new Date(`${date}T${timeStart}`);
+    const diffMs = rideDateTime.getTime() - now.getTime();
+    return diffMs / (1000 * 60 * 60);
+  };
 
   const handleDeleteRide = (rideId: string) => {
-    setRides(rides.filter((ride) => ride.id !== rideId));
+    const ride = rides.find((r) => r.id === rideId);
+    if (!ride) return;
+
+    const hoursUntilRide = getHoursUntilRide(ride.date, ride.departureTimeStart);
+
+    if (hoursUntilRide < 6 && hoursUntilRide > 0) {
+      // Aqui você aplicaria a penalidade de -0.1 na nota do usuário
+      console.log("Penalidade aplicada: -0.1 na nota do usuário");
+      // TODO: Implementar lógica real de atualização da nota
+    }
+
+    setRides(rides.filter((r) => r.id !== rideId));
     setModalType(null);
     setSelectedRide(null);
   };
 
-  const handleEditRide = (ride: MyRide) => {
+  const handleCompleteRide = (ride: MyRide) => {
     setSelectedRide(ride);
-    setEditForm({
-      date: ride.date,
-      timeStart: ride.departureTimeStart,
-      timeEnd: ride.departureTimeEnd,
-      price: ride.price.toString(),
-      totalSeats: ride.totalSeats.toString(),
-    });
-    setModalType("edit");
-  };
-
-  const handleSaveEdit = () => {
-    if (selectedRide) {
-      setRides(
-        rides.map((ride) =>
-          ride.id === selectedRide.id
-            ? {
-                ...ride,
-                date: editForm.date,
-                departureTimeStart: editForm.timeStart,
-                departureTimeEnd: editForm.timeEnd,
-                price: parseFloat(editForm.price),
-                totalSeats: parseInt(editForm.totalSeats),
-                availableSeats:
-                  parseInt(editForm.totalSeats) -
-                  ride.confirmedPassengers.length,
-              }
-            : ride,
-        ),
+    setPassengersToRate(ride.confirmedPassengers);
+    setCurrentPassengerIndex(0);
+    if (ride.confirmedPassengers.length > 0) {
+      setModalType("complete");
+      openRatingModal(
+        ride.confirmedPassengers[0].passenger,
+        "passenger",
+        {
+          date: ride.date,
+          origin: ride.origin,
+          destination: ride.destination,
+        }
       );
-      setModalType(null);
-      setSelectedRide(null);
+    } else {
+      // Se não há passageiros, apenas marcar como concluída e remover da lista
+      setRides(rides.filter((r) => r.id !== ride.id));
     }
   };
 
-  const handleAcceptRequest = (rideId: string, requestId: string) => {
+  const handleCompletePassengerRide = (ride: MyRideAsPassenger) => {
+    setSelectedPassengerRide(ride);
+    openRatingModal(
+      ride.driver,
+      "driver",
+      {
+        date: ride.date,
+        origin: ride.origin,
+        destination: ride.destination,
+      }
+    );
+  };
+
+  const openRatingModal = (
+    user: { id: string; name: string; rating: number },
+    type: "driver" | "passenger",
+    rideInfo: { date: string; origin: string; destination: string }
+  ) => {
+    setCurrentRatingUser(user);
+    setCurrentRatingType(type);
+    setChatRideInfo(rideInfo);
+    setRatingModalOpen(true);
+  };
+
+  const handleSubmitRating = (rating: number, comment: string, reportReason?: string) => {
+    console.log("Avaliação submetida:", { rating, comment, user: currentRatingUser, reportReason });
+
+    if (modalType === "complete" && selectedRide) {
+      // Avaliar passageiros da carona oferecida
+      const nextIndex = currentPassengerIndex + 1;
+
+      if (nextIndex < passengersToRate.length) {
+        setCurrentPassengerIndex(nextIndex);
+        openRatingModal(
+          passengersToRate[nextIndex].passenger,
+          "passenger",
+          {
+            date: selectedRide.date,
+            origin: selectedRide.origin,
+            destination: selectedRide.destination,
+          }
+        );
+      } else {
+        // Todas as avaliações foram concluídas - remover da lista
+        setRides(rides.filter((r) => r.id !== selectedRide.id));
+        setRatingModalOpen(false);
+        setModalType(null);
+        setSelectedRide(null);
+        setPassengersToRate([]);
+        setCurrentPassengerIndex(0);
+      }
+    } else if (selectedPassengerRide) {
+      // Avaliar motorista da carona recebida - remover da lista
+      setRidesAsPassenger(ridesAsPassenger.filter((r) => r.id !== selectedPassengerRide.id));
+      setRatingModalOpen(false);
+      setSelectedPassengerRide(null);
+    }
+  };
+
+  const handleCancelPassengerRide = (rideId: string) => {
+    const ride = ridesAsPassenger.find((r) => r.id === rideId);
+    if (!ride) return;
+
+    const hoursUntilRide = getHoursUntilRide(ride.date, ride.departureTimeStart);
+
+    if (hoursUntilRide < 6 && hoursUntilRide > 0) {
+      // Aplicar penalidade de -0.1 na nota do usuário
+      console.log("Penalidade aplicada: -0.1 na nota do usuário por cancelamento de carona recebida");
+    }
+
+    setRidesAsPassenger(ridesAsPassenger.filter((r) => r.id !== rideId));
+    setModalType(null);
+    setSelectedPassengerRide(null);
+  };
+
+  const handleAcceptRequest = (
+    rideId: string,
+    requestId: string,
+  ) => {
     setRides(
       rides.map((ride) => {
         if (ride.id === rideId) {
-          const request = ride.requests.find((r) => r.id === requestId);
+          const request = ride.requests.find(
+            (r) => r.id === requestId,
+          );
           if (request && ride.availableSeats > 0) {
             return {
               ...ride,
-              requests: ride.requests.filter((r) => r.id !== requestId),
+              requests: ride.requests.filter(
+                (r) => r.id !== requestId,
+              ),
               confirmedPassengers: [
                 ...ride.confirmedPassengers,
                 { ...request, status: "accepted" as const },
@@ -131,28 +225,37 @@ export function MyRides() {
     );
   };
 
-  const handleRejectRequest = (rideId: string, requestId: string) => {
+  const handleRejectRequest = (
+    rideId: string,
+    requestId: string,
+  ) => {
     setRides(
       rides.map((ride) =>
         ride.id === rideId
           ? {
               ...ride,
-              requests: ride.requests.filter((r) => r.id !== requestId),
+              requests: ride.requests.filter(
+                (r) => r.id !== requestId,
+              ),
             }
           : ride,
       ),
     );
   };
 
-  const handleRemovePassenger = (rideId: string, passengerId: string) => {
+  const handleRemovePassenger = (
+    rideId: string,
+    passengerId: string,
+  ) => {
     setRides(
       rides.map((ride) =>
         ride.id === rideId
           ? {
               ...ride,
-              confirmedPassengers: ride.confirmedPassengers.filter(
-                (p) => p.id !== passengerId,
-              ),
+              confirmedPassengers:
+                ride.confirmedPassengers.filter(
+                  (p) => p.id !== passengerId,
+                ),
               availableSeats: ride.availableSeats + 1,
             }
           : ride,
@@ -181,10 +284,7 @@ export function MyRides() {
     });
   };
 
-  const openChat = (
-    user: { id: string; name: string; rating: number },
-    rideInfo: { date: string; origin: string; destination: string },
-  ) => {
+  const openChat = (user: { id: string; name: string; rating: number }, rideInfo: { date: string; origin: string; destination: string }) => {
     setChatUser(user);
     setChatRideInfo(rideInfo);
     setChatOpen(true);
@@ -207,7 +307,9 @@ export function MyRides() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-xl font-semibold">Minhas caronas</h1>
+          <h1 className="text-xl font-semibold">
+            Minhas caronas
+          </h1>
         </div>
       </div>
 
@@ -278,26 +380,29 @@ export function MyRides() {
                             Mesmo gênero
                           </span>
                         )}
+                        {ride.status === "completed" && (
+                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                            Concluída
+                          </span>
+                        )}
                       </div>
-                      <p className="text-gray-600 text-sm">{ride.routeName}</p>
+                      <p className="text-gray-600 text-sm">
+                        {ride.routeName}
+                      </p>
                     </div>
 
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEditRide(ride)}
-                        className="p-2 hover:bg-info rounded-lg transition-colors"
-                      >
-                        <Edit className="w-5 h-5 text-info-foreground" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedRide(ride);
-                          setModalType("delete");
-                        }}
-                        className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-5 h-5 text-destructive" />
-                      </button>
+                      {ride.status !== "completed" && (
+                        <button
+                          onClick={() => {
+                            setSelectedRide(ride);
+                            setModalType("delete");
+                          }}
+                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-5 h-5 text-red-600" />
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -305,7 +410,9 @@ export function MyRides() {
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
-                      <p className="text-sm text-gray-700">{ride.origin}</p>
+                      <p className="text-sm text-gray-700">
+                        {ride.origin}
+                      </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
@@ -320,7 +427,8 @@ export function MyRides() {
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.departureTimeStart} - {ride.departureTimeEnd}
+                        {ride.departureTimeStart} -{" "}
+                        {ride.departureTimeEnd}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -332,8 +440,15 @@ export function MyRides() {
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.availableSeats}/{ride.totalSeats} vagas
-                        disponíveis
+                        {ride.availableSeats}/{ride.totalSeats}{" "}
+                        vagas
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-700">
+                        {ride.confirmedPassengers.length}{" "}
+                        confirmado(s)
                       </span>
                     </div>
                   </div>
@@ -350,7 +465,8 @@ export function MyRides() {
                       <div className="flex items-center gap-2">
                         <AlertCircle className="w-5 h-5 text-yellow-600" />
                         <span className="text-sm font-medium text-yellow-700">
-                          {ride.requests.length} nova(s) solicitação(ões)
+                          {ride.requests.length} nova(s)
+                          solicitação(ões)
                         </span>
                       </div>
                       <span className="text-yellow-600">→</span>
@@ -367,8 +483,7 @@ export function MyRides() {
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className="w-5 h-5 text-green-600" />
                           <span className="text-sm font-medium text-green-700">
-                            {ride.confirmedPassengers.length} passageiro(s)
-                            confirmado(s)
+                            {ride.confirmedPassengers.length} passageiro(s) confirmado(s)
                           </span>
                         </div>
                         {expandedRides.has(ride.id) ? (
@@ -380,67 +495,89 @@ export function MyRides() {
 
                       {expandedRides.has(ride.id) && (
                         <div className="space-y-2 mt-3">
-                          {ride.confirmedPassengers.map((passenger) => (
-                            <div
-                              key={passenger.id}
-                              className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
-                            >
-                              <button
-                                onClick={() =>
-                                  navigate(`/user/${passenger.passenger.id}`)
-                                }
-                                className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
+                          {ride.confirmedPassengers.map(
+                            (passenger) => (
+                              <div
+                                key={passenger.id}
+                                className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
                               >
-                                <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                                  <User className="w-5 h-5 text-white" />
-                                </div>
-                                <div>
-                                  <p className="text-sm font-medium text-gray-900">
-                                    {passenger.passenger.name}
-                                  </p>
-                                  <div className="flex items-center gap-1">
-                                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                                    <span className="text-xs text-gray-600">
-                                      {passenger.passenger.rating}
-                                    </span>
+                                <button
+                                  onClick={() =>
+                                    navigate(`/user/${passenger.passenger.id}`)
+                                  }
+                                  className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
+                                >
+                                  <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
+                                    <User className="w-5 h-5 text-white" />
                                   </div>
-                                </div>
-                              </button>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() =>
-                                    openChat(
-                                      {
-                                        id: passenger.passenger.id,
-                                        name: passenger.passenger.name,
-                                        rating: passenger.passenger.rating,
-                                      },
-                                      {
-                                        date: ride.date,
-                                        origin: ride.origin,
-                                        destination: ride.destination,
-                                      },
-                                    )
-                                  }
-                                  className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                                >
-                                  <MessageCircle className="w-4 h-4 text-blue-600" />
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-900">
+                                      {passenger.passenger.name}
+                                    </p>
+                                    <div className="flex items-center gap-1">
+                                      <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                                      <span className="text-xs text-gray-600">
+                                        {passenger.passenger.rating}
+                                      </span>
+                                    </div>
+                                  </div>
                                 </button>
-                                <button
-                                  onClick={() =>
-                                    handleRemovePassenger(ride.id, passenger.id)
-                                  }
-                                  className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                                >
-                                  <X className="w-4 h-4 text-red-600" />
-                                </button>
+                                {ride.status !== "completed" && (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() =>
+                                        openChat(
+                                          {
+                                            id: passenger.passenger.id,
+                                            name: passenger.passenger.name,
+                                            rating: passenger.passenger.rating,
+                                          },
+                                          {
+                                            date: ride.date,
+                                            origin: ride.origin,
+                                            destination: ride.destination,
+                                          }
+                                        )
+                                      }
+                                      className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                                    >
+                                      <MessageCircle className="w-4 h-4 text-blue-600" />
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleRemovePassenger(
+                                          ride.id,
+                                          passenger.id,
+                                        )
+                                      }
+                                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                    >
+                                      <X className="w-4 h-4 text-red-600" />
+                                    </button>
+                                  </div>
+                                )}
                               </div>
-                            </div>
-                          ))}
+                            ),
+                          )}
                         </div>
                       )}
                     </div>
                   )}
+
+                  {/* Complete Ride Button */}
+                  {ride.status === "active" &&
+                    isRidePast(ride.date, ride.departureTimeEnd) &&
+                    !ride.driverRatingsGiven && (
+                      <div className="mt-4">
+                        <button
+                          onClick={() => handleCompleteRide(ride)}
+                          className="w-full p-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
+                        >
+                          <CheckCircle2 className="w-5 h-5" />
+                          Concluir carona e avaliar passageiros
+                        </button>
+                      </div>
+                    )}
                 </div>
               ))
             )}
@@ -482,8 +619,13 @@ export function MyRides() {
                             Mesmo gênero
                           </span>
                         )}
+                        {ride.status === "completed" && (
+                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                            Concluída
+                          </span>
+                        )}
                         {ride.status === "confirmed" && (
-                          <span className="px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
                             Confirmada
                           </span>
                         )}
@@ -493,15 +635,31 @@ export function MyRides() {
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-600 text-sm">{ride.routeName}</p>
+                      <p className="text-gray-600 text-sm">
+                        {ride.routeName}
+                      </p>
                     </div>
+
+                    {(ride.status === "confirmed" || ride.status === "pending") && (
+                      <button
+                        onClick={() => {
+                          setSelectedPassengerRide(ride);
+                          setModalType("cancel-passenger");
+                        }}
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                      >
+                        <X className="w-5 h-5 text-red-600" />
+                      </button>
+                    )}
                   </div>
 
                   {/* Route */}
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
-                      <p className="text-sm text-gray-700">{ride.origin}</p>
+                      <p className="text-sm text-gray-700">
+                        {ride.origin}
+                      </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
@@ -516,7 +674,8 @@ export function MyRides() {
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.departureTimeStart} - {ride.departureTimeEnd}
+                        {ride.departureTimeStart} -{" "}
+                        {ride.departureTimeEnd}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -532,16 +691,14 @@ export function MyRides() {
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
                       Motorista
                     </h4>
-
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
                       <button
                         onClick={() => navigate(`/user/${ride.driver.id}`)}
-                        className="flex-1 flex items-center gap-3 p-3 bg-info border border-blue-200 rounded-lg hover:bg-info-muted transition-colors text-left"
+                        className="flex-1 flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left"
                       >
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-primary-foreground" />
+                        <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
+                          <User className="w-5 h-5 text-white" />
                         </div>
-
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
                             {ride.driver.name}
@@ -554,7 +711,6 @@ export function MyRides() {
                           </div>
                         </div>
                       </button>
-
                       {ride.status === "confirmed" && (
                         <button
                           onClick={() =>
@@ -568,7 +724,7 @@ export function MyRides() {
                                 date: ride.date,
                                 origin: ride.origin,
                                 destination: ride.destination,
-                              },
+                              }
                             )
                           }
                           className="p-3 bg-[#1D3557] hover:bg-[#2d4a6f] rounded-lg transition-colors"
@@ -578,6 +734,21 @@ export function MyRides() {
                       )}
                     </div>
                   </div>
+
+                  {/* Complete Ride Button for Passenger */}
+                  {ride.status === "confirmed" &&
+                    isRidePast(ride.date, ride.departureTimeEnd) &&
+                    !ride.passengerRatingGiven && (
+                      <div className="mt-4">
+                        <button
+                          onClick={() => handleCompletePassengerRide(ride)}
+                          className="w-full p-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
+                        >
+                          <CheckCircle2 className="w-5 h-5" />
+                          Concluir carona e avaliar motorista
+                        </button>
+                      </div>
+                    )}
                 </div>
               ))
             )}
@@ -590,8 +761,8 @@ export function MyRides() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-destructive-muted rounded-full flex items-center justify-center">
-                <Trash2 className="w-6 h-6 text-destructive" />
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-red-600" />
               </div>
               <div>
                 <h2 className="text-[#1D3557] font-semibold text-lg">
@@ -621,23 +792,51 @@ export function MyRides() {
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-700">
-                    {selectedRide.origin} → {selectedRide.destination}
+                    {selectedRide.origin} →{" "}
+                    {selectedRide.destination}
                   </span>
                 </div>
               </div>
             </div>
 
             {selectedRide.confirmedPassengers.length > 0 && (
-              <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <div className="flex gap-2">
                   <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
                   <p className="text-sm text-yellow-700">
-                    Há {selectedRide.confirmedPassengers.length} passageiro(s)
-                    confirmado(s). Eles serão notificados sobre o cancelamento.
+                    Há {selectedRide.confirmedPassengers.length}{" "}
+                    passageiro(s) confirmado(s). Eles serão
+                    notificados sobre o cancelamento.
                   </p>
                 </div>
               </div>
             )}
+
+            {(() => {
+              const hoursUntilRide = getHoursUntilRide(
+                selectedRide.date,
+                selectedRide.departureTimeStart
+              );
+              return hoursUntilRide < 6 && hoursUntilRide > 0 ? (
+                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex gap-2">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-red-700 mb-1">
+                        Atenção: Penalidade aplicada!
+                      </p>
+                      <p className="text-sm text-red-700">
+                        Ao deletar esta carona com menos de 6 horas de
+                        antecedência, você perderá <strong>0.1 ponto</strong> na
+                        sua avaliação.
+                        {selectedRide.confirmedPassengers.length > 0 &&
+                          " Os passageiros serão notificados sobre o cancelamento."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : null;
+            })()}
 
             <div className="flex gap-3">
               <button
@@ -650,146 +849,12 @@ export function MyRides() {
                 Cancelar
               </button>
               <button
-                onClick={() => handleDeleteRide(selectedRide.id)}
+                onClick={() =>
+                  handleDeleteRide(selectedRide.id)
+                }
                 className="flex-1 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
               >
                 Sim, excluir
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {modalType === "edit" && selectedRide && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#1D3557] font-semibold text-lg">
-                Editar carona
-              </h2>
-              <button
-                onClick={() => {
-                  setModalType(null);
-                  setSelectedRide(null);
-                }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
-                  Data
-                </label>
-                <input
-                  type="date"
-                  value={editForm.date}
-                  onChange={(e) =>
-                    setEditForm({
-                      ...editForm,
-                      date: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
-                  Horário de partida
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="time"
-                    value={editForm.timeStart}
-                    onChange={(e) =>
-                      setEditForm({
-                        ...editForm,
-                        timeStart: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
-                  />
-                  <input
-                    type="time"
-                    value={editForm.timeEnd}
-                    onChange={(e) =>
-                      setEditForm({
-                        ...editForm,
-                        timeEnd: e.target.value,
-                      })
-                    }
-                    className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
-                  Preço por pessoa
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={editForm.price}
-                  onChange={(e) =>
-                    setEditForm({
-                      ...editForm,
-                      price: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm text-gray-600 mb-2 block font-medium">
-                  Total de vagas
-                </label>
-                <select
-                  value={editForm.totalSeats}
-                  onChange={(e) =>
-                    setEditForm({
-                      ...editForm,
-                      totalSeats: e.target.value,
-                    })
-                  }
-                  className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
-                >
-                  <option value="1">1 vaga</option>
-                  <option value="2">2 vagas</option>
-                  <option value="3">3 vagas</option>
-                  <option value="4">4 vagas</option>
-                </select>
-              </div>
-
-              <div className="bg-blue-50 rounded-lg p-3">
-                <p className="text-xs text-blue-700">
-                  <strong>Nota:</strong> Você não pode editar a origem, destino
-                  ou rota após criar a carona.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => {
-                  setModalType(null);
-                  setSelectedRide(null);
-                }}
-                className="flex-1 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                className="flex-1 py-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors"
-              >
-                Salvar alterações
               </button>
             </div>
           </div>
@@ -817,7 +882,7 @@ export function MyRides() {
 
             {selectedRide.requests.length === 0 ? (
               <div className="text-center py-8">
-                <CheckCircle2 className="w-12 h-12 text-success-foreground mx-auto mb-3" />
+                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
                 <p className="text-gray-600">
                   Todas as solicitações foram processadas!
                 </p>
@@ -864,12 +929,14 @@ export function MyRides() {
 
                     <p className="text-xs text-gray-500 mb-3">
                       Solicitado em{" "}
-                      {new Date(request.requestedAt).toLocaleString("pt-BR")}
+                      {new Date(
+                        request.requestedAt,
+                      ).toLocaleString("pt-BR")}
                     </p>
 
                     {selectedRide.availableSeats === 0 ? (
-                      <div className="bg-destructive-muted border border-red-200 rounded-lg p-3">
-                        <p className="text-xs text-destructive">
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <p className="text-xs text-red-700">
                           Não há mais vagas disponíveis
                         </p>
                       </div>
@@ -877,7 +944,10 @@ export function MyRides() {
                       <div className="flex gap-2">
                         <button
                           onClick={() =>
-                            handleRejectRequest(selectedRide.id, request.id)
+                            handleRejectRequest(
+                              selectedRide.id,
+                              request.id,
+                            )
                           }
                           className="flex-1 py-2 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                         >
@@ -886,7 +956,10 @@ export function MyRides() {
                         </button>
                         <button
                           onClick={() =>
-                            handleAcceptRequest(selectedRide.id, request.id)
+                            handleAcceptRequest(
+                              selectedRide.id,
+                              request.id,
+                            )
                           }
                           className="flex-1 py-2 px-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                         >
@@ -910,6 +983,131 @@ export function MyRides() {
           onClose={() => setChatOpen(false)}
           otherUser={chatUser}
           rideInfo={chatRideInfo}
+        />
+      )}
+
+      {/* Cancel Passenger Ride Modal */}
+      {modalType === "cancel-passenger" && selectedPassengerRide && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <X className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h2 className="text-[#1D3557] font-semibold text-lg">
+                  Cancelar carona
+                </h2>
+                <p className="text-gray-600 text-sm">
+                  Esta ação não pode ser desfeita
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">
+                    {formatDate(selectedPassengerRide.date)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">
+                    {selectedPassengerRide.departureTimeStart} -{" "}
+                    {selectedPassengerRide.departureTimeEnd}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">
+                    {selectedPassengerRide.origin} →{" "}
+                    {selectedPassengerRide.destination}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">
+                    Motorista: {selectedPassengerRide.driver.name}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {(() => {
+              const hoursUntilRide = getHoursUntilRide(
+                selectedPassengerRide.date,
+                selectedPassengerRide.departureTimeStart
+              );
+              return hoursUntilRide < 6 && hoursUntilRide > 0 ? (
+                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex gap-2">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-red-700 mb-1">
+                        Atenção: Penalidade aplicada!
+                      </p>
+                      <p className="text-sm text-red-700">
+                        Ao cancelar esta carona com menos de 6 horas de
+                        antecedência, você perderá <strong>0.1 ponto</strong> na
+                        sua avaliação. O motorista será notificado sobre o cancelamento.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex gap-2">
+                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
+                    <p className="text-sm text-yellow-700">
+                      O motorista será notificado sobre o cancelamento.
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setModalType(null);
+                  setSelectedPassengerRide(null);
+                }}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={() =>
+                  handleCancelPassengerRide(selectedPassengerRide.id)
+                }
+                className="flex-1 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Sim, cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rating Modal */}
+      {ratingModalOpen && currentRatingUser && chatRideInfo && (
+        <RatingModal
+          isOpen={ratingModalOpen}
+          onClose={() => {
+            setRatingModalOpen(false);
+            setModalType(null);
+            setSelectedRide(null);
+            setSelectedPassengerRide(null);
+            setPassengersToRate([]);
+            setCurrentPassengerIndex(0);
+          }}
+          onSubmit={handleSubmitRating}
+          userName={currentRatingUser.name}
+          userRating={currentRatingUser.rating}
+          rideInfo={chatRideInfo}
+          userType={currentRatingType}
         />
       )}
     </div>

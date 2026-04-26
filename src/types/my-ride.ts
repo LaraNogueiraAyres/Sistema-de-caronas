@@ -1,3 +1,13 @@
+export interface Rating {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  rideId: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+}
+
 export interface PassengerRequest {
   id: string;
   passenger: {
@@ -10,6 +20,7 @@ export interface PassengerRequest {
   };
   status: "pending" | "accepted" | "rejected";
   requestedAt: string;
+  ratingGiven?: Rating;
 }
 
 export interface MyRide {
@@ -29,6 +40,8 @@ export interface MyRide {
   requests: PassengerRequest[];
   confirmedPassengers: PassengerRequest[];
   createdAt: string;
+  completedAt?: string;
+  driverRatingsGiven?: boolean;
 }
 
 // Tipo para caronas recebidas (como passageiro)
@@ -41,7 +54,7 @@ export interface MyRideAsPassenger {
   departureTimeEnd: string;
   price: number;
   routeName: string;
-  status: "pending" | "confirmed" | "cancelled";
+  status: "pending" | "confirmed" | "cancelled" | "completed";
   sameGenderOnly: boolean;
   driver: {
     id: string;
@@ -51,4 +64,6 @@ export interface MyRideAsPassenger {
     phone: string;
   };
   requestedAt: string;
+  completedAt?: string;
+  passengerRatingGiven?: Rating;
 }
