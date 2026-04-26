@@ -128,7 +128,7 @@ export function History() {
                               Mesmo gênero
                             </span>
                           )}
-                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
                             Concluída
                           </span>
                         </div>
@@ -241,7 +241,7 @@ export function History() {
                               Mesmo gênero
                             </span>
                           )}
-                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
                             Concluída
                           </span>
                         </div>

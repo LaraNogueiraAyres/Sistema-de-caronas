@@ -636,8 +636,8 @@ export function FindRide() {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
             <div className="bg-white rounded-2xl p-6 max-w-md w-full">
               <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
+                <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle2 className="w-8 h-8 text-success-foreground" />
                 </div>
 
                 <h2 className="text-[#1D3557] font-semibold text-xl mb-2">

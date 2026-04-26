@@ -303,18 +303,18 @@ export function MyRides() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEditRide(ride)}
-                        className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-2 hover:bg-info rounded-lg transition-colors"
                       >
-                        <Edit className="w-5 h-5 text-blue-600" />
+                        <Edit className="w-5 h-5 text-info-foreground" />
                       </button>
                       <button
                         onClick={() => {
                           setSelectedRide(ride);
                           setModalType("delete");
                         }}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
                       >
-                        <Trash2 className="w-5 h-5 text-red-600" />
+                        <Trash2 className="w-5 h-5 text-destructive" />
                       </button>
                     </div>
                   </div>
@@ -509,7 +509,7 @@ export function MyRides() {
                           </span>
                         )}
                         {ride.status === "confirmed" && (
-                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
                             Confirmada
                           </span>
                         )}
@@ -563,13 +563,22 @@ export function MyRides() {
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
                       Motorista
                     </h4>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => navigate(`/user/${ride.driver.id}`)}
-                        className="flex-1 flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left"
-                      >
-                        <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-white" />
+                    <button
+                      onClick={() => navigate(`/user/${ride.driver.id}`)}
+                      className="w-full flex items-center gap-3 p-3 bg-info border border-blue-200 rounded-lg hover:bg-info-muted transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-primary-foreground" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">
+                          {ride.driver.name}
+                        </p>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-3 h-3 text-warning-foreground fill-yellow-500" />
+                          <span className="text-xs text-gray-600">
+                            {ride.driver.rating} ({ride.driver.totalRatings})
+                          </span>
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
@@ -618,8 +627,8 @@ export function MyRides() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <Trash2 className="w-6 h-6 text-red-600" />
+              <div className="w-12 h-12 bg-destructive-muted rounded-full flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-destructive" />
               </div>
               <div>
                 <h2 className="text-[#1D3557] font-semibold text-lg">
@@ -849,7 +858,7 @@ export function MyRides() {
 
             {selectedRide.requests.length === 0 ? (
               <div className="text-center py-8">
-                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <CheckCircle2 className="w-12 h-12 text-success-foreground mx-auto mb-3" />
                 <p className="text-gray-600">
                   Todas as solicitações foram processadas!
                 </p>
@@ -902,8 +911,8 @@ export function MyRides() {
                     </p>
 
                     {selectedRide.availableSeats === 0 ? (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                        <p className="text-xs text-red-700">
+                      <div className="bg-destructive-muted border border-red-200 rounded-lg p-3">
+                        <p className="text-xs text-destructive">
                           Não há mais vagas disponíveis
                         </p>
                       </div>
