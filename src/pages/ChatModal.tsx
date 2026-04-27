@@ -87,23 +87,23 @@ export function ChatModal({ isOpen, onClose, otherUser, rideInfo }: ChatModalPro
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md h-[600px] flex flex-col shadow-2xl">
+      <div className="bg-background rounded-2xl w-full max-w-md h-[600px] flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-[#1D3557] text-white rounded-t-2xl">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-primary text-primary-foreground rounded-t-2xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-background/20 rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
               <h3 className="font-semibold">{otherUser.name}</h3>
-              <p className="text-xs text-white/80">
+              <p className="text-xs text-primary-foreground/80">
                 {formatDate(rideInfo.date)} • {rideInfo.origin.split(',')[0]}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -126,14 +126,14 @@ export function ChatModal({ isOpen, onClose, otherUser, rideInfo }: ChatModalPro
               <div
                 className={`max-w-[75%] ${
                   message.senderId === 'me'
-                    ? 'bg-[#1D3557] text-white'
-                    : 'bg-white text-gray-900 border border-gray-200'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-background text-gray-900 border border-gray-200'
                 } rounded-2xl px-4 py-2 shadow-sm`}
               >
                 <p className="text-sm break-words">{message.text}</p>
                 <p
                   className={`text-xs mt-1 ${
-                    message.senderId === 'me' ? 'text-white/70' : 'text-gray-500'
+                    message.senderId === 'me' ? 'text-primary-foreground/70' : 'text-gray-500'
                   }`}
                 >
                   {formatTime(message.timestamp)}
@@ -145,19 +145,19 @@ export function ChatModal({ isOpen, onClose, otherUser, rideInfo }: ChatModalPro
         </div>
 
         {/* Input */}
-        <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-white rounded-b-2xl">
+        <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200 bg-background rounded-b-2xl">
           <div className="flex gap-2">
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="flex-1 px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none text-sm"
+              className="flex-1 px-4 py-3 bg-gray-100 rounded-xl border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none text-sm"
             />
             <button
               type="submit"
               disabled={newMessage.trim() === ''}
-              className="px-4 py-3 bg-[#1D3557] text-white rounded-xl hover:bg-[#2d4a6f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-3 bg-primary text-primary-foreground rounded-xl hover:bg-[#2d4a6f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send className="w-5 h-5" />
             </button>

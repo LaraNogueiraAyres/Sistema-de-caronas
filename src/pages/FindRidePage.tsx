@@ -179,17 +179,17 @@ const sortedRides = [...filteredRides].sort((a, b) => {
   return (
     <div className="min-h-screen bg-[#F5F5F5] flex flex-col lg:h-screen lg:overflow-hidden">
       {/* Header */}
-      <div className="w-full px-6 pt-12 pb-6 bg-[#1D3557] text-white flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
           >
             <Menu className="w-6 h-6" />
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors hidden lg:block"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors hidden lg:block"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -202,7 +202,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
       {/* Desktop Layout: Search Form + Results Side by Side */}
       <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden">
         {/* Search Form */}
-        <div className="px-6 py-6 bg-white shadow-sm lg:w-96 lg:border-r lg:border-gray-200 lg:overflow-y-auto lg:flex-shrink-0">
+        <div className="px-6 py-6 bg-background shadow-sm lg:w-96 lg:border-r lg:border-gray-200 lg:overflow-y-auto lg:flex-shrink-0">
           <form onSubmit={handleSearch} className="space-y-4">
             {/* Origin and Destination with Swap Button */}
             <div className="space-y-4">
@@ -216,7 +216,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                     <button
                       type="button"
                       onClick={() => setShowSavedAddresses(!showSavedAddresses)}
-                      className="text-xs text-[#1D3557] font-medium flex items-center gap-1 hover:underline"
+                      className="text-xs text-foreground font-medium flex items-center gap-1 hover:underline"
                     >
                       <Bookmark className="w-3 h-3" />
                       Salvos
@@ -226,7 +226,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                 <div className="flex gap-3 items-center">
                   <div className="relative flex-1">
                     <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-                      <div className="w-3 h-3 bg-[#1D3557] rounded-full"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
                     </div>
                     <input
                       type="text"
@@ -237,23 +237,23 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                       className={`w-full pl-11 pr-4 py-4 rounded-xl border-2 transition-all outline-none ${
                         isReversed
                           ? "bg-gray-100 border-gray-200 text-gray-600 opacity-60 cursor-not-allowed"
-                          : "bg-[#F5F5F5] border-transparent focus:border-[#1D3557] focus:bg-white"
+                          : "bg-[#F5F5F5] border-transparent focus:border-primary focus:bg-background"
                       }`}
                     />
                   </div>
                   <button
                     type="button"
                     onClick={handleSwapLocations}
-                    className="p-3 bg-white border-2 border-[#1D3557] rounded-xl hover:bg-[#1D3557] hover:text-white transition-all group shadow-sm flex-shrink-0"
+                    className="p-3 bg-background border-2 border-primary rounded-xl hover:bg-primary hover:text-primary-foreground transition-all group shadow-sm flex-shrink-0"
                     title="Inverter origem e destino"
                   >
-                    <ArrowUpDown className="w-5 h-5 text-[#1D3557] group-hover:text-white" />
+                    <ArrowUpDown className="w-5 h-5 text-foreground group-hover:text-primary-foreground" />
                   </button>
                 </div>
 
                 {/* Saved Addresses Dropdown */}
                 {!isReversed && showSavedAddresses && savedAddresses.length > 0 && (
-                  <div className="mt-2 p-2 bg-white border-2 border-[#1D3557] rounded-xl shadow-lg">
+                  <div className="mt-2 p-2 bg-background border-2 border-primary rounded-xl shadow-lg">
                     {savedAddresses.map((addr) => (
                       <button
                         key={addr.id}
@@ -261,7 +261,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                         onClick={() => handleSelectSavedAddress(addr.address)}
                         className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
                       >
-                        <p className="text-sm font-medium text-[#1D3557]">
+                        <p className="text-sm font-medium text-foreground">
                           {addr.label}
                         </p>
                         <p className="text-xs text-gray-600">{addr.address}</p>
@@ -274,7 +274,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
               {/* Destination Input */}
               <div className="relative">
                 <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
-                  <MapPin className="w-4 h-4 text-[#E63946]" />
+                  <MapPin className="w-4 h-4 text-accent" />
                 </div>
                 <input
                   type="text"
@@ -285,7 +285,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                   className={`w-full pl-11 pr-4 py-4 rounded-xl border-2 transition-all outline-none ${
                     !isReversed
                       ? "bg-gray-100 border-gray-200 text-gray-600 opacity-60 cursor-not-allowed"
-                      : "bg-[#F5F5F5] border-transparent focus:border-[#1D3557] focus:bg-white"
+                      : "bg-[#F5F5F5] border-transparent focus:border-primary focus:bg-background"
                   }`}
                 />
               </div>
@@ -300,7 +300,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full pl-11 pr-4 py-4 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none text-sm"
+                className="w-full pl-11 pr-4 py-4 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none text-sm"
               />
             </div>
 
@@ -319,7 +319,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                     value={timeStart}
                     onChange={(e) => setTimeStart(e.target.value)}
                     placeholder="Das"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none text-sm"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none text-sm"
                   />
                 </div>
 
@@ -332,7 +332,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                     value={timeEnd}
                     onChange={(e) => setTimeEnd(e.target.value)}
                     placeholder="Até"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none text-sm"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-primary focus:bg-background transition-all outline-none text-sm"
                   />
                 </div>
               </div>
@@ -343,10 +343,10 @@ const sortedRides = [...filteredRides].sort((a, b) => {
               <button
                 type="button"
                 onClick={() => setShowFilters(!showFilters)}
-                className="px-5 py-4 bg-white border-2 border-gray-300 rounded-xl hover:border-[#1D3557] transition-colors flex items-center gap-2"
+                className="px-5 py-4 bg-background border-2 border-gray-300 rounded-xl hover:border-primary transition-colors flex items-center gap-2"
               >
-                <SlidersHorizontal className="w-5 h-5 text-[#1D3557]" />
-                <span className="text-[#1D3557] font-medium">
+                <SlidersHorizontal className="w-5 h-5 text-foreground" />
+                <span className="text-foreground font-medium">
                   Filtros
                 </span>
               </button>
@@ -377,7 +377,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
                   placeholder="R$ 0,00"
-                  className="w-24 px-3 py-2 rounded-lg bg-white border border-gray-300 text-sm outline-none focus:border-[#1D3557]"
+                  className="w-24 px-3 py-2 rounded-lg bg-background border border-gray-300 text-sm outline-none focus:border-primary"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -387,7 +387,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                 <select
                   value={minRating}
                   onChange={(e) => setMinRating(e.target.value)}
-                  className="w-24 px-3 py-2 rounded-lg bg-white border border-gray-300 text-sm outline-none focus:border-[#1D3557]"
+                  className="w-24 px-3 py-2 rounded-lg bg-background border border-gray-300 text-sm outline-none focus:border-primary"
                 >
                   <option value="">Qualquer</option>
                   <option value="4">4+ ⭐</option>
@@ -408,7 +408,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                     setMinPassengers(e.target.value)
                   }
                   placeholder="0"
-                  className="w-24 px-3 py-2 rounded-lg bg-white border border-gray-300 text-sm outline-none focus:border-[#1D3557]"
+                  className="w-24 px-3 py-2 rounded-lg bg-background border border-gray-300 text-sm outline-none focus:border-primary"
                 />
               </div>
 
@@ -430,12 +430,12 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                     }
                     className={`ml-3 relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#1D3557] focus:ring-offset-2 ${
                       sameGenderOnly
-                        ? "bg-[#1D3557]"
+                        ? "bg-primary"
                         : "bg-gray-300"
                     }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                      className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform duration-200 ${
                         sameGenderOnly
                           ? "translate-x-6"
                           : "translate-x-1"
@@ -452,7 +452,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
         {showResults && (
           <div className="flex-1 px-6 py-6 lg:px-0 lg:py-0 lg:overflow-y-auto">
             <div className="mb-4">
-              <h2 className="text-[#1D3557] font-semibold text-lg">
+              <h2 className="text-foreground font-semibold text-lg">
                 {filteredRides.length} caronas disponíveis
               </h2>
               <p className="text-gray-600 text-sm mt-1">
@@ -463,8 +463,8 @@ const sortedRides = [...filteredRides].sort((a, b) => {
             {/* Ride Cards */}
             <div className="space-y-4">
               {sortedRides.length === 0 ? (
-                <div className="bg-white rounded-2xl p-8 text-center">
-                  <p className="text-gray-600">
+                <div className="bg-background rounded-2xl p-8 text-center">
+                  <p className="text-foreground">
                     Nenhuma carona encontrada com os filtros
                     selecionados.
                   </p>
@@ -475,7 +475,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                       setMinPassengers("");
                       setSameGenderOnly(false);
                     }}
-                    className="mt-4 px-6 py-2 text-[#E63946] font-semibold hover:underline"
+                    className="mt-4 px-6 py-2 text-foreground font-semibold hover:underline"
                   >
                     Limpar filtros
                   </button>
@@ -484,16 +484,16 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                 sortedRides.map((ride) => (
                   <div
                     key={ride.id}
-                    className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                    className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
                   >
                     {/* Driver Info */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                          <User className="w-6 h-6 text-white" />
+                          <User className="w-6 h-6 text-primary-foreground" />
                         </div>
                         <div>
-                          <h3 className="text-[#1D3557] font-semibold">
+                          <h3 className="text-foreground font-semibold">
                             {ride.driver.name}
                           </h3>
                           <div className="flex items-center gap-1 mt-1">
@@ -509,10 +509,10 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                       </div>
 
                       <div className="text-right">
-                        <p className="text-[#E63946] font-bold text-lg">
+                        <p className="text-accent font-bold text-lg">
                           R$ {ride.price.toFixed(2)}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           por pessoa
                         </p>
                       </div>
@@ -521,13 +521,13 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                     {/* Route Info */}
                     <div className="mb-4 space-y-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
+                        <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
                         <p className="text-sm text-gray-700">
                           {ride.origin}
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
+                        <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
                         <p className="text-sm text-gray-700">
                           {ride.destination}
                         </p>
@@ -537,9 +537,9 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                     {/* Confirmed Passengers Badge */}
                     {ride.confirmedPassengers > 0 && (
                       <div className="mb-4">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1D3557]/5 rounded-full">
-                          <User className="w-3.5 h-3.5 text-[#1D3557]" />
-                          <span className="text-xs font-medium text-[#1D3557]">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 rounded-full">
+                          <User className="w-3.5 h-3.5 text-foreground" />
+                          <span className="text-xs font-medium text-foreground">
                             {ride.confirmedPassengers}{" "}
                             {ride.confirmedPassengers === 1
                               ? "passageiro confirmado"
@@ -572,7 +572,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
 
                       <button
                         onClick={() => handleRequestRide(ride.id)}
-                        className="px-5 py-2 bg-[#E63946] text-white font-medium text-sm rounded-lg hover:bg-[#d63340] transition-colors active:scale-95"
+                        className="px-5 py-2 bg-accent text-accent-foreground font-medium text-sm rounded-lg hover:bg-accent-hover transition-colors active:scale-95"
                       >
                         Solicitar
                       </button>
@@ -591,7 +591,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
               <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-10 h-10 text-gray-400" />
               </div>
-              <h3 className="text-[#1D3557] font-semibold text-lg mb-2">
+              <h3 className="text-foreground font-semibold text-lg mb-2">
                 Pronto para encontrar sua carona?
               </h3>
               <p className="text-gray-600 text-sm px-[0px] pt-[0px] pb-[80px]">
@@ -604,9 +604,9 @@ const sortedRides = [...filteredRides].sort((a, b) => {
         {/* Modal */}
         {showModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-            <div className="bg-white rounded-2xl p-6 w-96">
+            <div className="bg-background rounded-2xl p-6 w-96">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-[#1D3557] font-semibold text-lg">
+                <h2 className="text-foreground font-semibold text-lg">
                   Solicitar carona
                 </h2>
                 <button
@@ -620,10 +620,10 @@ const sortedRides = [...filteredRides].sort((a, b) => {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-white" />
+                    <User className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <div>
-                    <h3 className="text-[#1D3557] font-semibold">
+                    <h3 className="text-foreground font-semibold">
                       {selectedRide?.driver.name}
                     </h3>
                     <div className="flex items-center gap-1 mt-1">
@@ -639,13 +639,13 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
+                  <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
                   <p className="text-sm text-gray-700">
                     {selectedRide?.origin}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
+                  <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
                   <p className="text-sm text-gray-700">
                     {selectedRide?.destination}
                   </p>
@@ -680,13 +680,13 @@ const sortedRides = [...filteredRides].sort((a, b) => {
               <div className="flex gap-3 justify-end mt-6">
                 <button
                   onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 bg-gray-200 text-gray-700 font-medium text-sm rounded-lg hover:bg-gray-300 transition-colors"
+                  className="px-5 py-2.5 bg-muted text-muted-foreground font-medium text-sm rounded-lg hover:bg-gray-300 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleConfirmRequest}
-                  className="px-5 py-2.5 bg-[#E63946] text-white font-medium text-sm rounded-lg hover:bg-[#d63340] transition-colors active:scale-95"
+                  className="px-5 py-2.5 bg-accent text-accent-foreground font-medium text-sm rounded-lg hover:bg-accent-hover transition-colors active:scale-95"
                 >
                   Confirmar solicitação
                 </button>
@@ -698,13 +698,13 @@ const sortedRides = [...filteredRides].sort((a, b) => {
         {/* Success Message */}
         {showSuccessMessage && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-            <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+            <div className="bg-background rounded-2xl p-6 max-w-md w-full">
               <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mb-4">
                   <CheckCircle2 className="w-8 h-8 text-success-foreground" />
                 </div>
 
-                <h2 className="text-[#1D3557] font-semibold text-xl mb-2">
+                <h2 className="text-foreground font-semibold text-xl mb-2">
                   Solicitação enviada!
                 </h2>
 
@@ -717,10 +717,10 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                 <div className="w-full bg-gray-50 rounded-xl p-4 mb-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="w-5 h-5 text-white" />
+                      <User className="w-5 h-5 text-primary-foreground" />
                     </div>
                     <div className="text-left">
-                      <h3 className="text-[#1D3557] font-semibold text-sm">
+                      <h3 className="text-foreground font-semibold text-sm">
                         {selectedRide?.driver.name}
                       </h3>
                       <div className="flex items-center gap-1">
@@ -752,7 +752,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
 
                 <button
                   onClick={() => setShowSuccessMessage(false)}
-                  className="w-full py-3 bg-[#1D3557] text-white font-medium text-sm rounded-lg hover:bg-[#2d4a6f] transition-colors"
+                  className="w-full py-3 bg-accent text-accent-foreground font-medium text-sm rounded-lg hover:bg-accent-hover transition-colors"
                 >
                   Entendi
                 </button>

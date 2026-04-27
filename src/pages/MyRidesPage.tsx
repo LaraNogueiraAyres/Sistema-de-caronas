@@ -301,17 +301,17 @@ export function MyRides() {
   return (
     <div className="h-screen bg-[#F5F5F5] flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="w-full px-6 pt-12 pb-6 bg-[#1D3557] text-white flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors lg:hidden"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
           >
             <Menu className="w-6 h-6" />
           </button>
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors hidden lg:block"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors hidden lg:block"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -324,12 +324,12 @@ export function MyRides() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6 lg:max-w-7xl lg:mx-auto lg:w-full">
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 bg-white rounded-xl p-1 shadow-sm">
+        <div className="flex gap-2 mb-6 bg-background rounded-xl p-1 shadow-sm">
           <button
             onClick={() => setActiveTab("offered")}
             className={`flex-1 py-3 rounded-lg font-medium text-sm transition-all ${
               activeTab === "offered"
-                ? "bg-[#1D3557] text-white shadow-md"
+                ? "bg-primary text-primary-foreground shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
@@ -339,7 +339,7 @@ export function MyRides() {
             onClick={() => setActiveTab("received")}
             className={`flex-1 py-3 rounded-lg font-medium text-sm transition-all ${
               activeTab === "received"
-                ? "bg-[#1D3557] text-white shadow-md"
+                ? "bg-primary text-primary-foreground shadow-md"
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
@@ -353,18 +353,18 @@ export function MyRides() {
             {rides.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Navigation className="w-10 h-10 text-gray-400" />
+                  <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Navigation className="w-10 h-10 text-foreground" />
                   </div>
-                  <h3 className="text-[#1D3557] font-semibold text-lg mb-2">
+                  <h3 className="text-foreground font-semibold text-lg mb-2">
                     Nenhuma carona ativa
                   </h3>
-                  <p className="text-gray-600 text-sm mb-6">
+                  <p className="text-secondary-foreground text-sm mb-6">
                     Você ainda não ofereceu nenhuma carona
                   </p>
                   <button
                     onClick={() => navigate("/offer-ride")}
-                    className="px-6 py-3 bg-[#E63946] text-white font-medium rounded-lg hover:bg-[#d63340] transition-colors"
+                    className="px-6 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors"
                   >
                     Oferecer carona
                   </button>
@@ -374,13 +374,13 @@ export function MyRides() {
               rides.map((ride) => (
                 <div
                   key={ride.id}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100"
+                  className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-[#1D3557] font-semibold text-lg">
+                        <h3 className="text-foreground font-semibold text-lg">
                           {formatDate(ride.date)}
                         </h3>
                         {ride.sameGenderOnly && (
@@ -406,9 +406,9 @@ export function MyRides() {
                             setSelectedRide(ride);
                             setModalType("delete");
                           }}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                          className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-5 h-5 text-red-600" />
+                          <Trash2 className="w-5 h-5 text-destructive" />
                         </button>
                       )}
                     </div>
@@ -417,13 +417,13 @@ export function MyRides() {
                   {/* Route */}
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
                       <p className="text-sm text-gray-700">
                         {ride.origin}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
+                      <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
                       <p className="text-sm text-gray-700">
                         {ride.destination}
                       </p>
@@ -507,7 +507,7 @@ export function MyRides() {
                             (passenger) => (
                               <div
                                 key={passenger.id}
-                                className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
+                                className="flex items-center justify-between p-3 bg-background border border-gray-200 rounded-lg"
                               >
                                 <button
                                   onClick={() =>
@@ -516,7 +516,7 @@ export function MyRides() {
                                   className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
                                 >
                                   <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                                    <User className="w-5 h-5 text-white" />
+                                    <User className="w-5 h-5 text-primary-foreground" />
                                   </div>
                                   <div>
                                     <p className="text-sm font-medium text-gray-900">
@@ -558,9 +558,9 @@ export function MyRides() {
                                           passenger.id,
                                         )
                                       }
-                                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                                      className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
                                     >
-                                      <X className="w-4 h-4 text-red-600" />
+                                      <X className="w-4 h-4 text-destructive" />
                                     </button>
                                   </div>
                                 )}
@@ -579,7 +579,7 @@ export function MyRides() {
                       <div className="mt-4">
                         <button
                           onClick={() => handleCompleteRide(ride)}
-                          className="w-full p-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
+                          className="w-full p-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
                         >
                           <CheckCircle2 className="w-5 h-5" />
                           Concluir carona e avaliar passageiros
@@ -601,7 +601,7 @@ export function MyRides() {
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Navigation className="w-10 h-10 text-gray-400" />
                   </div>
-                  <h3 className="text-[#1D3557] font-semibold text-lg mb-2">
+                  <h3 className="text-foreground font-semibold text-lg mb-2">
                     Nenhuma carona recebida
                   </h3>
                   <p className="text-gray-600 text-sm mb-6">
@@ -613,13 +613,13 @@ export function MyRides() {
               ridesAsPassenger.map((ride) => (
                 <div
                   key={ride.id}
-                  className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100"
+                  className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-[#1D3557] font-semibold text-lg">
+                        <h3 className="text-foreground font-semibold text-lg">
                           {formatDate(ride.date)}
                         </h3>
                         {ride.sameGenderOnly && (
@@ -654,9 +654,9 @@ export function MyRides() {
                           setSelectedPassengerRide(ride);
                           setModalType("cancel-passenger");
                         }}
-                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
                       >
-                        <X className="w-5 h-5 text-red-600" />
+                        <X className="w-5 h-5 text-destructive" />
                       </button>
                     )}
                   </div>
@@ -664,13 +664,13 @@ export function MyRides() {
                   {/* Route */}
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-[#1D3557] rounded-full flex-shrink-0"></div>
+                      <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
                       <p className="text-sm text-gray-700">
                         {ride.origin}
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-3 h-3 text-[#E63946] flex-shrink-0" />
+                      <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
                       <p className="text-sm text-gray-700">
                         {ride.destination}
                       </p>
@@ -705,7 +705,7 @@ export function MyRides() {
                         className="flex-1 flex items-center gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-left"
                       >
                         <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-                          <User className="w-5 h-5 text-white" />
+                          <User className="w-5 h-5 text-primary-foreground" />
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">
@@ -735,9 +735,9 @@ export function MyRides() {
                               }
                             )
                           }
-                          className="p-3 bg-[#1D3557] hover:bg-[#2d4a6f] rounded-lg transition-colors"
+                          className="p-3 bg-primary hover:bg-[#2d4a6f] rounded-lg transition-colors"
                         >
-                          <MessageCircle className="w-5 h-5 text-white" />
+                          <MessageCircle className="w-5 h-5 text-primary-foreground" />
                         </button>
                       )}
                     </div>
@@ -750,7 +750,7 @@ export function MyRides() {
                       <div className="mt-4">
                         <button
                           onClick={() => handleCompletePassengerRide(ride)}
-                          className="w-full p-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
+                          className="w-full p-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
                         >
                           <CheckCircle2 className="w-5 h-5" />
                           Concluir carona e avaliar motorista
@@ -767,13 +767,13 @@ export function MyRides() {
       {/* Delete Modal */}
       {modalType === "delete" && selectedRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <Trash2 className="w-6 h-6 text-red-600" />
+                <Trash2 className="w-6 h-6 text-destructive" />
               </div>
               <div>
-                <h2 className="text-[#1D3557] font-semibold text-lg">
+                <h2 className="text-foreground font-semibold text-lg">
                   Excluir carona
                 </h2>
                 <p className="text-gray-600 text-sm">
@@ -826,9 +826,9 @@ export function MyRides() {
                 selectedRide.departureTimeStart
               );
               return hoursUntilRide < 6 && hoursUntilRide > 0 ? (
-                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="mb-6 p-3 bg-destructive-muted border border-red-200 rounded-lg">
                   <div className="flex gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                    <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
                     <div>
                       <p className="text-sm font-semibold text-red-700 mb-1">
                         Atenção: Penalidade aplicada!
@@ -860,7 +860,7 @@ export function MyRides() {
                 onClick={() =>
                   handleDeleteRide(selectedRide.id)
                 }
-                className="flex-1 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                className="flex-1 py-3 bg-destructive text-primary-foreground font-medium rounded-lg hover:bg-destructive-hover transition-colors"
               >
                 Sim, excluir
               </button>
@@ -871,10 +871,10 @@ export function MyRides() {
 
       {/* Requests Modal */}
       {modalType === "requests" && selectedRide && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#1D3557] font-semibold text-lg">
+              <h2 className="text-foreground font-semibold text-lg">
                 Solicitações ({selectedRide.requests.length})
               </h2>
               <button
@@ -907,10 +907,10 @@ export function MyRides() {
                       className="flex items-start gap-3 mb-3 w-full text-left hover:opacity-80 transition-opacity"
                     >
                       <div className="w-12 h-12 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="w-6 h-6 text-white" />
+                        <User className="w-6 h-6 text-primary-foreground" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-[#1D3557] font-semibold">
+                        <h3 className="text-foreground font-semibold">
                           {request.passenger.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
@@ -943,7 +943,7 @@ export function MyRides() {
                     </p>
 
                     {selectedRide.availableSeats === 0 ? (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <div className="bg-destructive-muted border border-red-200 rounded-lg p-3">
                         <p className="text-xs text-red-700">
                           Não há mais vagas disponíveis
                         </p>
@@ -969,7 +969,7 @@ export function MyRides() {
                               request.id,
                             )
                           }
-                          className="flex-1 py-2 px-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 py-2 px-4 bg-green-600 text-primary-foreground font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                         >
                           <Check className="w-4 h-4" />
                           Aceitar
@@ -997,13 +997,13 @@ export function MyRides() {
       {/* Cancel Passenger Ride Modal */}
       {modalType === "cancel-passenger" && selectedPassengerRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <X className="w-6 h-6 text-red-600" />
+                <X className="w-6 h-6 text-destructive" />
               </div>
               <div>
-                <h2 className="text-[#1D3557] font-semibold text-lg">
+                <h2 className="text-foreground font-semibold text-lg">
                   Cancelar carona
                 </h2>
                 <p className="text-gray-600 text-sm">
@@ -1049,9 +1049,9 @@ export function MyRides() {
                 selectedPassengerRide.departureTimeStart
               );
               return hoursUntilRide < 6 && hoursUntilRide > 0 ? (
-                <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="mb-6 p-3 bg-destructive-muted border border-red-200 rounded-lg">
                   <div className="flex gap-2">
-                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                    <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
                     <div>
                       <p className="text-sm font-semibold text-red-700 mb-1">
                         Atenção: Penalidade aplicada!
@@ -1090,7 +1090,7 @@ export function MyRides() {
                 onClick={() =>
                   handleCancelPassengerRide(selectedPassengerRide.id)
                 }
-                className="flex-1 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                className="flex-1 py-3 bg-destructive text-primary-foreground font-medium rounded-lg hover:bg-red-700 transition-colors"
               >
                 Sim, cancelar
               </button>

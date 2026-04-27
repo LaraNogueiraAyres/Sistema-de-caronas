@@ -38,7 +38,7 @@ export function PublicProfile() {
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <UserIcon className="w-10 h-10 text-gray-400" />
           </div>
-          <h3 className="text-[#1D3557] font-semibold text-lg mb-2">
+          <h3 className="text-foreground font-semibold text-lg mb-2">
             Usuário não encontrado
           </h3>
           <p className="text-gray-600 text-sm mb-6">
@@ -46,7 +46,7 @@ export function PublicProfile() {
           </p>
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors"
+            className="px-6 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors"
           >
             Voltar
           </button>
@@ -90,11 +90,11 @@ export function PublicProfile() {
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
       {/* Header */}
-      <div className="w-full px-6 pt-12 pb-6 bg-[#1D3557] text-white">
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground">
         <div className="flex items-center gap-4 max-w-4xl mx-auto">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
@@ -104,11 +104,11 @@ export function PublicProfile() {
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-background rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           {/* Avatar Section */}
           <div className="bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] px-6 pt-8 pb-24 relative">
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
-              <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+              <div className="w-32 h-32 bg-background rounded-full flex items-center justify-center shadow-lg border-4 border-white">
                 {user.avatar ? (
                   <img
                     src={user.avatar}
@@ -116,7 +116,7 @@ export function PublicProfile() {
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  <UserIcon className="w-16 h-16 text-[#1D3557]" />
+                  <UserIcon className="w-16 h-16 text-foreground" />
                 )}
               </div>
             </div>
@@ -125,7 +125,7 @@ export function PublicProfile() {
           {/* User Info */}
           <div className="pt-20 px-6 pb-6 text-center">
             {/* Name */}
-            <h2 className="text-2xl font-bold text-[#1D3557] mb-2">
+            <h2 className="text-2xl font-bold text-foreground mb-2">
               {user.name}
             </h2>
 
@@ -151,14 +151,14 @@ export function PublicProfile() {
               {/* Gender */}
               <div className="bg-[#F5F5F5] rounded-xl p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-[#1D3557] rounded-full flex items-center justify-center">
-                    <UserIcon className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                    <UserIcon className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 font-medium uppercase mb-1">
                       Gênero
                     </p>
-                    <p className="text-base font-semibold text-[#1D3557]">
+                    <p className="text-base font-semibold text-foreground">
                       {user.gender}
                     </p>
                   </div>
@@ -170,13 +170,13 @@ export function PublicProfile() {
                 <div className="bg-[#F5F5F5] rounded-xl p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
-                      <CalendarIcon className="w-6 h-6 text-white" />
+                      <CalendarIcon className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 font-medium uppercase mb-1">
                         Idade
                       </p>
-                      <p className="text-base font-semibold text-[#1D3557]">
+                      <p className="text-base font-semibold text-foreground">
                         {calculateAge(user.birthDate)} anos
                       </p>
                     </div>
@@ -189,13 +189,13 @@ export function PublicProfile() {
                 <div className="bg-[#F5F5F5] rounded-xl p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-white" />
+                      <Phone className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 font-medium uppercase mb-1">
                         Telefone
                       </p>
-                      <p className="text-base font-semibold text-[#1D3557]">
+                      <p className="text-base font-semibold text-foreground">
                         {user.phone}
                       </p>
                     </div>
@@ -208,13 +208,13 @@ export function PublicProfile() {
                 <div className="bg-[#F5F5F5] rounded-xl p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                      <CreditCard className="w-6 h-6 text-white" />
+                      <CreditCard className="w-6 h-6 text-primary-foreground" />
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 font-medium uppercase mb-1">
                         Chave PIX
                       </p>
-                      <p className="text-base font-semibold text-[#1D3557]">
+                      <p className="text-base font-semibold text-foreground">
                         {user.pix}
                       </p>
                     </div>
@@ -225,14 +225,14 @@ export function PublicProfile() {
               {/* Member Since */}
               <div className="bg-[#F5F5F5] rounded-xl p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-[#E63946] rounded-full flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-destructive rounded-full flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 font-medium uppercase mb-1">
                       Membro desde
                     </p>
-                    <p className="text-base font-semibold text-[#1D3557]">
+                    <p className="text-base font-semibold text-foreground">
                       {new Date(user.birthDate).toLocaleDateString("pt-BR", {
                         month: "long",
                         year: "numeric",
@@ -246,7 +246,7 @@ export function PublicProfile() {
             {/* About Section */}
             {user.bio && (
               <div className="mt-6 text-left">
-                <h3 className="text-lg font-semibold text-[#1D3557] mb-3">
+                <h3 className="text-lg font-semibold text-foreground mb-3">
                   Sobre mim
                 </h3>
                 <div className="bg-[#F5F5F5] rounded-xl p-4">
@@ -259,7 +259,7 @@ export function PublicProfile() {
 
             {/* Verification Badges (optional) */}
             <div className="mt-6">
-              <h3 className="text-lg font-semibold text-[#1D3557] mb-3 text-left">
+              <h3 className="text-lg font-semibold text-foreground mb-3 text-left">
                 Verificações
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -282,19 +282,19 @@ export function PublicProfile() {
             <div className="mt-6 pt-6 border-t border-gray-200">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-2xl font-bold text-[#1D3557]">
+                  <p className="text-2xl font-bold text-foreground">
                     {user.totalRatings}
                   </p>
                   <p className="text-xs text-gray-600 mt-1">Avaliações</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[#1D3557]">
+                  <p className="text-2xl font-bold text-foreground">
                     {Math.floor(Math.random() * 50) + 10}
                   </p>
                   <p className="text-xs text-gray-600 mt-1">Caronas</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-[#1D3557]">
+                  <p className="text-2xl font-bold text-foreground">
                     {Math.floor(Math.random() * 12) + 1}
                   </p>
                   <p className="text-xs text-gray-600 mt-1">Meses ativo</p>
@@ -308,7 +308,7 @@ export function PublicProfile() {
         <div className="mt-6">
           <button
             onClick={() => navigate(-1)}
-            className="w-full py-4 bg-[#1D3557] text-white font-semibold rounded-xl hover:bg-[#2d4a6f] transition-colors"
+            className="w-full py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-[#2d4a6f] transition-colors"
           >
             Voltar
           </button>

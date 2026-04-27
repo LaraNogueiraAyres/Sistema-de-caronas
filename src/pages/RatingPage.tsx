@@ -69,10 +69,10 @@ export function RatingModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-      <div className="bg-white rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-background rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-[#1D3557] font-semibold text-lg">
+          <h2 className="text-foreground font-semibold text-lg">
             Avaliar {userType === "driver" ? "motorista" : "passageiro"}
           </h2>
           <button
@@ -87,10 +87,10 @@ export function RatingModal({
         <div className="bg-[#F5F5F5] rounded-xl p-4 mb-6">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
-              <UserIcon className="w-6 h-6 text-white" />
+              <UserIcon className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <p className="text-base font-semibold text-[#1D3557]">
+              <p className="text-base font-semibold text-foreground">
                 {userName}
               </p>
               <div className="flex items-center gap-1">
@@ -154,7 +154,7 @@ export function RatingModal({
             onChange={(e) => setComment(e.target.value)}
             placeholder="Compartilhe sua experiência..."
             rows={4}
-            className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none resize-none"
+            className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-background transition-all outline-none resize-none"
           />
         </div>
 
@@ -162,7 +162,7 @@ export function RatingModal({
         {!showReport ? (
           <button
             onClick={() => setShowReport(true)}
-            className="w-full mb-4 py-2 text-sm text-red-600 hover:text-red-700 font-medium flex items-center justify-center gap-2 hover:bg-red-50 rounded-lg transition-colors"
+            className="w-full mb-4 py-2 text-sm text-destructive hover:text-red-700 font-medium flex items-center justify-center gap-2 hover:bg-destructive-muted rounded-lg transition-colors"
           >
             <AlertTriangle className="w-4 h-4" />
             Fazer uma denúncia
@@ -188,9 +188,9 @@ export function RatingModal({
               onChange={(e) => setReportReason(e.target.value)}
               placeholder="Descreva o motivo da denúncia..."
               rows={3}
-              className="w-full px-4 py-3 rounded-xl bg-red-50 border-2 border-red-200 focus:border-red-500 focus:bg-white transition-all outline-none resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-destructive-muted border-2 border-red-200 focus:border-red-500 focus:bg-background transition-all outline-none resize-none"
             />
-            <p className="text-xs text-red-600 mt-2">
+            <p className="text-xs text-destructive mt-2">
               Denúncias falsas podem resultar em penalidades na sua conta.
             </p>
           </div>
@@ -224,7 +224,7 @@ export function RatingModal({
             </button>
             <button
               onClick={handleSubmit}
-              className="flex-1 py-3 bg-[#1D3557] text-white font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors"
+              className="flex-1 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors"
             >
               Enviar avaliação
             </button>

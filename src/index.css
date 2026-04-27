@@ -7,6 +7,7 @@
   --font-size: 16px;
   --background: #ffffff;
   --foreground: #1d3557;
+  --foreground-muted: #666666;
  
   --primary: #1d3557;
   --primary-foreground: #ffffff;
@@ -18,24 +19,24 @@
   --muted-hover: #dadada;
   --muted-foreground: #666666;
 
-  --accent: #0a8070; /*vermelho antigo E63946*/
-  --accent-hover: #2ca998;
+  --accent: #0a7a80; /*vermelho antigo E63946*/
+  --accent-hover: #2c9da9;
   --accent-foreground: #ffffff;
 
   --destructive: #e63946;
   --destructive-muted: #fce5e8;
   --destructive-hover: #c52e3b;
   --destructive-foreground: #ffffff;
-
   
   --info: #ecf3ff;
   --info-muted: #e3eeff; 
-  --info-foreground: #013e94;
-
+  --info-foreground: #013e94; 
+  --info-border: #93befb; 
   
   --success: #ecfff8;
   --success-muted: #e3fff9; 
   --success-foreground: #019441;
+  --success-border: #62d795;
 
   --warning: #fffbc5;
   --warning-hover: #fffde0;
@@ -97,13 +98,18 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground); 
+  --color-foreground-muted: var(--foreground-muted); 
+
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+
   --color-muted: var(--muted);
   --color-muted-hover: var(--muted-hover);
   --color-muted-foreground: var(--muted-foreground);
+
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-foreground: var(--accent-foreground);
@@ -115,6 +121,7 @@
 
   --color-info: var(--info); 
   --color-info-foreground: var(--info-foreground);
+  --color-info-border: var(--info-border);
   --color-info-muted: var(--info-muted);
 
   --color-warning: var(--warning);
@@ -123,7 +130,7 @@
 
   --color-success: var(--success);
   --color-success-hover: var(--success-hover);
-  --color-success-hover: var(--success-hover);
+  --color-success-border: var(--success-border);
   --color-success-foreground: var(--success-foreground);
 
   --color-border: var(--border);
