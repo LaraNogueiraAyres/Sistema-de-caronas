@@ -44,7 +44,9 @@ type ModalType =
   | "complete"
   | "cancel-passenger"
   | "details"
+  | "remove-passenger"
   | null;
+
 type TabType = "offered" | "received";
 
 export function MyRides() {
@@ -100,7 +102,8 @@ export function MyRides() {
     [],
   );
   const [currentPassengerIndex, setCurrentPassengerIndex] = useState(0);
-
+  const [selectedPassengerToRemove, setSelectedPassengerToRemove] =
+    useState<PassengerRequest | null>(null);
   const isRidePast = (date: string, timeEnd: string): boolean => {
     const now = new Date();
     const rideDateTime = new Date(`${date}T${timeEnd}`);
@@ -301,16 +304,29 @@ export function MyRides() {
   };
 
   const handleRejectRequest = (rideId: string, requestId: string) => {
-    setRides(
-      rides.map((ride) =>
+    setProcessingRequest(requestId);
+    setRequestAction("reject");
+
+    setTimeout(() => {
+      const updatedRides = rides.map((ride) =>
         ride.id === rideId
           ? {
               ...ride,
               requests: ride.requests.filter((r) => r.id !== requestId),
             }
           : ride,
-      ),
-    );
+      );
+
+      setRides(updatedRides);
+
+      const updatedSelectedRide =
+        updatedRides.find((r) => r.id === rideId) || null;
+
+      setSelectedRide(updatedSelectedRide);
+
+      setProcessingRequest(null);
+      setRequestAction(null);
+    }, 700);
   };
 
   const handleRemovePassenger = (rideId: string, passengerId: string) => {
@@ -327,6 +343,12 @@ export function MyRides() {
           : ride,
       ),
     );
+
+    setModalType(null);
+    setSelectedPassengerToRemove(null);
+
+    setRatingSuccessText("Passageiro removido com sucesso!");
+    setShowRatingSuccess(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -630,12 +652,11 @@ export function MyRides() {
                                       <MessageCircle className="w-4 h-4 text-blue-600" />
                                     </button>
                                     <button
-                                      onClick={() =>
-                                        handleRemovePassenger(
-                                          ride.id,
-                                          passenger.id,
-                                        )
-                                      }
+                                      onClick={() => {
+                                        setSelectedRide(ride);
+                                        setSelectedPassengerToRemove(passenger);
+                                        setModalType("remove-passenger");
+                                      }}
                                       className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
                                     >
                                       <X className="w-4 h-4 text-destructive" />
@@ -910,16 +931,72 @@ export function MyRides() {
                 </span>
               </div>
             </div>
-
+{/* 
             <button
               onClick={() => handleCompleteRide(selectedRide)}
               className="w-full py-3 bg-accent text-white rounded-xl"
             >
               Concluir carona
-            </button>
+            </button> */}
           </div>
         </div>
       )}
+      {/* Modal de remoção do passageiro */}
+      {modalType === "remove-passenger" &&
+        selectedRide &&
+        selectedPassengerToRemove && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+            <div className="bg-background rounded-2xl p-6 max-w-md w-full">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-warning rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-warning-foreground" />
+                </div>
+
+                <div>
+                  <h2 className="text-lg font-semibold">Remover passageiro</h2>
+
+                  <p className="text-sm text-foreground-muted">
+                    Deseja realmente remover este passageiro?
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-secondary rounded-xl p-4 mb-6">
+                <p className="font-medium">
+                  {selectedPassengerToRemove.passenger.name}
+                </p>
+
+                <p className="text-sm text-secondary-foreground">
+                  Será liberada 1 vaga novamente.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setModalType(null);
+                    setSelectedPassengerToRemove(null);
+                  }}
+                  className="flex-1 py-3 bg-muted text-muted-foreground rounded-lg hover:bg-muted-hover"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  onClick={() =>
+                    handleRemovePassenger(
+                      selectedRide.id,
+                      selectedPassengerToRemove.id,
+                    )
+                  }
+                  className="flex-1 py-3 bg-destructive text-destructive-foreground hover:bg-destructive-hover rounded-lg"
+                >
+                  Remover
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       {/* Delete Modal */}
       {modalType === "delete" && selectedRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
@@ -1061,13 +1138,15 @@ export function MyRides() {
                   <div
                     key={request.id}
                     className={`
-    rounded-xl p-4 border transition-all duration-500
-    ${
-      processingRequest === request.id && requestAction === "accept"
-        ? "border-green-300 bg-green-50 scale-95 opacity-80"
-        : "border-gray-200"
-    }
-  `}
+rounded-xl p-4 border transition-all duration-500
+${
+  processingRequest === request.id && requestAction === "accept"
+    ? "border-green-300 bg-green-50 scale-95 opacity-80"
+    : processingRequest === request.id && requestAction === "reject"
+      ? "border-red-300 bg-red-50 scale-95 opacity-80"
+      : "border-gray-200"
+}
+`}
                   >
                     <button
                       onClick={() => navigate(`/user/${request.passenger.id}`)}
