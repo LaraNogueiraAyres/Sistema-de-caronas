@@ -4,9 +4,9 @@ import type { User } from "../types/user";
 export const mockCurrentUser: User = {
   id: "user-1",
   name: "Ana Paula",
-  email: "anapaularenault@email.com",
+  email: "anapaula@gmail.com",
   phone: "(82) 99999-8888",
-  pix: "anapaularenault@email.com",
+  pix: "anapaula@gmail.com",
   gender: "Feminino",
   birthDate: "1998-03-15",
   rating: 4.8,
@@ -33,9 +33,9 @@ export const mockUsers: User[] = [
   {
     id: "user-2",
     name: "Carlos Silva",
-    email: "carlos.silva@email.com",
+    email: "carlos@gmail.com",
     phone: "(82) 99888-7777",
-    pix: "carlos.silva@email.com",
+    pix: "carlos@gmail.com",
     gender: "Masculino",
     birthDate: "1995-07-22",
     rating: 4.9,
@@ -46,7 +46,7 @@ export const mockUsers: User[] = [
   {
     id: "user-3",
     name: "Maria Oliveira",
-    email: "maria.oliveira@email.com",
+    email: "maria.oliveira@gmail.com",
     phone: "(82) 99777-6666",
     gender: "Feminino",
     birthDate: "1999-11-08",
@@ -58,7 +58,7 @@ export const mockUsers: User[] = [
   {
     id: "user-4",
     name: "João Santos",
-    email: "joao.santos@email.com",
+    email: "joao.santos@gmail.com",
     phone: "(82) 99666-5555",
     pix: "(82) 99666-5555",
     gender: "Masculino",
@@ -71,9 +71,9 @@ export const mockUsers: User[] = [
   {
     id: "user-5",
     name: "Beatriz Costa",
-    email: "beatriz.costa@email.com",
+    email: "beatriz.costa@gmail.com",
     phone: "(82) 99555-4444",
-    pix: "beatriz.costa@email.com",
+    pix: "beatriz.costa@gmail.com",
     gender: "Feminino",
     birthDate: "2000-01-30",
     rating: 4.9,
@@ -84,7 +84,7 @@ export const mockUsers: User[] = [
   {
     id: "user-6",
     name: "Pedro Almeida",
-    email: "pedro.almeida@email.com",
+    email: "pedro.almeida@gmail.com",
     phone: "(82) 99444-3333",
     gender: "Masculino",
     birthDate: "1996-09-18",

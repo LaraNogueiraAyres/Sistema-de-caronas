@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router";
+import { authUsers } from "../mocks/authUsers";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -16,6 +17,7 @@ export function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     if (!validateEmail(email)) {
       setError("Digite um e-mail válido");
@@ -26,6 +28,19 @@ export function LoginPage() {
       setError("A senha deve ter pelo menos 6 caracteres");
       return;
     }
+
+    const user = authUsers.find(
+      (user) =>
+        user.email.toLowerCase() === email.toLowerCase() &&
+        user.password === password,
+    );
+
+    if (!user) {
+      setError("E-mail ou senha inválidos");
+      return;
+    }
+
+    localStorage.setItem("currentUser", JSON.stringify(user));
 
     navigate("/home");
   };
@@ -103,7 +118,9 @@ export function LoginPage() {
                 placeholder="••••••••"
               />
 
-              {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+              {error && (
+                <p className="text-sm text-destructive mt-2">{error}</p>
+              )}
             </div>
 
             {/* ESQUECI SENHA */}

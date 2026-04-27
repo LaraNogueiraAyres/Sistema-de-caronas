@@ -1,6 +1,6 @@
 import { Menu, MapPin, Users, Car } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
-import { mockCurrentUser } from "../mocks/user";
+import { getCurrentUser } from "../utils/auth";
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -10,6 +10,7 @@ interface LayoutContext {
 
 export function HomePage() {
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
 
   return (
@@ -25,9 +26,7 @@ export function HomePage() {
           </button>
           <div className="text-right lg:ml-auto">
             <p className="text-sm opacity-90 mb-1">Olá,</p>
-            <h1 className="text-xl font-semibold">
-              {mockCurrentUser.name}
-            </h1>
+            <h1 className="text-xl font-semibold">{currentUser?.name}</h1>
           </div>
         </div>
       </div>
@@ -148,9 +147,7 @@ export function HomePage() {
               <MapPin className="w-5 h-5 text-foreground" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-secondary-foreground mb-0.5">
-                Origem
-              </p>
+              <p className="text-xs text-secondary-foreground mb-0.5">Origem</p>
               <p className="text-sm font-medium text-foreground truncate">
                 Rua das Flores, 123 - Centro, São Paulo
               </p>
@@ -214,9 +211,7 @@ export function HomePage() {
               <h3 className="text-foreground font-semibold text-lg mb-1">
                 Oferecer carona
               </h3>
-              <p className="text-gray-600 text-sm">
-                Compartilhe sua viagem
-              </p>
+              <p className="text-gray-600 text-sm">Compartilhe sua viagem</p>
             </div>
           </button>
         </div>

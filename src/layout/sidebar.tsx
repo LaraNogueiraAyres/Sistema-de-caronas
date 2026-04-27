@@ -1,6 +1,16 @@
-import { Menu, User, History, Settings, LogOut, X, Navigation, ChevronLeft, Home } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router';
-import { mockCurrentUser } from '../mocks/user';
+import {
+  Menu,
+  User,
+  History,
+  Settings,
+  LogOut,
+  X,
+  Navigation,
+  ChevronLeft,
+  Home,
+} from "lucide-react";
+import { useNavigate, useLocation } from "react-router";
+import { getCurrentUser, logout } from "../utils/auth";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,12 +19,19 @@ interface SidebarProps {
   onToggleCollapse: () => void;
 }
 
-export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: SidebarProps) {
+export function Sidebar({
+  isOpen,
+  onClose,
+  isCollapsed,
+  onToggleCollapse,
+}: SidebarProps) {
   const navigate = useNavigate();
-  const location = useLocation();
+  const currentUser = getCurrentUser();
 
   const handleLogout = () => {
-    navigate('/');
+    logout();
+    localStorage.clear();
+    navigate("/");
   };
 
   const handleNavigation = (path: string) => {
@@ -40,8 +57,8 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full bg-white shadow-2xl z-50 transition-all duration-300 lg:relative lg:shadow-none lg:border-r lg:border-gray-200 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 ${isCollapsed ? 'lg:w-20' : 'w-72'}`}
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0 ${isCollapsed ? "lg:w-20" : "w-72"}`}
       >
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
@@ -59,7 +76,9 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
               onClick={onToggleCollapse}
               className="hidden lg:block absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
-              <ChevronLeft className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
+              <ChevronLeft
+                className={`w-5 h-5 transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+              />
             </button>
 
             {!isCollapsed && (
@@ -70,8 +89,12 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
                     <User className="w-6 h-6" />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold truncate">{mockCurrentUser.name}</p>
-                    <p className="text-sm opacity-75 truncate">{mockCurrentUser.email}</p>
+                    <p className="font-semibold truncate">
+                      {currentUser?.name}
+                    </p>
+                    <p className="text-sm opacity-75 truncate">
+                      {currentUser?.email}
+                    </p>
                   </div>
                 </div>
               </>
@@ -89,58 +112,82 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
           {/* Sidebar Menu */}
           <nav className="flex-1 py-6 overflow-y-auto">
             <button
-              onClick={() => handleNavigation('/home')}
+              onClick={() => handleNavigation("/home")}
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left ${
-                isActive('/home') ? 'bg-gray-50 border-l-4 border-[#1D3557]' : ''
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title={isCollapsed ? 'Início' : ''}
+                isActive("/home")
+                  ? "bg-gray-50 border-l-4 border-[#1D3557]"
+                  : ""
+              } ${isCollapsed ? "justify-center" : ""}`}
+              title={isCollapsed ? "Início" : ""}
             >
               <Home className="w-5 h-5 text-[#1D3557] flex-shrink-0" />
-              {!isCollapsed && <span className="text-[#1D3557] font-medium">Início</span>}
+              {!isCollapsed && (
+                <span className="text-[#1D3557] font-medium">Início</span>
+              )}
             </button>
 
             <button
-              onClick={() => handleNavigation('/profile')}
+              onClick={() => handleNavigation("/profile")}
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left ${
-                isActive('/profile') ? 'bg-gray-50 border-l-4 border-[#1D3557]' : ''
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title={isCollapsed ? 'Perfil' : ''}
+                isActive("/profile")
+                  ? "bg-gray-50 border-l-4 border-[#1D3557]"
+                  : ""
+              } ${isCollapsed ? "justify-center" : ""}`}
+              title={isCollapsed ? "Perfil" : ""}
             >
               <User className="w-5 h-5 text-[#1D3557] flex-shrink-0" />
-              {!isCollapsed && <span className="text-[#1D3557] font-medium">Perfil</span>}
+              {!isCollapsed && (
+                <span className="text-[#1D3557] font-medium">Perfil</span>
+              )}
             </button>
 
             <button
-              onClick={() => handleNavigation('/my-rides')}
+              onClick={() => handleNavigation("/my-rides")}
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left ${
-                isActive('/my-rides') ? 'bg-gray-50 border-l-4 border-[#1D3557]' : ''
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title={isCollapsed ? 'Minhas caronas' : ''}
+                isActive("/my-rides")
+                  ? "bg-gray-50 border-l-4 border-[#1D3557]"
+                  : ""
+              } ${isCollapsed ? "justify-center" : ""}`}
+              title={isCollapsed ? "Minhas caronas" : ""}
             >
               <Navigation className="w-5 h-5 text-[#1D3557] flex-shrink-0" />
-              {!isCollapsed && <span className="text-[#1D3557] font-medium">Minhas caronas</span>}
+              {!isCollapsed && (
+                <span className="text-[#1D3557] font-medium">
+                  Minhas caronas
+                </span>
+              )}
             </button>
 
             <button
-              onClick={() => handleNavigation('/history')}
+              onClick={() => handleNavigation("/history")}
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left ${
-                isActive('/history') ? 'bg-gray-50 border-l-4 border-[#1D3557]' : ''
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title={isCollapsed ? 'Histórico' : ''}
+                isActive("/history")
+                  ? "bg-gray-50 border-l-4 border-[#1D3557]"
+                  : ""
+              } ${isCollapsed ? "justify-center" : ""}`}
+              title={isCollapsed ? "Histórico" : ""}
             >
               <History className="w-5 h-5 text-[#1D3557] flex-shrink-0" />
-              {!isCollapsed && <span className="text-[#1D3557] font-medium">Histórico</span>}
+              {!isCollapsed && (
+                <span className="text-[#1D3557] font-medium">Histórico</span>
+              )}
             </button>
 
             <button
-              onClick={() => handleNavigation('/settings')}
+              onClick={() => handleNavigation("/settings")}
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left ${
-                isActive('/settings') ? 'bg-gray-50 border-l-4 border-[#1D3557]' : ''
-              } ${isCollapsed ? 'justify-center' : ''}`}
-              title={isCollapsed ? 'Configurações' : ''}
+                isActive("/settings")
+                  ? "bg-gray-50 border-l-4 border-[#1D3557]"
+                  : ""
+              } ${isCollapsed ? "justify-center" : ""}`}
+              title={isCollapsed ? "Configurações" : ""}
             >
               <Settings className="w-5 h-5 text-[#1D3557] flex-shrink-0" />
-              {!isCollapsed && <span className="text-[#1D3557] font-medium">Configurações</span>}
+              {!isCollapsed && (
+                <span className="text-[#1D3557] font-medium">
+                  Configurações
+                </span>
+              )}
             </button>
           </nav>
 
@@ -149,12 +196,14 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
             <button
               onClick={handleLogout}
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-destructive-muted transition-colors text-left ${
-                isCollapsed ? 'justify-center' : ''
+                isCollapsed ? "justify-center" : ""
               }`}
-              title={isCollapsed ? 'Sair' : ''}
+              title={isCollapsed ? "Sair" : ""}
             >
               <LogOut className="w-5 h-5 text-[#E63946] flex-shrink-0" />
-              {!isCollapsed && <span className="text-[#E63946] font-medium">Sair</span>}
+              {!isCollapsed && (
+                <span className="text-[#E63946] font-medium">Sair</span>
+              )}
             </button>
           </div>
         </div>

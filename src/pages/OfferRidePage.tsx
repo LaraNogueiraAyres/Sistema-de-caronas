@@ -16,10 +16,11 @@ import {
   Bookmark,
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
-import { mockCurrentUser } from "../mocks/user";
+import { getCurrentUser } from "../utils/auth";
 import { mockRoutes } from "../mocks/routes";
 import type { RouteOption } from "../types/route";
-import { RouteMap } from "./route-map";
+import { RouteMap } from "./RouteMap";
+import { saveRide } from "../utils/rides"; 
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -29,6 +30,7 @@ interface LayoutContext {
 
 export function OfferRide() {
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
   const [origin, setOrigin] = useState("");
   const [isReversed, setIsReversed] = useState(false);
@@ -44,7 +46,7 @@ export function OfferRide() {
   >(null);
   const [showSavedAddresses, setShowSavedAddresses] = useState(false);
 
-  const savedAddresses = mockCurrentUser.savedAddresses || [];
+  const savedAddresses = currentUser?.savedAddresses || [];
   const ufalLocation = "UFAL - Campus A.C. Simões";
   const originValue = isReversed ? ufalLocation : origin;
   const destinationValue = isReversed ? origin : ufalLocation;
@@ -62,23 +64,46 @@ export function OfferRide() {
     e.preventDefault();
     setShowRoutes(true);
   };
+const handleConfirmRoute = () => {
+  if (!selectedRoute) return;
 
-  const handleConfirmRoute = () => {
-    if (!selectedRoute) return;
-    console.log("Publicar carona:", {
-      origin: originValue,
-      destination: destinationValue,
-      date,
-      timeStart,
-      timeEnd,
-      price,
-      seats,
-      sameGenderOnly,
-      selectedRoute,
-    });
-    // Aqui implementaria a lógica de publicação
-    navigate("/home");
-  };
+  const route = mockRoutes.find(
+    (r) => r.id === selectedRoute
+  );
+
+  saveRide({
+    id: Date.now().toString(),
+
+    origin: originValue,
+    destination: destinationValue,
+
+    date,
+
+    departureTimeStart: timeStart,
+    departureTimeEnd: timeEnd,
+
+    price: Number(price),
+
+    totalSeats: Number(seats),
+    availableSeats: Number(seats),
+
+    routeId: selectedRoute,
+    routeName: route?.name || "Nova rota",
+
+    status: "active",
+
+    sameGenderOnly,
+
+    requests: [],
+    confirmedPassengers: [],
+
+    createdAt: new Date().toISOString(),
+
+    driverRatingsGiven: false
+  });
+
+  navigate("/my-rides");
+}; 
 
   const getTrafficColor = (traffic: RouteOption["traffic"]) => {
     switch (traffic) {
@@ -340,7 +365,7 @@ export function OfferRide() {
                       Aceitar apenas passageiros do meu gênero
                     </span>
                     <span className="text-xs text-gray-500">
-                      Seu gênero: {mockCurrentUser.gender}
+                      Seu gênero: {currentUser?.gender}
                     </span>
                   </div>
                   <button

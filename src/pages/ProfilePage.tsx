@@ -1,6 +1,6 @@
 import { ArrowLeft, Star, User as UserIcon, MapPin, Menu, Phone, CreditCard, Calendar as CalendarIcon } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
-import { mockCurrentUser } from "../mocks/user";
+import { getCurrentUser } from "../utils/auth";
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -11,7 +11,7 @@ interface LayoutContext {
 export function Profile() {
   const navigate = useNavigate();
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
-  const user = mockCurrentUser;
+  const user = getCurrentUser();
 
   const calculateAge = (birthDate: string) => {
     const birth = new Date(birthDate);

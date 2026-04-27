@@ -23,8 +23,9 @@ import {
 import { useNavigate, useOutletContext } from "react-router";
 import { mockMyRides, mockMyRidesAsPassenger } from "../mocks/my-rides";
 import type { MyRide, PassengerRequest, MyRideAsPassenger, Rating } from "../types/my-ride";
-import { ChatModal } from "./chat-modal";
+import { ChatModal } from "./ChatModal";
 import { RatingModal } from "./RatingPage";
+import { getMyRides } from "../utils/rides";
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -37,11 +38,18 @@ type TabType = "offered" | "received";
 
 export function MyRides() {
   const navigate = useNavigate();
+  
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
   const [activeTab, setActiveTab] = useState<TabType>("offered");
-  const [rides, setRides] = useState<MyRide[]>(
-    mockMyRides.filter((ride) => ride.status !== "completed"),
+  const [rides, setRides] = useState<MyRide[]>(() => {
+  const saved = getMyRides();
+
+  const activeMocks = mockMyRides.filter(
+    (ride) => ride.status !== "completed"
   );
+
+  return [...activeMocks, ...saved];
+});
   const [ridesAsPassenger, setRidesAsPassenger] = useState<MyRideAsPassenger[]>(
     mockMyRidesAsPassenger.filter((ride) => ride.status !== "completed"),
   );

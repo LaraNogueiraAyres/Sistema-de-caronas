@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { mockRides } from "../mocks/rides";
-import { mockCurrentUser } from "../mocks/user";
+import { getCurrentUser } from "../utils/auth";
 import type { Ride } from "../types/ride";
 
 interface LayoutContext {
@@ -26,6 +26,7 @@ interface LayoutContext {
 }
 
 export function FindRide() {
+  const currentUser = getCurrentUser();
   const navigate = useNavigate();
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
   const [origin, setOrigin] = useState("");
@@ -47,7 +48,7 @@ export function FindRide() {
     useState(false);
   const [showSavedAddresses, setShowSavedAddresses] = useState(false);
 
-  const savedAddresses = mockCurrentUser.savedAddresses || [];
+  const savedAddresses = currentUser?.savedAddresses || [];
   const ufalLocation = "UFAL - Campus A.C. Simões";
   const originValue = isReversed ? ufalLocation : origin;
   const destinationValue = isReversed ? origin : ufalLocation;
@@ -78,22 +79,85 @@ export function FindRide() {
   }, [showModal, showSuccessMessage]);
   // Filtrar caronas com base nos filtros aplicados
   const filteredRides = mockRides.filter((ride) => {
-    if (maxPrice && ride.price > parseFloat(maxPrice))
+  // // origem
+  // if (
+  //   origin &&
+  //   !ride.origin.toLowerCase().includes(origin.toLowerCase())
+  // ) {
+  //   return false;
+  // }
+
+  // preço
+  if (maxPrice && ride.price > parseFloat(maxPrice)) {
+    return false;
+  }
+
+  // avaliação
+  if (
+    minRating &&
+    ride.driver.rating < parseFloat(minRating)
+  ) {
+    return false;
+  }
+
+  // passageiros mínimos
+  if (
+    minPassengers &&
+    ride.confirmedPassengers < parseInt(minPassengers)
+  ) {
+    return false;
+  }
+
+  // gênero
+  if (
+    sameGenderOnly &&
+    ride.driver.gender !== currentUser?.gender
+  ) {
+    return false;
+  }
+
+  // horário inicial
+  if (timeStart) {
+    const rideMinutes =
+      parseInt(ride.departureTimeStart.split(":")[0]) * 60 +
+      parseInt(ride.departureTimeStart.split(":")[1]);
+
+    const filterMinutes =
+      parseInt(timeStart.split(":")[0]) * 60 +
+      parseInt(timeStart.split(":")[1]);
+
+    if (rideMinutes < filterMinutes) {
       return false;
-    if (minRating && ride.driver.rating < parseFloat(minRating))
+    }
+  }
+
+  // horário final
+  if (timeEnd) {
+    const rideMinutes =
+      parseInt(ride.departureTimeStart.split(":")[0]) * 60 +
+      parseInt(ride.departureTimeStart.split(":")[1]);
+
+    const filterMinutes =
+      parseInt(timeEnd.split(":")[0]) * 60 +
+      parseInt(timeEnd.split(":")[1]);
+
+    if (rideMinutes > filterMinutes) {
       return false;
-    if (
-      minPassengers &&
-      ride.confirmedPassengers < parseInt(minPassengers)
-    )
-      return false;
-    if (
-      sameGenderOnly &&
-      ride.driver.gender !== mockCurrentUser.gender
-    )
-      return false;
-    return true;
-  });
+    }
+  }
+
+  return true;
+});
+
+const sortedRides = [...filteredRides].sort((a, b) => {
+  const [ah, am] = a.departureTimeStart.split(":").map(Number);
+  const [bh, bm] = b.departureTimeStart.split(":").map(Number);
+
+  const minutesA = ah * 60 + am;
+  const minutesB = bh * 60 + bm;
+
+  return minutesA - minutesB;
+});
 
   const handleRequestRide = (rideId: string) => {
     const ride = mockRides.find((r) => r.id === rideId);
@@ -290,10 +354,10 @@ export function FindRide() {
               <button
                 type="submit"
                 disabled={!origin}
-                className={`flex-1 py-4 rounded-xl font-semibold text-white transition-all duration-200 ${
+                className={`flex-1 py-4 rounded-xl font-semibold transition-all duration-200 ${
                   origin
-                    ? "bg-[#E63946] hover:bg-[#d63340] active:scale-[0.98]"
-                    : "bg-gray-300 cursor-not-allowed"
+                    ? "bg-accent text-accent-foreground hover:bg-accent-hover active:scale-[0.98]"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
                 }`}
               >
                 Buscar caronas
@@ -356,7 +420,7 @@ export function FindRide() {
                       Somente motoristas do meu gênero
                     </span>
                     <span className="text-xs text-gray-500">
-                      Seu gênero: {mockCurrentUser.gender}
+                      Seu gênero: {currentUser?.gender}
                     </span>
                   </div>
                   <button
@@ -398,7 +462,7 @@ export function FindRide() {
 
             {/* Ride Cards */}
             <div className="space-y-4">
-              {filteredRides.length === 0 ? (
+              {sortedRides.length === 0 ? (
                 <div className="bg-white rounded-2xl p-8 text-center">
                   <p className="text-gray-600">
                     Nenhuma carona encontrada com os filtros
@@ -417,7 +481,7 @@ export function FindRide() {
                   </button>
                 </div>
               ) : (
-                filteredRides.map((ride) => (
+                sortedRides.map((ride) => (
                   <div
                     key={ride.id}
                     className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"

@@ -21,7 +21,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
-import { mockCurrentUser } from "../mocks/user";
+import { getCurrentUser } from "../utils/auth";
 import type { SavedAddress } from "../types/user";
 
 interface LayoutContext {
@@ -32,15 +32,21 @@ interface LayoutContext {
 
 export function Settings() {
   const navigate = useNavigate();
+  const currentUser = getCurrentUser();
+
+  if (!currentUser) {
+    navigate("/");
+    return null;
+  }
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
 
-  const [email, setEmail] = useState(mockCurrentUser.email);
-  const [phone, setPhone] = useState(mockCurrentUser.phone || "");
-  const [pix, setPix] = useState(mockCurrentUser.pix || "");
-  const [name, setName] = useState(mockCurrentUser.name);
-  const [bio, setBio] = useState(mockCurrentUser.bio || "");
-  const [birthDate, setBirthDate] = useState(mockCurrentUser.birthDate);
-  const [gender, setGender] = useState(mockCurrentUser.gender);
+  const [email, setEmail] = useState(currentUser.email);
+  const [phone, setPhone] = useState(currentUser.phone || "");
+  const [pix, setPix] = useState(currentUser.pix || "");
+  const [name, setName] = useState(currentUser.name);
+  const [bio, setBio] = useState(currentUser.bio || "");
+  const [birthDate, setBirthDate] = useState(currentUser.birthDate);
+  const [gender, setGender] = useState(currentUser.gender);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -50,14 +56,16 @@ export function Settings() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [privateMode, setPrivateMode] = useState(mockCurrentUser.privateMode || false);
+  const [privateMode, setPrivateMode] = useState(
+    currentUser.privateMode || false,
+  );
   const [savedMessage, setSavedMessage] = useState(false);
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingAccount, setIsEditingAccount] = useState(false);
 
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>(
-    mockCurrentUser.savedAddresses || []
+    currentUser.savedAddresses || [],
   );
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [newAddressLabel, setNewAddressLabel] = useState("");
@@ -180,7 +188,9 @@ export function Settings() {
             </div>
             <div>
               <p className="text-green-800 font-semibold">Salvo com sucesso!</p>
-              <p className="text-green-700 text-sm">Suas alterações foram aplicadas.</p>
+              <p className="text-green-700 text-sm">
+                Suas alterações foram aplicadas.
+              </p>
             </div>
           </div>
         )}
@@ -208,10 +218,10 @@ export function Settings() {
               <button
                 onClick={() => {
                   setIsEditingProfile(false);
-                  setName(mockCurrentUser.name);
-                  setBio(mockCurrentUser.bio || "");
-                  setBirthDate(mockCurrentUser.birthDate);
-                  setGender(mockCurrentUser.gender);
+                  setName(currentUser.name);
+                  setBio(currentUser.bio || "");
+                  setBirthDate(currentUser.birthDate);
+                  setGender(currentUser.gender);
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Cancelar"
@@ -249,7 +259,11 @@ export function Settings() {
               {isEditingProfile ? (
                 <select
                   value={gender}
-                  onChange={(e) => setGender(e.target.value as "Masculino" | "Feminino" | "Outro")}
+                  onChange={(e) =>
+                    setGender(
+                      e.target.value as "Masculino" | "Feminino" | "Outro",
+                    )
+                  }
                   className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border-2 border-transparent focus:border-[#1D3557] focus:bg-white transition-all outline-none"
                 >
                   <option value="Masculino">Masculino</option>
@@ -257,9 +271,7 @@ export function Settings() {
                   <option value="Outro">Outro</option>
                 </select>
               ) : (
-                <p className="text-gray-700 px-4 py-3">
-                  {gender}
-                </p>
+                <p className="text-gray-700 px-4 py-3">{gender}</p>
               )}
             </div>
 
@@ -285,7 +297,8 @@ export function Settings() {
                 </>
               ) : (
                 <p className="text-gray-700 px-4 py-3">
-                  {new Date(birthDate).toLocaleDateString("pt-BR")} • {calculateAge(birthDate)} anos
+                  {new Date(birthDate).toLocaleDateString("pt-BR")} •{" "}
+                  {calculateAge(birthDate)} anos
                 </p>
               )}
             </div>
@@ -351,9 +364,9 @@ export function Settings() {
               <button
                 onClick={() => {
                   setIsEditingAccount(false);
-                  setEmail(mockCurrentUser.email);
-                  setPhone(mockCurrentUser.phone || "");
-                  setPix(mockCurrentUser.pix || "");
+                  setEmail(currentUser.email);
+                  setPhone(currentUser.phone || "");
+                  setPix(currentUser.pix || "");
                 }}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 title="Cancelar"
@@ -557,7 +570,9 @@ export function Settings() {
                     </button>
                     <button
                       onClick={handleAddAddress}
-                      disabled={!newAddressLabel.trim() || !newAddressValue.trim()}
+                      disabled={
+                        !newAddressLabel.trim() || !newAddressValue.trim()
+                      }
                       className={`flex-1 py-2 font-medium rounded-lg transition-colors ${
                         newAddressLabel.trim() && newAddressValue.trim()
                           ? "bg-[#1D3557] text-white hover:bg-[#2d4a6f]"
@@ -591,8 +606,8 @@ export function Settings() {
                   Modo Privado
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Quando ativado, suas informações sensíveis (número de celular, PIX e idade)
-                  ficarão ocultas para outros usuários
+                  Quando ativado, suas informações sensíveis (número de celular,
+                  PIX e idade) ficarão ocultas para outros usuários
                 </p>
               </div>
               <button
