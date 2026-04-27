@@ -130,8 +130,12 @@ export function MyRides() {
     }
 
     setRides(rides.filter((r) => r.id !== rideId));
+
     setModalType(null);
     setSelectedRide(null);
+
+    setRatingSuccessText("Carona deletada com sucesso!");
+    setShowRatingSuccess(true);
   };
 
   const handleCompleteRide = (ride: MyRide) => {
@@ -854,7 +858,7 @@ export function MyRides() {
           </div>
         </div>
       )}
-      {/* Modal de detalhes da carona */}  
+      {/* Modal de detalhes da carona */}
       {modalType === "details" && selectedRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
           <div className="bg-background rounded-2xl p-6 max-w-md w-full">
@@ -901,7 +905,8 @@ export function MyRides() {
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-gray-500" />
                 <span className="text-sm text-gray-700">
-                  {selectedRide.availableSeats}/{selectedRide.totalSeats} vagas disponíveis
+                  {selectedRide.availableSeats}/{selectedRide.totalSeats} vagas
+                  disponíveis
                 </span>
               </div>
             </div>

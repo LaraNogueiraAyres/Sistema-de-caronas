@@ -20,7 +20,7 @@ import { getCurrentUser } from "../utils/auth";
 import { mockRoutes } from "../mocks/routes";
 import type { RouteOption } from "../types/route";
 import { RouteMap } from "./RouteMap";
-import { saveRide } from "../utils/rides"; 
+import { saveRide } from "../utils/rides";
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -31,6 +31,7 @@ interface LayoutContext {
 export function OfferRide() {
   const navigate = useNavigate();
   const currentUser = getCurrentUser();
+
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
   const [origin, setOrigin] = useState("");
   const [isReversed, setIsReversed] = useState(false);
@@ -41,11 +42,9 @@ export function OfferRide() {
   const [seats, setSeats] = useState("");
   const [sameGenderOnly, setSameGenderOnly] = useState(false);
   const [showRoutes, setShowRoutes] = useState(false);
-  const [selectedRoute, setSelectedRoute] = useState<
-    string | null
-  >(null);
+  const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [showSavedAddresses, setShowSavedAddresses] = useState(false);
-
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const savedAddresses = currentUser?.savedAddresses || [];
   const ufalLocation = "UFAL - Campus A.C. Simões";
   const originValue = isReversed ? ufalLocation : origin;
@@ -64,46 +63,43 @@ export function OfferRide() {
     e.preventDefault();
     setShowRoutes(true);
   };
-const handleConfirmRoute = () => {
-  if (!selectedRoute) return;
+  const handleConfirmRoute = () => {
+    if (!selectedRoute) return;
 
-  const route = mockRoutes.find(
-    (r) => r.id === selectedRoute
-  );
+    const route = mockRoutes.find((r) => r.id === selectedRoute);
 
-  saveRide({
-    id: Date.now().toString(),
+    saveRide({
+      id: Date.now().toString(),
 
-    origin: originValue,
-    destination: destinationValue,
+      origin: originValue,
+      destination: destinationValue,
 
-    date,
+      date,
 
-    departureTimeStart: timeStart,
-    departureTimeEnd: timeEnd,
+      departureTimeStart: timeStart,
+      departureTimeEnd: timeEnd,
 
-    price: Number(price),
+      price: Number(price),
 
-    totalSeats: Number(seats),
-    availableSeats: Number(seats),
+      totalSeats: Number(seats),
+      availableSeats: Number(seats),
 
-    routeId: selectedRoute,
-    routeName: route?.name || "Nova rota",
+      routeId: selectedRoute,
+      routeName: route?.name || "Nova rota",
 
-    status: "active",
+      status: "active",
 
-    sameGenderOnly,
+      sameGenderOnly,
 
-    requests: [],
-    confirmedPassengers: [],
+      requests: [],
+      confirmedPassengers: [],
 
-    createdAt: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
 
-    driverRatingsGiven: false
-  });
-
-  navigate("/my-rides");
-}; 
+      driverRatingsGiven: false,
+    });
+    setShowSuccessMessage(true);
+  };
 
   const getTrafficColor = (traffic: RouteOption["traffic"]) => {
     switch (traffic) {
@@ -172,7 +168,9 @@ const handleConfirmRoute = () => {
                     {!isReversed && savedAddresses.length > 0 && (
                       <button
                         type="button"
-                        onClick={() => setShowSavedAddresses(!showSavedAddresses)}
+                        onClick={() =>
+                          setShowSavedAddresses(!showSavedAddresses)
+                        }
                         className="text-xs text-foreground font-medium flex items-center gap-1 hover:underline"
                       >
                         <Bookmark className="w-3 h-3" />
@@ -188,7 +186,9 @@ const handleConfirmRoute = () => {
                       <input
                         type="text"
                         value={isReversed ? ufalLocation : origin}
-                        onChange={(e) => !isReversed && setOrigin(e.target.value)}
+                        onChange={(e) =>
+                          !isReversed && setOrigin(e.target.value)
+                        }
                         placeholder="Digite a origem"
                         disabled={isReversed}
                         className={`w-full pl-11 pr-4 py-4 rounded-xl border-2 transition-all outline-none ${
@@ -210,23 +210,29 @@ const handleConfirmRoute = () => {
                   </div>
 
                   {/* Saved Addresses Dropdown */}
-                  {!isReversed && showSavedAddresses && savedAddresses.length > 0 && (
-                    <div className="mt-2 p-2 bg-background border-2 border-[#1D3557] rounded-xl shadow-lg">
-                      {savedAddresses.map((addr) => (
-                        <button
-                          key={addr.id}
-                          type="button"
-                          onClick={() => handleSelectSavedAddress(addr.address)}
-                          className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
-                        >
-                          <p className="text-sm font-medium text-foreground">
-                            {addr.label}
-                          </p>
-                          <p className="text-xs text-gray-600">{addr.address}</p>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  {!isReversed &&
+                    showSavedAddresses &&
+                    savedAddresses.length > 0 && (
+                      <div className="mt-2 p-2 bg-background border-2 border-[#1D3557] rounded-xl shadow-lg">
+                        {savedAddresses.map((addr) => (
+                          <button
+                            key={addr.id}
+                            type="button"
+                            onClick={() =>
+                              handleSelectSavedAddress(addr.address)
+                            }
+                            className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-lg transition-colors"
+                          >
+                            <p className="text-sm font-medium text-foreground">
+                              {addr.label}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              {addr.address}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                 </div>
 
                 {/* Destination Input */}
@@ -370,19 +376,14 @@ const handleConfirmRoute = () => {
                   </div>
                   <button
                     type="button"
-                    onClick={() =>
-                      setSameGenderOnly(!sameGenderOnly)
-                    }
+                    onClick={() => setSameGenderOnly(!sameGenderOnly)}
                     className={`ml-3 relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#1D3557] focus:ring-offset-2 ${
-                      sameGenderOnly
-                        ? "bg-primary" : "bg-muted"
+                      sameGenderOnly ? "bg-primary" : "bg-muted"
                     }`}
                   >
                     <span
                       className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform duration-200 ${
-                        sameGenderOnly
-                          ? "translate-x-6"
-                          : "translate-x-1"
+                        sameGenderOnly ? "translate-x-6" : "translate-x-1"
                       }`}
                     />
                   </button>
@@ -415,9 +416,7 @@ const handleConfirmRoute = () => {
                   <div className="flex items-start gap-3">
                     <div className="w-3 h-3 bg-primary rounded-full mt-1.5 flex-shrink-0"></div>
                     <div className="flex-1">
-                      <p className="text-xs text-gray-500">
-                        Origem
-                      </p>
+                      <p className="text-xs text-gray-500">Origem</p>
                       <p className="text-sm font-medium text-foreground">
                         {originValue}
                       </p>
@@ -426,9 +425,7 @@ const handleConfirmRoute = () => {
                   <div className="flex items-start gap-3">
                     <MapPin className="w-3 h-3 text-accent mt-1.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-xs text-foreground-muted">
-                        Destino
-                      </p>
+                      <p className="text-xs text-foreground-muted">Destino</p>
                       <p className="text-sm font-medium text-foreground">
                         {destinationValue}
                       </p>
@@ -571,6 +568,57 @@ const handleConfirmRoute = () => {
               >
                 Publicar carona
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showSuccessMessage && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-8 h-8 text-success-foreground" />
+              </div>
+
+              <h2 className="text-xl font-semibold text-foreground mb-2">
+                Carona publicada!
+              </h2>
+
+              <p className="text-sm text-gray-600 mb-6">
+                Sua carona foi criada com sucesso e já está visível para outros
+                usuários.
+              </p>
+
+              <div className="w-full bg-gray-50 rounded-xl p-4 mb-6 text-left space-y-2">
+                <p className="text-sm font-medium">
+                  {originValue} → {destinationValue}
+                </p>
+
+                <p className="text-xs text-gray-600">{date}</p>
+
+                <p className="text-xs text-gray-600">
+                  {timeStart} - {timeEnd}
+                </p>
+
+                <p className="text-xs text-gray-600">
+                  R$ {Number(price).toFixed(2)} • {seats} vaga(s)
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 w-full">
+                <button
+                  onClick={() => navigate("/home")}
+                  className="py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-colors"
+                >
+                  Home
+                </button>
+                <button
+                  onClick={() => navigate("/my-rides")}
+                  className="py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent-hover transition-colors"
+                >
+                  Minhas caronas
+                </button>
+              </div>
             </div>
           </div>
         </div>

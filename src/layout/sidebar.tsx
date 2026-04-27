@@ -148,7 +148,7 @@ export function Sidebar({
                   ? "bg-gray-50 border-l-4 border-primary"
                   : ""
               } ${isCollapsed ? "justify-center" : ""}`}
-              title={isCollapsed ? "Minhas caronas" : ""}
+              title={isCollapsed ? "Em andamento" : ""}
             >
               <Navigation className="w-5 h-5 text-foreground flex-shrink-0" />
               {!isCollapsed && (
