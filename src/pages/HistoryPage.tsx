@@ -95,7 +95,7 @@ export function History() {
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >
-              Caronas recebidas
+              Caronas solicitadas
             </button>
           </div>
 
@@ -115,102 +115,113 @@ export function History() {
                   </p>
                 </div>
               ) : (
-                mockHistoryAsDriver.map((ride) => (
-                  <div
-                    key={ride.id}
-                    className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
-                  >
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <h3 className="text-foreground font-semibold text-lg">
-                            {formatDate(ride.date)}
-                          </h3>
-                          {ride.sameGenderOnly && (
-                            <span className="px-2 py-0.5  bg-info text-info-foreground text-xs font-medium rounded-full">
-                              Mesmo gênero
+                [...mockHistoryAsDriver]
+                  .sort((a, b) => {
+                    const dateA = new Date(
+                      `${a.date}T${a.departureTimeStart}`,
+                    ).getTime();
+                    const dateB = new Date(
+                      `${b.date}T${b.departureTimeStart}`,
+                    ).getTime();
+
+                    return dateB - dateA;
+                  })
+                  .map((ride) => (
+                    <div
+                      key={ride.id}
+                      className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
+                    >
+                      {/* Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <h3 className="text-foreground font-semibold text-lg">
+                              {formatDate(ride.date)}
+                            </h3>
+                            {ride.sameGenderOnly && (
+                              <span className="px-2 py-0.5  bg-info text-info-foreground text-xs font-medium rounded-full">
+                                Mesmo gênero
+                              </span>
+                            )}
+                            <span className="px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
+                              Concluída
                             </span>
-                          )}
-                          <span className="px-2 py-0.5 bg-success text-success-foreground text-xs font-medium rounded-full">
-                            Concluída
+                          </div>
+                          <p className="text-gray-600 text-sm">
+                            {ride.routeName}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Route */}
+                      <div className="mb-4 space-y-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
+                          <p className="text-sm text-gray-700">{ride.origin}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
+                          <p className="text-sm text-gray-700">
+                            {ride.destination}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Info Grid */}
+                      <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-gray-100">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-secondary-foreground" />
+                          <span className="text-sm text-gray-700">
+                            {ride.departureTimeStart} - {ride.departureTimeEnd}
                           </span>
                         </div>
-                        <p className="text-gray-600 text-sm">
-                          {ride.routeName}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Route */}
-                    <div className="mb-4 space-y-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
-                        <p className="text-sm text-gray-700">{ride.origin}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-                        <p className="text-sm text-gray-700">
-                          {ride.destination}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Info Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-gray-100">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-secondary-foreground" />
-                        <span className="text-sm text-gray-700">
-                          {ride.departureTimeStart} - {ride.departureTimeEnd}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-secondary-foreground" />
-                        <span className="text-sm text-gray-700">
-                          R$ {ride.price.toFixed(2)}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-secondary-foreground" />
-                        <span className="text-sm text-gray-700">
-                          {ride.passengers.length}/{ride.totalSeats} ocupado
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Passengers */}
-                    {ride.passengers.length > 0 && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 mb-3">
-                          Passageiros ({ride.passengers.length})
-                        </h4>
-                        <div className="space-y-2">
-                          {ride.passengers.map((passenger) => (
-                            <div
-                              key={passenger.id}
-                              className="flex items-center gap-3 p-2 bg-secondary rounded-lg"
-                            >
-                              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-                                <User className="w-4 h-4 text-primary-foreground" />
-                              </div>
-                              <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-900">
-                                  {passenger.name}
-                                </p>
-                                <div className="flex items-center gap-1">
-                                  <Star className="w-3 h-3 text-warning-foreground fill-yellow-500" />
-                                  <span className="text-xs text-gray-600">
-                                    {passenger.rating}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-secondary-foreground" />
+                          <span className="text-sm text-gray-700">
+                            R$ {ride.price.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-secondary-foreground" />
+                          <span className="text-sm text-gray-700">
+                            {ride.passengers.length}/{ride.totalSeats} ocupado
+                          </span>
                         </div>
                       </div>
-                    )}
-                  </div>
-                ))
+
+                      {/* Passengers */}
+                      {ride.passengers.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-700 mb-3">
+                            Passageiros ({ride.passengers.length})
+                          </h4>
+                          <div className="space-y-2">
+                            {ride.passengers.map((passenger) => (
+                              <div
+                                key={passenger.id}
+                                className="flex items-center gap-3 p-2 bg-secondary rounded-lg"
+                              >
+                                <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                                  <User className="w-4 h-4 text-primary-foreground" />
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {passenger.name}
+                                  </p>
+                                  <div className="flex items-center gap-1">
+                                    <Star className="w-3 h-3 text-warning-foreground fill-yellow-500" />
+                                    <span className="text-xs text-gray-600">
+                                      {passenger.rating}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))
               )}
             </div>
           )}

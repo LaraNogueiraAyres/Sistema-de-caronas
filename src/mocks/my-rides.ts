@@ -136,9 +136,41 @@ export const mockMyRides: MyRide[] = [
       },
     ],
   },
+  {
+    id: "my-ride-4",
+    origin: "Cruz das Almas",
+    destination: "UFAL - Campus A.C. Simões",
+    date: "2026-04-27",
+    departureTimeStart: "20:30",
+    departureTimeEnd: "21:00",
+    price: 5.5,
+    totalSeats: 3,
+    availableSeats: 2,
+    routeId: "route-4",
+    routeName: "Via Avenida Comendador Gustavo Paiva",
+    status: "active",
+    sameGenderOnly: false,
+    createdAt: "2026-04-10T08:00:00Z",
+    requests: [],
+    confirmedPassengers: [
+      {
+        id: "confirmed-5",
+        passenger: {
+          id: "user-7",
+          name: "Ana Lima",
+          gender: "Feminino",
+          rating: 4.8,
+          totalRatings: 110,
+          phone: "(82) 99789-0123",
+        },
+        status: "accepted",
+        requestedAt: "2026-04-10T09:00:00Z",
+      },
+    ],
+  },
 ];
 
-// Caronas recebidas (como passageiro)
+// Caronas solicitadas (como passageiro)
 export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
   {
     id: "received-ride-1",

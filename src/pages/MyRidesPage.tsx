@@ -22,7 +22,12 @@ import {
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { mockMyRides, mockMyRidesAsPassenger } from "../mocks/my-rides";
-import type { MyRide, PassengerRequest, MyRideAsPassenger, Rating } from "../types/my-ride";
+import type {
+  MyRide,
+  PassengerRequest,
+  MyRideAsPassenger,
+  Rating,
+} from "../types/my-ride";
 import { ChatModal } from "./ChatModal";
 import { RatingModal } from "./RatingModal";
 import { getMyRides } from "../utils/rides";
@@ -33,28 +38,42 @@ interface LayoutContext {
   sidebarCollapsed: boolean;
 }
 
-type ModalType = "delete" | "requests" | "complete" | "cancel-passenger" | null;
+type ModalType =
+  | "delete"
+  | "requests"
+  | "complete"
+  | "cancel-passenger"
+  | "details"
+  | null;
 type TabType = "offered" | "received";
 
 export function MyRides() {
   const navigate = useNavigate();
-  
+  const [processingRequest, setProcessingRequest] = useState<string | null>(
+    null,
+  );
+  const [showRatingSuccess, setShowRatingSuccess] = useState(false);
+  const [ratingSuccessText, setRatingSuccessText] = useState("");
+  const [requestAction, setRequestAction] = useState<
+    "accept" | "reject" | null
+  >(null);
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
   const [activeTab, setActiveTab] = useState<TabType>("offered");
   const [rides, setRides] = useState<MyRide[]>(() => {
-  const saved = getMyRides();
+    const saved = getMyRides();
 
-  const activeMocks = mockMyRides.filter(
-    (ride) => ride.status !== "completed"
-  );
+    const activeMocks = mockMyRides.filter(
+      (ride) => ride.status !== "completed",
+    );
 
-  return [...activeMocks, ...saved];
-});
+    return [...activeMocks, ...saved];
+  });
   const [ridesAsPassenger, setRidesAsPassenger] = useState<MyRideAsPassenger[]>(
     mockMyRidesAsPassenger.filter((ride) => ride.status !== "completed"),
   );
   const [selectedRide, setSelectedRide] = useState<MyRide | null>(null);
-  const [selectedPassengerRide, setSelectedPassengerRide] = useState<MyRideAsPassenger | null>(null);
+  const [selectedPassengerRide, setSelectedPassengerRide] =
+    useState<MyRideAsPassenger | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
   const [expandedRides, setExpandedRides] = useState<Set<string>>(new Set());
   const [chatOpen, setChatOpen] = useState(false);
@@ -74,8 +93,12 @@ export function MyRides() {
     name: string;
     rating: number;
   } | null>(null);
-  const [currentRatingType, setCurrentRatingType] = useState<"driver" | "passenger">("passenger");
-  const [passengersToRate, setPassengersToRate] = useState<PassengerRequest[]>([]);
+  const [currentRatingType, setCurrentRatingType] = useState<
+    "driver" | "passenger"
+  >("passenger");
+  const [passengersToRate, setPassengersToRate] = useState<PassengerRequest[]>(
+    [],
+  );
   const [currentPassengerIndex, setCurrentPassengerIndex] = useState(0);
 
   const isRidePast = (date: string, timeEnd: string): boolean => {
@@ -95,12 +118,15 @@ export function MyRides() {
     const ride = rides.find((r) => r.id === rideId);
     if (!ride) return;
 
-    const hoursUntilRide = getHoursUntilRide(ride.date, ride.departureTimeStart);
+    const hoursUntilRide = getHoursUntilRide(
+      ride.date,
+      ride.departureTimeStart,
+    );
 
-    if (hoursUntilRide < 6 && hoursUntilRide > 0) {
-      // Aqui você aplicaria a penalidade de -0.1 na nota do usuário
+    const hasConfirmedPassengers = ride.confirmedPassengers.length > 0;
+
+    if (hoursUntilRide < 6 && hoursUntilRide > 0 && hasConfirmedPassengers) {
       console.log("Penalidade aplicada: -0.1 na nota do usuário");
-      // TODO: Implementar lógica real de atualização da nota
     }
 
     setRides(rides.filter((r) => r.id !== rideId));
@@ -110,42 +136,36 @@ export function MyRides() {
 
   const handleCompleteRide = (ride: MyRide) => {
     setSelectedRide(ride);
+
+    if (ride.confirmedPassengers.length === 0) {
+      setModalType("delete");
+      return;
+    }
+
     setPassengersToRate(ride.confirmedPassengers);
     setCurrentPassengerIndex(0);
-    if (ride.confirmedPassengers.length > 0) {
-      setModalType("complete");
-      openRatingModal(
-        ride.confirmedPassengers[0].passenger,
-        "passenger",
-        {
-          date: ride.date,
-          origin: ride.origin,
-          destination: ride.destination,
-        }
-      );
-    } else {
-      // Se não há passageiros, apenas marcar como concluída e remover da lista
-      setRides(rides.filter((r) => r.id !== ride.id));
-    }
+    setModalType("complete");
+
+    openRatingModal(ride.confirmedPassengers[0].passenger, "passenger", {
+      date: ride.date,
+      origin: ride.origin,
+      destination: ride.destination,
+    });
   };
 
   const handleCompletePassengerRide = (ride: MyRideAsPassenger) => {
     setSelectedPassengerRide(ride);
-    openRatingModal(
-      ride.driver,
-      "driver",
-      {
-        date: ride.date,
-        origin: ride.origin,
-        destination: ride.destination,
-      }
-    );
+    openRatingModal(ride.driver, "driver", {
+      date: ride.date,
+      origin: ride.origin,
+      destination: ride.destination,
+    });
   };
 
   const openRatingModal = (
     user: { id: string; name: string; rating: number },
     type: "driver" | "passenger",
-    rideInfo: { date: string; origin: string; destination: string }
+    rideInfo: { date: string; origin: string; destination: string },
   ) => {
     setCurrentRatingUser(user);
     setCurrentRatingType(type);
@@ -153,37 +173,64 @@ export function MyRides() {
     setRatingModalOpen(true);
   };
 
-  const handleSubmitRating = (rating: number, comment: string, reportReason?: string) => {
-    console.log("Avaliação submetida:", { rating, comment, user: currentRatingUser, reportReason });
+  const handleSubmitRating = (
+    rating: number,
+    comment: string,
+    reportReason?: string,
+  ) => {
+    console.log("Avaliação submetida:", {
+      rating,
+      comment,
+      user: currentRatingUser,
+      reportReason,
+    });
 
+    // MOTORISTA avaliando passageiros
     if (modalType === "complete" && selectedRide) {
-      // Avaliar passageiros da carona oferecida
       const nextIndex = currentPassengerIndex + 1;
 
+      // ainda existem passageiros para avaliar
       if (nextIndex < passengersToRate.length) {
         setCurrentPassengerIndex(nextIndex);
-        openRatingModal(
-          passengersToRate[nextIndex].passenger,
-          "passenger",
-          {
-            date: selectedRide.date,
-            origin: selectedRide.origin,
-            destination: selectedRide.destination,
-          }
-        );
-      } else {
-        // Todas as avaliações foram concluídas - remover da lista
-        setRides(rides.filter((r) => r.id !== selectedRide.id));
-        setRatingModalOpen(false);
-        setModalType(null);
-        setSelectedRide(null);
-        setPassengersToRate([]);
-        setCurrentPassengerIndex(0);
+
+        openRatingModal(passengersToRate[nextIndex].passenger, "passenger", {
+          date: selectedRide.date,
+          origin: selectedRide.origin,
+          destination: selectedRide.destination,
+        });
+
+        return;
       }
-    } else if (selectedPassengerRide) {
-      // Avaliar motorista da carona recebida - remover da lista
-      setRidesAsPassenger(ridesAsPassenger.filter((r) => r.id !== selectedPassengerRide.id));
+
+      // terminou todos passageiros
+      setRides(rides.filter((r) => r.id !== selectedRide.id));
+
       setRatingModalOpen(false);
+
+      setRatingSuccessText(
+        "Carona concluída e avaliações enviadas com sucesso!",
+      );
+      setShowRatingSuccess(true);
+
+      setModalType(null);
+      setSelectedRide(null);
+      setPassengersToRate([]);
+      setCurrentPassengerIndex(0);
+
+      return;
+    }
+
+    // PASSAGEIRO avaliando motorista
+    if (selectedPassengerRide) {
+      setRidesAsPassenger(
+        ridesAsPassenger.filter((r) => r.id !== selectedPassengerRide.id),
+      );
+
+      setRatingModalOpen(false);
+
+      setRatingSuccessText("Avaliação enviada com sucesso!");
+      setShowRatingSuccess(true);
+
       setSelectedPassengerRide(null);
     }
   };
@@ -192,11 +239,16 @@ export function MyRides() {
     const ride = ridesAsPassenger.find((r) => r.id === rideId);
     if (!ride) return;
 
-    const hoursUntilRide = getHoursUntilRide(ride.date, ride.departureTimeStart);
+    const hoursUntilRide = getHoursUntilRide(
+      ride.date,
+      ride.departureTimeStart,
+    );
 
     if (hoursUntilRide < 6 && hoursUntilRide > 0) {
       // Aplicar penalidade de -0.1 na nota do usuário
-      console.log("Penalidade aplicada: -0.1 na nota do usuário por cancelamento de carona recebida");
+      console.log(
+        "Penalidade aplicada: -0.1 na nota do usuário por cancelamento de carona recebida",
+      );
     }
 
     setRidesAsPassenger(ridesAsPassenger.filter((r) => r.id !== rideId));
@@ -204,66 +256,68 @@ export function MyRides() {
     setSelectedPassengerRide(null);
   };
 
-  const handleAcceptRequest = (
-    rideId: string,
-    requestId: string,
-  ) => {
-    setRides(
-      rides.map((ride) => {
+  const handleAcceptRequest = (rideId: string, requestId: string) => {
+    setProcessingRequest(requestId);
+    setRequestAction("accept");
+
+    setTimeout(() => {
+      const updatedRides = rides.map((ride) => {
         if (ride.id === rideId) {
-          const request = ride.requests.find(
-            (r) => r.id === requestId,
-          );
+          const request = ride.requests.find((r) => r.id === requestId);
+
           if (request && ride.availableSeats > 0) {
             return {
               ...ride,
-              requests: ride.requests.filter(
-                (r) => r.id !== requestId,
-              ),
+              requests: ride.requests.filter((r) => r.id !== requestId),
               confirmedPassengers: [
                 ...ride.confirmedPassengers,
-                { ...request, status: "accepted" as const },
+                {
+                  ...request,
+                  status: "accepted" as const,
+                },
               ],
               availableSeats: ride.availableSeats - 1,
             };
           }
         }
+
         return ride;
-      }),
-    );
+      });
+
+      setRides(updatedRides);
+
+      const updatedSelectedRide =
+        updatedRides.find((r) => r.id === rideId) || null;
+
+      setSelectedRide(updatedSelectedRide);
+
+      setProcessingRequest(null);
+      setRequestAction(null);
+    }, 700);
   };
 
-  const handleRejectRequest = (
-    rideId: string,
-    requestId: string,
-  ) => {
+  const handleRejectRequest = (rideId: string, requestId: string) => {
     setRides(
       rides.map((ride) =>
         ride.id === rideId
           ? {
               ...ride,
-              requests: ride.requests.filter(
-                (r) => r.id !== requestId,
-              ),
+              requests: ride.requests.filter((r) => r.id !== requestId),
             }
           : ride,
       ),
     );
   };
 
-  const handleRemovePassenger = (
-    rideId: string,
-    passengerId: string,
-  ) => {
+  const handleRemovePassenger = (rideId: string, passengerId: string) => {
     setRides(
       rides.map((ride) =>
         ride.id === rideId
           ? {
               ...ride,
-              confirmedPassengers:
-                ride.confirmedPassengers.filter(
-                  (p) => p.id !== passengerId,
-                ),
+              confirmedPassengers: ride.confirmedPassengers.filter(
+                (p) => p.id !== passengerId,
+              ),
               availableSeats: ride.availableSeats + 1,
             }
           : ride,
@@ -292,7 +346,10 @@ export function MyRides() {
     });
   };
 
-  const openChat = (user: { id: string; name: string; rating: number }, rideInfo: { date: string; origin: string; destination: string }) => {
+  const openChat = (
+    user: { id: string; name: string; rating: number },
+    rideInfo: { date: string; origin: string; destination: string },
+  ) => {
     setChatUser(user);
     setChatRideInfo(rideInfo);
     setChatOpen(true);
@@ -315,12 +372,9 @@ export function MyRides() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-xl font-semibold">
-            Minhas caronas
-          </h1>
+          <h1 className="text-xl font-semibold">Em andamento</h1>
         </div>
       </div>
-
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6 lg:max-w-7xl lg:mx-auto lg:w-full">
         {/* Tabs */}
@@ -343,7 +397,7 @@ export function MyRides() {
                 : "text-gray-600 hover:bg-gray-50"
             }`}
           >
-            Caronas recebidas
+            Caronas solicitadas
           </button>
         </div>
 
@@ -371,140 +425,160 @@ export function MyRides() {
                 </div>
               </div>
             ) : (
-              rides.map((ride) => (
-                <div
-                  key={ride.id}
-                  className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
-                >
-                  {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-foreground font-semibold text-lg">
-                          {formatDate(ride.date)}
-                        </h3>
-                        {ride.sameGenderOnly && (
-                          <span className="px-2 py-0.5 bg-info text-info-foreground text-xs font-medium rounded-full">
-                            Mesmo gênero
-                          </span>
-                        )}
-                        {ride.status === "completed" && (
-                          <span className="px-2 py-0.5  bg-success text-success-foreground  text-xs font-medium rounded-full">
-                            Concluída
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-gray-600 text-sm">
-                        {ride.routeName}
-                      </p>
-                    </div>
+              [...rides]
+                .sort((a, b) => {
+                  const dateA = new Date(
+                    `${a.date}T${a.departureTimeStart}`,
+                  ).getTime();
+                  const dateB = new Date(
+                    `${b.date}T${b.departureTimeStart}`,
+                  ).getTime();
 
-                    <div className="flex gap-2">
-                      {ride.status !== "completed" && (
+                  return dateA - dateB;
+                })
+                .map((ride) => (
+                  <div
+                    key={ride.id}
+                    className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-foreground font-semibold text-lg">
+                            {formatDate(ride.date)}
+                          </h3>
+                          {ride.sameGenderOnly && (
+                            <span className="px-2 py-0.5 bg-info text-info-foreground text-xs font-medium rounded-full">
+                              Mesmo gênero
+                            </span>
+                          )}
+                          {ride.status === "completed" && (
+                            <span className="px-2 py-0.5  bg-success text-success-foreground  text-xs font-medium rounded-full">
+                              Concluída
+                            </span>
+                          )}
+                        </div>
+                        {/* <p className="text-gray-600 text-sm">
+                          {ride.routeName}
+                        </p> */}
                         <button
                           onClick={() => {
                             setSelectedRide(ride);
-                            setModalType("delete");
+                            setModalType("details");
                           }}
-                          className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
+                          className="text-xs text-foreground font-medium flex items-center gap-1"
                         >
-                          <Trash2 className="w-5 h-5 text-destructive" />
+                          Ver detalhes
                         </button>
-                      )}
-                    </div>
-                  </div>
+                      </div>
 
-                  {/* Route */}
-                  <div className="mb-4 space-y-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
-                      <p className="text-sm text-gray-700">
-                        {ride.origin}
-                      </p>
+                      <div className="flex gap-2">
+                        {ride.status !== "completed" && (
+                          <button
+                            onClick={() => {
+                              setSelectedRide(ride);
+                              setModalType("delete");
+                            }}
+                            className="p-2 hover:bg-destructive-muted rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-5 h-5 text-destructive" />
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-                      <p className="text-sm text-gray-700">
-                        {ride.destination}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Info Grid */}
-                  <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-gray-100">
+                    {/* Route */}
+                    <div className="mb-4 space-y-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
+                        <p className="text-sm text-gray-700">{ride.origin}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
+                        <p className="text-sm text-gray-700">
+                          {ride.destination}
+                        </p>
+                      </div>
+                    </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.departureTimeStart} -{" "}
-                        {ride.departureTimeEnd}
+                        {ride.departureTimeStart} - {ride.departureTimeEnd}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-700">
-                        R$ {ride.price.toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-700">
-                        {ride.availableSeats}/{ride.totalSeats}{" "}
-                        vagas
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-700">
-                        {ride.confirmedPassengers.length}{" "}
-                        confirmado(s)
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Requests Badge */}
-                  {ride.requests.length > 0 && (
-                    <button
-                      onClick={() => {
-                        setSelectedRide(ride);
-                        setModalType("requests");
-                      }}
-                      className="w-full p-3 bg-warning border border-yellow-200 rounded-lg hover:bg-warning-hover transition-colors flex items-center justify-between"
-                    >
+                    {/* Info Grid
+                    <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-gray-100">
                       <div className="flex items-center gap-2">
-                        <AlertCircle className="w-5 h-5 text-warning-foreground" />
-                        <span className="text-sm font-medium text-warning-foreground">
-                          {ride.requests.length} nova(s)
-                          solicitação(ões)
+                        <Clock className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-700">
+                          {ride.departureTimeStart} - {ride.departureTimeEnd}
                         </span>
                       </div>
-                      <span className="text-warning-foreground">→</span>
-                    </button>
-                  )}
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-700">
+                          R$ {ride.price.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-700">
+                          {ride.availableSeats}/{ride.totalSeats} vagas
+                          disponíveis
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-700">
+                          {ride.confirmedPassengers.length} confirmado(s)
+                        </span>
+                      </div>
+                    </div> */}
 
-                  {/* Confirmed Passengers - Collapsible */}
-                  {ride.confirmedPassengers.length > 0 && (
-                    <div className="mt-4">
+                    {/* Requests Badge */}
+                    {ride.requests.length > 0 && (
                       <button
-                        onClick={() => toggleRideExpansion(ride.id)}
-                        className="w-full flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
+                        onClick={() => {
+                          setSelectedRide(ride);
+                          setModalType("requests");
+                        }}
+                        className="mt-2 w-full p-3 bg-warning border border-warning-border rounded-lg hover:bg-warning-hover transition-colors flex items-center justify-between"
                       >
                         <div className="flex items-center gap-2">
-                          <CheckCircle2 className="w-5 h-5 text-green-600" />
-                          <span className="text-sm font-medium text-green-700">
-                            {ride.confirmedPassengers.length} passageiro(s) confirmado(s)
+                          <AlertCircle className="w-5 h-5 text-warning-foreground" />
+                          <span className="text-sm font-medium text-warning-foreground">
+                            {ride.requests.length} nova(s) solicitação(ões)
                           </span>
                         </div>
-                        {expandedRides.has(ride.id) ? (
-                          <ChevronUp className="w-5 h-5 text-green-600" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-green-600" />
-                        )}
+                        <span className="text-warning-foreground">→</span>
                       </button>
+                    )}
 
-                      {expandedRides.has(ride.id) && (
-                        <div className="space-y-2 mt-3">
-                          {ride.confirmedPassengers.map(
-                            (passenger) => (
+                    {/* Confirmed Passengers - Collapsible */}
+                    {ride.confirmedPassengers.length > 0 && (
+                      <div className="mt-4">
+                        <button
+                          onClick={() => toggleRideExpansion(ride.id)}
+                          className="w-full flex items-center justify-between p-3 bg-success border border-success-border rounded-lg hover:bg-success-hover transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="w-5 h-5 text-success-foreground" />
+                            <span className="text-sm font-medium text-success-foreground  ">
+                              {ride.confirmedPassengers.length} passageiro(s)
+                              confirmado(s)
+                            </span>
+                          </div>
+                          {expandedRides.has(ride.id) ? (
+                            <ChevronUp className="w-5 h-5 text-success-foreground" />
+                          ) : (
+                            <ChevronDown className="w-5 h-5 text-success-foreground" />
+                          )}
+                        </button>
+
+                        {expandedRides.has(ride.id) && (
+                          <div className="space-y-2 mt-3">
+                            {ride.confirmedPassengers.map((passenger) => (
                               <div
                                 key={passenger.id}
                                 className="flex items-center justify-between p-3 bg-background border border-gray-200 rounded-lg"
@@ -544,7 +618,7 @@ export function MyRides() {
                                             date: ride.date,
                                             origin: ride.origin,
                                             destination: ride.destination,
-                                          }
+                                          },
                                         )
                                       }
                                       className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
@@ -565,29 +639,28 @@ export function MyRides() {
                                   </div>
                                 )}
                               </div>
-                            ),
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Complete Ride Button */}
-                  {ride.status === "active" &&
-                    isRidePast(ride.date, ride.departureTimeEnd) &&
-                    !ride.driverRatingsGiven && (
-                      <div className="mt-4">
-                        <button
-                          onClick={() => handleCompleteRide(ride)}
-                          className="w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
-                        >
-                          <CheckCircle2 className="w-5 h-5" />
-                          Concluir carona e avaliar passageiros
-                        </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
-                </div>
-              ))
+
+                    {/* Complete Ride Button */}
+                    {ride.status === "active" &&
+                      isRidePast(ride.date, ride.departureTimeEnd) &&
+                      !ride.driverRatingsGiven && (
+                        <div className="mt-4">
+                          <button
+                            onClick={() => handleCompleteRide(ride)}
+                            className="w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
+                          >
+                            <CheckCircle2 className="w-5 h-5" />
+                            Concluir carona
+                          </button>
+                        </div>
+                      )}
+                  </div>
+                ))
             )}
           </div>
         )}
@@ -643,12 +716,11 @@ export function MyRides() {
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-600 text-sm">
-                        {ride.routeName}
-                      </p>
+                      <p className="text-gray-600 text-sm">{ride.routeName}</p>
                     </div>
 
-                    {(ride.status === "confirmed" || ride.status === "pending") && (
+                    {(ride.status === "confirmed" ||
+                      ride.status === "pending") && (
                       <button
                         onClick={() => {
                           setSelectedPassengerRide(ride);
@@ -665,9 +737,7 @@ export function MyRides() {
                   <div className="mb-4 space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
-                      <p className="text-sm text-gray-700">
-                        {ride.origin}
-                      </p>
+                      <p className="text-sm text-gray-700">{ride.origin}</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
@@ -682,8 +752,7 @@ export function MyRides() {
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-700">
-                        {ride.departureTimeStart} -{" "}
-                        {ride.departureTimeEnd}
+                        {ride.departureTimeStart} - {ride.departureTimeEnd}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -732,7 +801,7 @@ export function MyRides() {
                                 date: ride.date,
                                 origin: ride.origin,
                                 destination: ride.destination,
-                              }
+                              },
                             )
                           }
                           className="p-3 bg-primary hover:bg-[#2d4a6f] rounded-lg transition-colors"
@@ -763,7 +832,89 @@ export function MyRides() {
           </div>
         )}
       </div>
+      {showRatingSuccess && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-success-foreground" />
+            </div>
 
+            <h2 className="text-xl font-semibold text-foreground mb-2">
+              Sucesso!
+            </h2>
+
+            <p className="text-gray-600 mb-6">{ratingSuccessText}</p>
+
+            <button
+              onClick={() => setShowRatingSuccess(false)}
+              className="w-full py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent-hover transition-colors"
+            >
+              Entendi
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Modal de detalhes da carona */}  
+      {modalType === "details" && selectedRide && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-lg font-semibold">Detalhes da carona</h2>
+              <button onClick={() => setModalType(null)}>
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-sm mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
+                <p className="text-sm text-gray-700">{selectedRide.origin}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
+                <p className="text-sm text-gray-700">
+                  {selectedRide.destination}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-6 pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-700">
+                  {formatDate(selectedRide.date)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-700">
+                  {selectedRide.departureTimeStart} -{" "}
+                  {selectedRide.departureTimeEnd}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-700">
+                  R$ {selectedRide.price.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-700">
+                  {selectedRide.availableSeats}/{selectedRide.totalSeats} vagas disponíveis
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleCompleteRide(selectedRide)}
+              className="w-full py-3 bg-accent text-white rounded-xl"
+            >
+              Concluir carona
+            </button>
+          </div>
+        </div>
+      )}
       {/* Delete Modal */}
       {modalType === "delete" && selectedRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
@@ -774,10 +925,17 @@ export function MyRides() {
               </div>
               <div>
                 <h2 className="text-foreground font-semibold text-lg">
-                  Excluir carona
+                  {selectedRide.confirmedPassengers.length === 0 &&
+                  isRidePast(selectedRide.date, selectedRide.departureTimeEnd)
+                    ? "Carona vazia"
+                    : "Excluir carona"}
                 </h2>
+
                 <p className="text-gray-600 text-sm">
-                  Esta ação não pode ser desfeita
+                  {selectedRide.confirmedPassengers.length === 0 &&
+                  isRidePast(selectedRide.date, selectedRide.departureTimeEnd)
+                    ? "Uma carona sem passageiros não pode ser concluída."
+                    : "Esta ação não pode ser desfeita"}
                 </p>
               </div>
             </div>
@@ -800,21 +958,19 @@ export function MyRides() {
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-700">
-                    {selectedRide.origin} →{" "}
-                    {selectedRide.destination}
+                    {selectedRide.origin} → {selectedRide.destination}
                   </span>
                 </div>
               </div>
             </div>
 
             {selectedRide.confirmedPassengers.length > 0 && (
-              <div className="mb-4 p-3 bg-warning border border-yellow-200 rounded-lg">
+              <div className="mb-4 p-3 bg-warning border border-warning-border rounded-lg">
                 <div className="flex gap-2">
                   <AlertCircle className="w-5 h-5 text-warning-foreground flex-shrink-0" />
                   <p className="text-sm text-yellow-700">
-                    Há {selectedRide.confirmedPassengers.length}{" "}
-                    passageiro(s) confirmado(s). Eles serão
-                    notificados sobre o cancelamento.
+                    Há {selectedRide.confirmedPassengers.length} passageiro(s)
+                    confirmado(s). Eles serão notificados sobre o cancelamento.
                   </p>
                 </div>
               </div>
@@ -823,14 +979,16 @@ export function MyRides() {
             {(() => {
               const hoursUntilRide = getHoursUntilRide(
                 selectedRide.date,
-                selectedRide.departureTimeStart
+                selectedRide.departureTimeStart,
               );
-              return hoursUntilRide < 6 && hoursUntilRide > 0 ? (
+              return hoursUntilRide < 6 &&
+                hoursUntilRide > 0 &&
+                selectedRide.confirmedPassengers.length > 0 ? (
                 <div className="mb-6 p-3 bg-destructive-muted border border-red-200 rounded-lg">
                   <div className="flex gap-2">
                     <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0" />
                     <div>
-                      <p className="text-sm font-semibold text-red-700 mb-1">
+                      <p className="text-sm font-semibold text-destructive mb-1">
                         Atenção: Penalidade aplicada!
                       </p>
                       <p className="text-sm text-red-700">
@@ -857,9 +1015,7 @@ export function MyRides() {
                 Cancelar
               </button>
               <button
-                onClick={() =>
-                  handleDeleteRide(selectedRide.id)
-                }
+                onClick={() => handleDeleteRide(selectedRide.id)}
                 className="flex-1 py-3 bg-destructive text-primary-foreground font-medium rounded-lg hover:bg-destructive-hover transition-colors"
               >
                 Sim, excluir
@@ -868,7 +1024,6 @@ export function MyRides() {
           </div>
         </div>
       )}
-
       {/* Requests Modal */}
       {modalType === "requests" && selectedRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
@@ -890,7 +1045,7 @@ export function MyRides() {
 
             {selectedRide.requests.length === 0 ? (
               <div className="text-center py-8">
-                <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                <CheckCircle2 className="w-12 h-12 text-success-foreground mx-auto mb-3" />
                 <p className="text-gray-600">
                   Todas as solicitações foram processadas!
                 </p>
@@ -900,7 +1055,14 @@ export function MyRides() {
                 {selectedRide.requests.map((request) => (
                   <div
                     key={request.id}
-                    className="border border-gray-200 rounded-xl p-4"
+                    className={`
+    rounded-xl p-4 border transition-all duration-500
+    ${
+      processingRequest === request.id && requestAction === "accept"
+        ? "border-green-300 bg-green-50 scale-95 opacity-80"
+        : "border-gray-200"
+    }
+  `}
                   >
                     <button
                       onClick={() => navigate(`/user/${request.passenger.id}`)}
@@ -937,9 +1099,7 @@ export function MyRides() {
 
                     <p className="text-xs text-gray-500 mb-3">
                       Solicitado em{" "}
-                      {new Date(
-                        request.requestedAt,
-                      ).toLocaleString("pt-BR")}
+                      {new Date(request.requestedAt).toLocaleString("pt-BR")}
                     </p>
 
                     {selectedRide.availableSeats === 0 ? (
@@ -952,10 +1112,7 @@ export function MyRides() {
                       <div className="flex gap-2">
                         <button
                           onClick={() =>
-                            handleRejectRequest(
-                              selectedRide.id,
-                              request.id,
-                            )
+                            handleRejectRequest(selectedRide.id, request.id)
                           }
                           className="flex-1 py-2 px-4 bg-muted text-muted-foreground font-medium rounded-lg hover:bg-muted-hover transition-colors flex items-center justify-center gap-2"
                         >
@@ -964,10 +1121,7 @@ export function MyRides() {
                         </button>
                         <button
                           onClick={() =>
-                            handleAcceptRequest(
-                              selectedRide.id,
-                              request.id,
-                            )
+                            handleAcceptRequest(selectedRide.id, request.id)
                           }
                           className="flex-1 py-2 px-4 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                         >
@@ -983,7 +1137,6 @@ export function MyRides() {
           </div>
         </div>
       )}
-
       {/* Chat Modal */}
       {chatOpen && chatUser && chatRideInfo && (
         <ChatModal
@@ -993,7 +1146,6 @@ export function MyRides() {
           rideInfo={chatRideInfo}
         />
       )}
-
       {/* Cancel Passenger Ride Modal */}
       {modalType === "cancel-passenger" && selectedPassengerRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
@@ -1046,7 +1198,7 @@ export function MyRides() {
             {(() => {
               const hoursUntilRide = getHoursUntilRide(
                 selectedPassengerRide.date,
-                selectedPassengerRide.departureTimeStart
+                selectedPassengerRide.departureTimeStart,
               );
               return hoursUntilRide < 6 && hoursUntilRide > 0 ? (
                 <div className="mb-6 p-3 bg-destructive-muted border border-red-200 rounded-lg">
@@ -1059,13 +1211,14 @@ export function MyRides() {
                       <p className="text-sm text-red-700">
                         Ao cancelar esta carona com menos de 6 horas de
                         antecedência, você perderá <strong>0.1 ponto</strong> na
-                        sua avaliação. O motorista será notificado sobre o cancelamento.
+                        sua avaliação. O motorista será notificado sobre o
+                        cancelamento.
                       </p>
                     </div>
                   </div>
                 </div>
               ) : (
-                <div className="mb-6 p-3 bg-warning border border-yellow-200 rounded-lg">
+                <div className="mb-6 p-3 bg-warning border border-warning-border rounded-lg">
                   <div className="flex gap-2">
                     <AlertCircle className="w-5 h-5 text-warning-foreground flex-shrink-0" />
                     <p className="text-sm text-yellow-700">
@@ -1098,7 +1251,6 @@ export function MyRides() {
           </div>
         </div>
       )}
-
       {/* Rating Modal */}
       {ratingModalOpen && currentRatingUser && chatRideInfo && (
         <RatingModal

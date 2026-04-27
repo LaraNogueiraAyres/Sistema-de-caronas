@@ -34,13 +34,14 @@
   --info-border: #93befb; 
   
   --success: #ecfff8;
-  --success-muted: #e3fff9; 
+  --success-hover: #ddffeb; 
   --success-foreground: #019441;
-  --success-border: #62d795;
+  --success-border: #79e4a7;
 
   --warning: #fffee7;
-  --warning-hover: #fffcce;
+  --warning-hover: #fffddb;
   --warning-foreground: #b98407;
+  --warning-border: #edd773;
 
   --border: rgba(0, 0, 0, 0.1);
   --input: transparent;
@@ -127,6 +128,7 @@
   --color-warning: var(--warning);
   --color-warning-hover: var(--warning-hover);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-border: var(--warning-border);
 
   --color-success: var(--success);
   --color-success-hover: var(--success-hover);

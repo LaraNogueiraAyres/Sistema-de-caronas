@@ -153,7 +153,7 @@ export function Sidebar({
               <Navigation className="w-5 h-5 text-foreground flex-shrink-0" />
               {!isCollapsed && (
                 <span className="text-foreground font-medium">
-                  Minhas caronas
+                  Em andamento
                 </span>
               )}
             </button>

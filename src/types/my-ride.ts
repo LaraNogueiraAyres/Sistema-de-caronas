@@ -44,7 +44,7 @@ export interface MyRide {
   driverRatingsGiven?: boolean;
 }
 
-// Tipo para caronas recebidas (como passageiro)
+// Tipo para caronas solicitadas (como passageiro)
 export interface MyRideAsPassenger {
   id: string;
   origin: string;

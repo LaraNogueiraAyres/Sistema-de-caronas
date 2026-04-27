@@ -198,14 +198,14 @@ export function RatingModal({
 
         {/* Report Confirmation Message */}
         {showReportConfirmation && (
-          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <div className="mb-4 p-4 bg-success border border-success-border rounded-lg">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-green-600" />
+              <AlertTriangle className="w-5 h-5 text-success-foreground" />
               <div>
-                <p className="text-sm font-semibold text-green-700">
+                <p className="text-sm font-semibold text-success-foreground">
                   Denúncia enviada!
                 </p>
-                <p className="text-xs text-green-600 mt-1">
+                <p className="text-xs text-success-foreground mt-1">
                   Sua denúncia será avaliada pela nossa equipe. Obrigado por
                   contribuir para a segurança da comunidade.
                 </p>
