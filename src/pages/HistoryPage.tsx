@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Menu,
   ArrowLeft,
@@ -13,10 +13,13 @@ import {
   Navigation,
   X,
   CheckCircle2,
-} from 'lucide-react';
-import { useNavigate, useOutletContext } from 'react-router';
-import { mockHistoryAsPassenger, mockHistoryAsDriver } from '../mocks/history';
-import type { HistoryRideAsPassenger, HistoryRideAsDriver } from '../types/history';
+} from "lucide-react";
+import { useNavigate, useOutletContext } from "react-router";
+import { mockHistoryAsPassenger, mockHistoryAsDriver } from "../mocks/history";
+import type {
+  HistoryRideAsPassenger,
+  HistoryRideAsDriver,
+} from "../types/history";
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -24,21 +27,22 @@ interface LayoutContext {
   sidebarCollapsed: boolean;
 }
 
-type TabType = 'offered' | 'received';
+type TabType = "offered" | "received";
 
 export function History() {
   const navigate = useNavigate();
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
-  const [activeTab, setActiveTab] = useState<TabType>('offered');
-  const [selectedPassengerRide, setSelectedPassengerRide] = useState<HistoryRideAsPassenger | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>("offered");
+  const [selectedPassengerRide, setSelectedPassengerRide] =
+    useState<HistoryRideAsPassenger | null>(null);
   const [showRouteModal, setShowRouteModal] = useState(false);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
     });
   };
 
@@ -74,21 +78,21 @@ export function History() {
           {/* Tabs */}
           <div className="flex gap-2 mb-6 bg-background rounded-xl p-1 shadow-sm">
             <button
-              onClick={() => setActiveTab('offered')}
+              onClick={() => setActiveTab("offered")}
               className={`flex-1 py-3 rounded-lg font-medium text-sm transition-all ${
-                activeTab === 'offered'
-                  ? 'bg-primary text-primary-foreground shadow-md'
-                  : 'text-gray-600 hover:bg-gray-50'
+                activeTab === "offered"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               Caronas oferecidas
             </button>
             <button
-              onClick={() => setActiveTab('received')}
+              onClick={() => setActiveTab("received")}
               className={`flex-1 py-3 rounded-lg font-medium text-sm transition-all ${
-                activeTab === 'received'
-                  ? 'bg-primary text-primary-foreground shadow-md'
-                  : 'text-gray-600 hover:bg-gray-50'
+                activeTab === "received"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               Caronas recebidas
@@ -96,7 +100,7 @@ export function History() {
           </div>
 
           {/* Tab Content - Offered Rides (As Driver) */}
-          {activeTab === 'offered' && (
+          {activeTab === "offered" && (
             <div className="space-y-4">
               {mockHistoryAsDriver.length === 0 ? (
                 <div className="bg-background rounded-2xl p-12 text-center">
@@ -124,7 +128,7 @@ export function History() {
                             {formatDate(ride.date)}
                           </h3>
                           {ride.sameGenderOnly && (
-                            <span className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">
+                            <span className="px-2 py-0.5  bg-info text-info-foreground text-xs font-medium rounded-full">
                               Mesmo gênero
                             </span>
                           )}
@@ -132,7 +136,9 @@ export function History() {
                             Concluída
                           </span>
                         </div>
-                        <p className="text-gray-600 text-sm">{ride.routeName}</p>
+                        <p className="text-gray-600 text-sm">
+                          {ride.routeName}
+                        </p>
                       </div>
                     </div>
 
@@ -144,7 +150,9 @@ export function History() {
                       </div>
                       <div className="flex items-center gap-3">
                         <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-                        <p className="text-sm text-gray-700">{ride.destination}</p>
+                        <p className="text-sm text-gray-700">
+                          {ride.destination}
+                        </p>
                       </div>
                     </div>
 
@@ -208,7 +216,7 @@ export function History() {
           )}
 
           {/* Tab Content - Received Rides (As Passenger) */}
-          {activeTab === 'received' && (
+          {activeTab === "received" && (
             <div className="space-y-4">
               {mockHistoryAsPassenger.length === 0 ? (
                 <div className="bg-background rounded-2xl p-12 text-center">
@@ -237,7 +245,7 @@ export function History() {
                             {formatDate(ride.date)}
                           </h3>
                           {ride.sameGenderOnly && (
-                            <span className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">
+                            <span className="px-2 py-0.5  bg-info text-info-foreground text-xs font-medium rounded-full">
                               Mesmo gênero
                             </span>
                           )}
@@ -264,7 +272,9 @@ export function History() {
                       </div>
                       <div className="flex items-center gap-3">
                         <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-                        <p className="text-sm text-gray-700">{ride.destination}</p>
+                        <p className="text-sm text-gray-700">
+                          {ride.destination}
+                        </p>
                       </div>
                     </div>
 
@@ -324,119 +334,127 @@ export function History() {
       {showRouteModal && selectedPassengerRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
           <div className="bg-background rounded-2xl max-w-lg w-full max-h-[90vh] overflow-hidden">
-  <div className="p-6 overflow-y-auto max-h-[90vh]">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-foreground font-semibold text-lg">
-                Detalhes da Rota
-              </h2>
-              <button
-                onClick={() => setShowRouteModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-secondary-foreground" />
-              </button>
-            </div>
-
-            {/* Ride Summary */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-xl">
-              <div className="flex items-center gap-2 mb-3">
-                <Calendar className="w-4 h-4 text-secondary-foreground" />
-                <span className="text-sm font-medium text-gray-700">
-                  {formatDate(selectedPassengerRide.date)}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 mb-3">
-                <Clock className="w-4 h-4 text-secondary-foreground" />
-                <span className="text-sm text-gray-700">
-                  {selectedPassengerRide.departureTimeStart} - {selectedPassengerRide.departureTimeEnd}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-secondary-foreground" />
-                <span className="text-sm text-gray-700">
-                  R$ {selectedPassengerRide.price.toFixed(2)}
-                </span>
-              </div>
-            </div>
-
-            {/* Route Info */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Navigation className="w-5 h-5 text-foreground" />
-                <h3 className="text-foreground font-semibold">
-                  {selectedPassengerRide.route.name}
-                </h3>
+            <div className="p-6 overflow-y-auto max-h-[90vh]">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-foreground font-semibold text-lg">
+                  Detalhes da Rota
+                </h2>
+                <button
+                  onClick={() => setShowRouteModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-secondary-foreground" />
+                </button>
               </div>
 
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <Navigation className="w-4 h-4 text-secondary-foreground" />
-                  <span className="text-sm text-gray-700">
-                    {selectedPassengerRide.route.distance}
+              {/* Ride Summary */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="w-4 h-4 text-secondary-foreground" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {formatDate(selectedPassengerRide.date)}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-3">
                   <Clock className="w-4 h-4 text-secondary-foreground" />
                   <span className="text-sm text-gray-700">
-                    {selectedPassengerRide.route.duration}
+                    {selectedPassengerRide.departureTimeStart} -{" "}
+                    {selectedPassengerRide.departureTimeEnd}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-secondary-foreground" />
+                  <span className="text-sm text-gray-700">
+                    R$ {selectedPassengerRide.price.toFixed(2)}
                   </span>
                 </div>
               </div>
 
-              {/* Waypoints */}
-              <div>
-                <p className="text-xs text-secondary-foreground mb-3 font-medium">
-                  Pontos de passagem:
-                </p>
-                <div className="space-y-2">
-                  {selectedPassengerRide.route.waypoints.map((waypoint, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      {index === 0 ? (
-                        <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
-                      ) : index === selectedPassengerRide.route.waypoints.length - 1 ? (
-                        <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-                      ) : (
-                        <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 ml-0.5"></div>
-                      )}
-                      <span className="text-sm text-gray-700">{waypoint}</span>
-                    </div>
-                  ))}
+              {/* Route Info */}
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Navigation className="w-5 h-5 text-foreground" />
+                  <h3 className="text-foreground font-semibold">
+                    {selectedPassengerRide.route.name}
+                  </h3>
                 </div>
-              </div>
-            </div>
 
-            {/* Driver Info */}
-            <div className="p-4 bg-primary/5 rounded-xl">
-              <p className="text-xs text-secondary-foreground mb-2 font-medium">Motorista</p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-900">
-                    {selectedPassengerRide.driver.name}
-                  </p>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 text-warning-foreground fill-yellow-500" />
-                    <span className="text-sm font-medium text-gray-700">
-                      {selectedPassengerRide.driver.rating}
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Navigation className="w-4 h-4 text-secondary-foreground" />
+                    <span className="text-sm text-gray-700">
+                      {selectedPassengerRide.route.distance}
                     </span>
-                    <span className="text-xs text-secondary-foreground">
-                      ({selectedPassengerRide.driver.totalRatings})
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-secondary-foreground" />
+                    <span className="text-sm text-gray-700">
+                      {selectedPassengerRide.route.duration}
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <button
-              onClick={() => setShowRouteModal(false)}
-              className="w-full mt-6 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors"
-            >
-              Fechar
-            </button>
+                {/* Waypoints */}
+                <div>
+                  <p className="text-xs text-secondary-foreground mb-3 font-medium">
+                    Pontos de passagem:
+                  </p>
+                  <div className="space-y-2">
+                    {selectedPassengerRide.route.waypoints.map(
+                      (waypoint, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                          {index === 0 ? (
+                            <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
+                          ) : index ===
+                            selectedPassengerRide.route.waypoints.length - 1 ? (
+                            <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
+                          ) : (
+                            <div className="w-2 h-2 bg-gray-400 rounded-full flex-shrink-0 ml-0.5"></div>
+                          )}
+                          <span className="text-sm text-gray-700">
+                            {waypoint}
+                          </span>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Driver Info */}
+              <div className="p-4 bg-primary/5 rounded-xl">
+                <p className="text-xs text-secondary-foreground mb-2 font-medium">
+                  Motorista
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {selectedPassengerRide.driver.name}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 text-warning-foreground fill-yellow-500" />
+                      <span className="text-sm font-medium text-gray-700">
+                        {selectedPassengerRide.driver.rating}
+                      </span>
+                      <span className="text-xs text-secondary-foreground">
+                        ({selectedPassengerRide.driver.totalRatings})
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowRouteModal(false)}
+                className="w-full mt-6 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors"
+              >
+                Fechar
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       )}
     </div>

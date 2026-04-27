@@ -24,7 +24,7 @@ import { useNavigate, useOutletContext } from "react-router";
 import { mockMyRides, mockMyRidesAsPassenger } from "../mocks/my-rides";
 import type { MyRide, PassengerRequest, MyRideAsPassenger, Rating } from "../types/my-ride";
 import { ChatModal } from "./ChatModal";
-import { RatingModal } from "./RatingPage";
+import { RatingModal } from "./RatingModal";
 import { getMyRides } from "../utils/rides";
 
 interface LayoutContext {
@@ -384,12 +384,12 @@ export function MyRides() {
                           {formatDate(ride.date)}
                         </h3>
                         {ride.sameGenderOnly && (
-                          <span className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-info text-info-foreground text-xs font-medium rounded-full">
                             Mesmo gênero
                           </span>
                         )}
                         {ride.status === "completed" && (
-                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5  bg-success text-success-foreground  text-xs font-medium rounded-full">
                             Concluída
                           </span>
                         )}
@@ -468,16 +468,16 @@ export function MyRides() {
                         setSelectedRide(ride);
                         setModalType("requests");
                       }}
-                      className="w-full p-3 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition-colors flex items-center justify-between"
+                      className="w-full p-3 bg-warning border border-yellow-200 rounded-lg hover:bg-warning-hover transition-colors flex items-center justify-between"
                     >
                       <div className="flex items-center gap-2">
-                        <AlertCircle className="w-5 h-5 text-yellow-600" />
-                        <span className="text-sm font-medium text-yellow-700">
+                        <AlertCircle className="w-5 h-5 text-warning-foreground" />
+                        <span className="text-sm font-medium text-warning-foreground">
                           {ride.requests.length} nova(s)
                           solicitação(ões)
                         </span>
                       </div>
-                      <span className="text-yellow-600">→</span>
+                      <span className="text-warning-foreground">→</span>
                     </button>
                   )}
 
@@ -579,7 +579,7 @@ export function MyRides() {
                       <div className="mt-4">
                         <button
                           onClick={() => handleCompleteRide(ride)}
-                          className="w-full p-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
+                          className="w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <CheckCircle2 className="w-5 h-5" />
                           Concluir carona e avaliar passageiros
@@ -623,22 +623,22 @@ export function MyRides() {
                           {formatDate(ride.date)}
                         </h3>
                         {ride.sameGenderOnly && (
-                          <span className="px-2 py-0.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-info text-info-foreground text-xs font-medium rounded-full">
                             Mesmo gênero
                           </span>
                         )}
                         {ride.status === "completed" && (
-                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5  bg-success text-success-foreground  text-xs font-medium rounded-full">
                             Concluída
                           </span>
                         )}
                         {ride.status === "confirmed" && (
-                          <span className="px-2 py-0.5 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5  bg-success text-success-foreground  text-xs font-medium rounded-full">
                             Confirmada
                           </span>
                         )}
                         {ride.status === "pending" && (
-                          <span className="px-2 py-0.5 bg-yellow-50 text-yellow-700 text-xs font-medium rounded-full">
+                          <span className="px-2 py-0.5 bg-warning text-warning-foreground text-xs font-medium rounded-full">
                             Pendente
                           </span>
                         )}
@@ -750,7 +750,7 @@ export function MyRides() {
                       <div className="mt-4">
                         <button
                           onClick={() => handleCompletePassengerRide(ride)}
-                          className="w-full p-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors flex items-center justify-center gap-2"
+                          className="w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <CheckCircle2 className="w-5 h-5" />
                           Concluir carona e avaliar motorista
@@ -808,9 +808,9 @@ export function MyRides() {
             </div>
 
             {selectedRide.confirmedPassengers.length > 0 && (
-              <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="mb-4 p-3 bg-warning border border-yellow-200 rounded-lg">
                 <div className="flex gap-2">
-                  <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
+                  <AlertCircle className="w-5 h-5 text-warning-foreground flex-shrink-0" />
                   <p className="text-sm text-yellow-700">
                     Há {selectedRide.confirmedPassengers.length}{" "}
                     passageiro(s) confirmado(s). Eles serão
@@ -957,7 +957,7 @@ export function MyRides() {
                               request.id,
                             )
                           }
-                          className="flex-1 py-2 px-4 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 py-2 px-4 bg-muted text-muted-foreground font-medium rounded-lg hover:bg-muted-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <X className="w-4 h-4" />
                           Recusar
@@ -969,7 +969,7 @@ export function MyRides() {
                               request.id,
                             )
                           }
-                          className="flex-1 py-2 px-4 bg-green-600 text-primary-foreground font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 py-2 px-4 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <Check className="w-4 h-4" />
                           Aceitar
@@ -1065,9 +1065,9 @@ export function MyRides() {
                   </div>
                 </div>
               ) : (
-                <div className="mb-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="mb-6 p-3 bg-warning border border-yellow-200 rounded-lg">
                   <div className="flex gap-2">
-                    <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
+                    <AlertCircle className="w-5 h-5 text-warning-foreground flex-shrink-0" />
                     <p className="text-sm text-yellow-700">
                       O motorista será notificado sobre o cancelamento.
                     </p>

@@ -200,7 +200,7 @@ export function Sidebar({
               }`}
               title={isCollapsed ? "Sair" : ""}
             >
-              <LogOut className="w-5 h-5 flex-shrink-0" />
+              <LogOut className="w-5 h-5 flex-shrink-0 text-destructive" />
               {!isCollapsed && (
                 <span className="text-destructive font-medium">Sair</span>
               )}

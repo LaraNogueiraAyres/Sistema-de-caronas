@@ -69,7 +69,7 @@ export function RatingModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-      <div className="bg-background rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-background rounded-2xl p-6 max-w-md w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-foreground font-semibold text-lg">
@@ -206,7 +206,8 @@ export function RatingModal({
                   Denúncia enviada!
                 </p>
                 <p className="text-xs text-green-600 mt-1">
-                  Sua denúncia será avaliada pela nossa equipe. Obrigado por contribuir para a segurança da comunidade.
+                  Sua denúncia será avaliada pela nossa equipe. Obrigado por
+                  contribuir para a segurança da comunidade.
                 </p>
               </div>
             </div>
@@ -224,7 +225,7 @@ export function RatingModal({
             </button>
             <button
               onClick={handleSubmit}
-              className="flex-1 py-3 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-[#2d4a6f] transition-colors"
+              className="flex-1 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors"
             >
               Enviar avaliação
             </button>
