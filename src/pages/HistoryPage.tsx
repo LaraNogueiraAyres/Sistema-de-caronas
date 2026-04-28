@@ -14,6 +14,7 @@ import {
   Car,
   Navigation,
   X,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { mockHistoryAsPassenger, mockHistoryAsDriver } from "../mocks/history";
@@ -31,6 +32,9 @@ interface LayoutContext {
 }
 
 type TabType = "offered" | "received";
+type SortOrder = "recent" | "oldest";
+type StatusFilter = "all" | "completed" | "cancelled";
+type DirectionFilter = "all" | "to-ufal" | "from-ufal";
 
 // — Component —
 
@@ -40,6 +44,14 @@ export function History() {
 
   // Tab
   const [activeTab, setActiveTab] = useState<TabType>("offered");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("recent");
+  const [sameGenderFilter, setSameGenderFilter] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [timeStartFilter, setTimeStartFilter] = useState("");
+  const [timeEndFilter, setTimeEndFilter] = useState("");
+  const [directionFilter, setDirectionFilter] =
+    useState<DirectionFilter>("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   // Modal
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -60,11 +72,95 @@ export function History() {
       year: "numeric",
     });
 
-  const sortedDriverRides = [...mockHistoryAsDriver].sort((a, b) => {
-    const dateA = new Date(`${a.date}T${a.departureTimeStart}`).getTime();
-    const dateB = new Date(`${b.date}T${b.departureTimeStart}`).getTime();
-    return dateB - dateA;
-  });
+  const getRideStartTime = (ride: {
+    date: string;
+    departureTimeStart: string;
+  }) => new Date(`${ride.date}T${ride.departureTimeStart}`).getTime();
+
+  const getRideStartMinutes = (time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const isUfalLocation = (location: string) =>
+    location.toLowerCase().includes("ufal");
+
+  const matchesTimeFilter = (time: string) => {
+    const minutes = getRideStartMinutes(time);
+
+    if (timeStartFilter && minutes < getRideStartMinutes(timeStartFilter)) {
+      return false;
+    }
+
+    if (timeEndFilter && minutes > getRideStartMinutes(timeEndFilter)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const matchesDirectionFilter = (ride: {
+    origin: string;
+    destination: string;
+  }) => {
+    if (directionFilter === "to-ufal") return isUfalLocation(ride.destination);
+    if (directionFilter === "from-ufal") return isUfalLocation(ride.origin);
+
+    return true;
+  };
+
+  const filterHistoryRides = <
+    Ride extends {
+      origin: string;
+      destination: string;
+      departureTimeStart: string;
+      sameGenderOnly: boolean;
+      status: "completed" | "cancelled";
+    },
+  >(
+    rideList: Ride[],
+  ) =>
+    rideList.filter(
+      (ride) =>
+        (!sameGenderFilter || ride.sameGenderOnly) &&
+        (statusFilter === "all" || ride.status === statusFilter) &&
+        matchesTimeFilter(ride.departureTimeStart) &&
+        matchesDirectionFilter(ride),
+    );
+
+  const hasActiveFilters =
+    sameGenderFilter ||
+    statusFilter !== "all" ||
+    Boolean(timeStartFilter) ||
+    Boolean(timeEndFilter) ||
+    directionFilter !== "all";
+
+  const clearFilters = () => {
+    setSameGenderFilter(false);
+    setStatusFilter("all");
+    setTimeStartFilter("");
+    setTimeEndFilter("");
+    setDirectionFilter("all");
+  };
+
+  const sortHistoryRides = <
+    Ride extends { date: string; departureTimeStart: string },
+  >(
+    rideList: Ride[],
+  ) =>
+    [...rideList].sort((a, b) => {
+      const dateA = getRideStartTime(a);
+      const dateB = getRideStartTime(b);
+
+      return sortOrder === "recent" ? dateB - dateA : dateA - dateB;
+    });
+
+  const sortedDriverRides = sortHistoryRides(
+    filterHistoryRides(mockHistoryAsDriver),
+  );
+  const sortedPassengerRides = sortHistoryRides(
+    filterHistoryRides(mockHistoryAsPassenger),
+  );
 
   // — Handlers —
 
@@ -135,14 +231,171 @@ export function History() {
             </button>
           </div>
 
+          {(activeTab === "offered"
+            ? mockHistoryAsDriver.length
+            : mockHistoryAsPassenger.length) > 0 && (
+            <div className="mb-4 space-y-3">
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters((current) => !current)}
+                  className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium shadow-sm transition-colors ${
+                    showFilters || hasActiveFilters
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-gray-200 bg-background text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Filtros
+                  {showFilters ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
+
+                <label className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>Ordenar</span>
+                  <div className="relative">
+                    <select
+                      value={sortOrder}
+                      onChange={(event) =>
+                        setSortOrder(event.target.value as SortOrder)
+                      }
+                      className="appearance-none rounded-lg border border-gray-200 bg-background py-2 pl-3 pr-9 text-sm text-gray-700 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-primary"
+                    >
+                      <option value="recent">Mais recentes</option>
+                      <option value="oldest">Mais antigas</option>
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                  </div>
+                </label>
+              </div>
+
+              {showFilters && (
+                <div className="rounded-xl bg-background p-4 shadow-sm border border-gray-100">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <label className="space-y-1 text-sm text-gray-600">
+                      <span>Status</span>
+                      <select
+                        value={statusFilter}
+                        onChange={(event) =>
+                          setStatusFilter(event.target.value as StatusFilter)
+                        }
+                        className="w-full rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-primary"
+                      >
+                        <option value="all">Todas</option>
+                        <option value="completed">Concluídas</option>
+                        <option value="cancelled">Canceladas</option>
+                      </select>
+                    </label>
+
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <span>Horário</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <label
+                          className="sr-only"
+                          htmlFor="history-time-start-filter"
+                        >
+                          De
+                        </label>
+                        <input
+                          id="history-time-start-filter"
+                          type="time"
+                          value={timeStartFilter}
+                          onChange={(event) =>
+                            setTimeStartFilter(event.target.value)
+                          }
+                          aria-label="Horário inicial"
+                          className="w-full rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-primary"
+                        />
+
+                        <label
+                          className="sr-only"
+                          htmlFor="history-time-end-filter"
+                        >
+                          Até
+                        </label>
+                        <input
+                          id="history-time-end-filter"
+                          type="time"
+                          value={timeEndFilter}
+                          onChange={(event) =>
+                            setTimeEndFilter(event.target.value)
+                          }
+                          aria-label="Horário final"
+                          className="w-full rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-primary"
+                        />
+                      </div>
+                    </div>
+
+                    <label className="space-y-1 text-sm text-gray-600">
+                      <span>Rota</span>
+                      <select
+                        value={directionFilter}
+                        onChange={(event) =>
+                          setDirectionFilter(
+                            event.target.value as DirectionFilter,
+                          )
+                        }
+                        className="w-full rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-primary"
+                      >
+                        <option value="all">Qualquer rota</option>
+                        <option value="to-ufal">Para UFAL</option>
+                        <option value="from-ufal">Saindo da UFAL</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-4">
+                    <label className="flex items-center gap-3 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={sameGenderFilter}
+                        onChange={(event) =>
+                          setSameGenderFilter(event.target.checked)
+                        }
+                        className="h-4 w-4 rounded border-gray-300 accent-primary"
+                      />
+                      Apenas mesmo gênero
+                    </label>
+
+                    {hasActiveFilters && (
+                      <button
+                        type="button"
+                        onClick={clearFilters}
+                        className="text-sm font-medium text-accent hover:text-accent-hover"
+                      >
+                        Limpar filtros
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Tab: Caronas oferecidas (motorista) */}
           {activeTab === "offered" && (
             <div className="space-y-4">
-              {sortedDriverRides.length === 0 ? (
+              {mockHistoryAsDriver.length === 0 ? (
                 <EmptyState
                   icon={<Car className="w-8 h-8 text-gray-400" />}
                   message="Você ainda não ofereceu nenhuma carona"
                 />
+              ) : sortedDriverRides.length === 0 ? (
+                <div className="bg-background rounded-2xl p-8 text-center shadow-sm border border-gray-100">
+                  <p className="text-foreground">
+                    Nenhuma carona encontrada com os filtros selecionados.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="mt-4 px-4 py-2 text-sm font-medium text-accent hover:text-accent-hover"
+                  >
+                    Limpar filtros
+                  </button>
+                </div>
               ) : (
                 sortedDriverRides.map((ride) => (
                   <RideCard
@@ -168,8 +421,21 @@ export function History() {
                   icon={<Users className="w-8 h-8 text-gray-400" />}
                   message="Você ainda não pegou nenhuma carona"
                 />
+              ) : sortedPassengerRides.length === 0 ? (
+                <div className="bg-background rounded-2xl p-8 text-center shadow-sm border border-gray-100">
+                  <p className="text-foreground">
+                    Nenhuma carona encontrada com os filtros selecionados.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="mt-4 px-4 py-2 text-sm font-medium text-accent hover:text-accent-hover"
+                  >
+                    Limpar filtros
+                  </button>
+                </div>
               ) : (
-                mockHistoryAsPassenger.map((ride) => (
+                sortedPassengerRides.map((ride) => (
                   <RideCard
                     key={ride.id}
                     date={formatDate(ride.date)}
