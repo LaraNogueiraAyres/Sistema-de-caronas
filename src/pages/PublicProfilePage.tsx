@@ -8,13 +8,16 @@ import {
   CreditCard,
   Calendar as CalendarIcon,
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams, useOutletContext } from "react-router";
 import { useState, useEffect } from "react";
 import type { User } from "../types/user";
 import { mockUsers } from "../mocks/user";
 
 export function PublicProfile() {
   const navigate = useNavigate();
+  const { setSidebarOpen } = useOutletContext<{
+    setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  }>();
   const { userId } = useParams<{ userId: string }>();
   const [user, setUser] = useState<User | null>(null);
 
@@ -312,6 +315,14 @@ export function PublicProfile() {
                   <p className="text-xs text-gray-600 mt-1">Meses ativo</p>
                 </div>
               </div>
+            </div>
+            <div className="mt-8">
+              <button
+                onClick={() => navigate(-1)}
+                className="lg:hidden w-full py-3 bg-primary border border-gray-300 text-primary-foreground rounded-xl font-medium   "
+              >
+                ← Voltar
+              </button>
             </div>
           </div>
         </div>
