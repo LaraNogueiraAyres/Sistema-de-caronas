@@ -1,4 +1,4 @@
-import { Menu, MapPin, Users, Car } from "lucide-react";
+import { Menu, ArrowLeft, MapPin, Users, Car } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { getCurrentUser } from "../utils/auth";
 
@@ -15,9 +15,9 @@ export function HomePage() {
 
   return (
     <div className="flex-1 flex flex-col min-h-screen lg:overflow-hidden">
-      {/* Header */}
-      <div className="w-full px-6 pt-12 pb-4 bg-primary text-primary-foreground relative z-10 flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-4">
-        <div className="flex items-center justify-between">
+      {/* Header
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
@@ -25,8 +25,23 @@ export function HomePage() {
             <Menu className="w-6 h-6" />
           </button>
           <div className="text-right lg:ml-auto">
-            <p className="text-sm opacity-90 mb-1">Olá,</p>
+            <p className="text-base opacity-90 mb-1">Olá,</p>
             <h1 className="text-xl font-semibold">{currentUser?.name}</h1>
+          </div>
+        </div>
+      </div> */}
+      {/* Header */}
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+          <div className="text-right ml-auto ">
+            <p className="text-sm opacity-90 mb-1 ">Olá,</p>
+            <h1 className="text-xl font-semibold ">{currentUser?.name}</h1>
           </div>
         </div>
       </div>

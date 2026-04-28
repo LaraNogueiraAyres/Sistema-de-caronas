@@ -158,10 +158,10 @@ export function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5]">
+    <div className="min-h-screen bg-secondary flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground">
-        <div className="flex items-center gap-4 max-w-4xl mx-auto">
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
             className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
