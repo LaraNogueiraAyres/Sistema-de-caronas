@@ -56,13 +56,13 @@ export function Sidebar({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full bg-background shadow-2xl z-50 transition-all duration-300 lg:relative lg:shadow-none lg:border-r lg:border-gray-200 ${
+        className={`fixed top-0 left-0 h-full bg-background shadow-2xl z-50 transition-all duration-300 lg:relative lg:shadow-none  ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 ${isCollapsed ? "lg:w-20" : "w-72"}`}
       >
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="px-6 pt-12 pb-6 bg-primary text-primary-foreground relative">
+          <div className="px-6 pt-12 pb-6 bg-primary text-primary-foreground relative lg:border-r lg:border-muted/30">
             {/* Close button for mobile */}
             <button
               onClick={onClose}
@@ -114,9 +114,7 @@ export function Sidebar({
             <button
               onClick={() => handleNavigation("/home")}
               className={`w-full px-6 py-4 flex items-center gap-4 hover:bg-gray-50 transition-colors text-left ${
-                isActive("/home")
-                  ? "bg-gray-50 border-l-4 border-primary"
-                  : ""
+                isActive("/home") ? "bg-gray-50 border-l-4 border-primary" : ""
               } ${isCollapsed ? "justify-center" : ""}`}
               title={isCollapsed ? "Início" : ""}
             >
