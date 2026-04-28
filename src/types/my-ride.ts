@@ -53,6 +53,8 @@ export interface MyRideAsPassenger {
   departureTimeStart: string;
   departureTimeEnd: string;
   price: number;
+  totalSeats: number;
+  availableSeats: number;
   routeName: string;
   status: "pending" | "confirmed" | "cancelled" | "completed";
   sameGenderOnly: boolean;
@@ -63,6 +65,12 @@ export interface MyRideAsPassenger {
     totalRatings: number;
     phone: string;
   };
+  otherPassengers: {
+    id: string;
+    name: string;
+    gender: string;
+    rating: number;
+  }[];
   requestedAt: string;
   completedAt?: string;
   passengerRatingGiven?: Rating;

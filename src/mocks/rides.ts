@@ -4,6 +4,7 @@ export const mockRides: Ride[] = [
   {
     id: "1",
     driver: {
+      id: "user-2",
       name: "Carlos Silva",
       rating: 4.8,
       totalRatings: 127,
@@ -21,6 +22,7 @@ export const mockRides: Ride[] = [
   {
     id: "2",
     driver: {
+      id: "user-3",
       name: "Maria Santos",
       rating: 4.9,
       totalRatings: 203,
@@ -38,6 +40,7 @@ export const mockRides: Ride[] = [
   {
     id: "3",
     driver: {
+      id: "user-4",
       name: "João Pedro",
       rating: 4.7,
       totalRatings: 89,
@@ -55,6 +58,7 @@ export const mockRides: Ride[] = [
   {
     id: "4",
     driver: {
+      id: "user-7",
       name: "Ana Carolina",
       rating: 5.0,
       totalRatings: 156,
@@ -72,6 +76,7 @@ export const mockRides: Ride[] = [
   {
     id: "5",
     driver: {
+      id: "user-6",
       name: "Pedro Henrique",
       rating: 4.6,
       totalRatings: 94,
@@ -89,6 +94,7 @@ export const mockRides: Ride[] = [
   {
     id: "6",
     driver: {
+      id: "user-9",
       name: "Juliana Oliveira",
       rating: 4.9,
       totalRatings: 178,
@@ -102,5 +108,113 @@ export const mockRides: Ride[] = [
     confirmedPassengers: 0,
     departureTimeStart: "14:15",
     departureTimeEnd: "14:45",
+  },
+  {
+    id: "7",
+    driver: {
+      id: "user-5",
+      name: "Beatriz Costa",
+      rating: 4.9,
+      totalRatings: 154,
+      gender: "Feminino",
+    },
+    departure: "07:15",
+    origin: "Jatiúca",
+    destination: "UFAL - Campus A.C. Simões",
+    price: 6.5,
+    availableSeats: 1,
+    confirmedPassengers: 2,
+    departureTimeStart: "07:00",
+    departureTimeEnd: "07:30",
+  },
+  {
+    id: "8",
+    driver: {
+      id: "user-10",
+      name: "Juliana Oliveira",
+      rating: 4.7,
+      totalRatings: 65,
+      gender: "Feminino",
+    },
+    departure: "15:45",
+    origin: "UFAL - Campus A.C. Simões",
+    destination: "Pajuçara",
+    price: 7.5,
+    availableSeats: 3,
+    confirmedPassengers: 1,
+    departureTimeStart: "15:30",
+    departureTimeEnd: "16:00",
+  },
+  {
+    id: "9",
+    driver: {
+      id: "user-8",
+      name: "Rafael Souza",
+      rating: 4.6,
+      totalRatings: 38,
+      gender: "Masculino",
+    },
+    departure: "17:30",
+    origin: "Farol",
+    destination: "UFAL - Campus A.C. Simões",
+    price: 8.0,
+    availableSeats: 2,
+    confirmedPassengers: 2,
+    departureTimeStart: "17:15",
+    departureTimeEnd: "17:45",
+  },
+  {
+    id: "10",
+    driver: {
+      id: "user-3",
+      name: "Maria Santos",
+      rating: 4.9,
+      totalRatings: 203,
+      gender: "Feminino",
+    },
+    departure: "18:20",
+    origin: "UFAL - Campus A.C. Simões",
+    destination: "Jatiúca",
+    price: 7.0,
+    availableSeats: 4,
+    confirmedPassengers: 0,
+    departureTimeStart: "18:05",
+    departureTimeEnd: "18:35",
+  },
+  {
+    id: "11",
+    driver: {
+      id: "user-4",
+      name: "João Pedro",
+      rating: 4.7,
+      totalRatings: 89,
+      gender: "Masculino",
+    },
+    departure: "06:45",
+    origin: "Pajuçara",
+    destination: "UFAL - Campus A.C. Simões",
+    price: 6.0,
+    availableSeats: 2,
+    confirmedPassengers: 1,
+    departureTimeStart: "06:30",
+    departureTimeEnd: "07:00",
+  },
+  {
+    id: "12",
+    driver: {
+      id: "user-6",
+      name: "Pedro Henrique",
+      rating: 4.6,
+      totalRatings: 94,
+      gender: "Masculino",
+    },
+    departure: "19:00",
+    origin: "UFAL - Campus A.C. Simões",
+    destination: "Farol",
+    price: 8.5,
+    availableSeats: 1,
+    confirmedPassengers: 3,
+    departureTimeStart: "18:45",
+    departureTimeEnd: "19:15",
   },
 ];

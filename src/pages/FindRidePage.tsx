@@ -25,6 +25,14 @@ interface LayoutContext {
   sidebarCollapsed: boolean;
 }
 
+type RideSortOrder =
+  | "time-asc"
+  | "time-desc"
+  | "price-asc"
+  | "price-desc"
+  | "seats-desc"
+  | "seats-asc";
+
 export function FindRide() {
   const currentUser = getCurrentUser();
   const navigate = useNavigate();
@@ -47,6 +55,8 @@ export function FindRide() {
   const [showSuccessMessage, setShowSuccessMessage] =
     useState(false);
   const [showSavedAddresses, setShowSavedAddresses] = useState(false);
+  const [rideSortOrder, setRideSortOrder] =
+    useState<RideSortOrder>("time-asc");
 
   const savedAddresses = currentUser?.savedAddresses || [];
   const ufalLocation = "UFAL - Campus A.C. Simões";
@@ -77,15 +87,48 @@ export function FindRide() {
       document.body.style.overflow = "auto";
     };
   }, [showModal, showSuccessMessage]);
+
+  const normalizeLocation = (value: string) =>
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+
+  const locationMatches = (rideLocation: string, searchLocation: string) => {
+    const normalizedRideLocation = normalizeLocation(rideLocation);
+    const normalizedSearchLocation = normalizeLocation(searchLocation);
+
+    return (
+      !normalizedSearchLocation ||
+      normalizedRideLocation.includes(normalizedSearchLocation)
+    );
+  };
+
+  const isUfalLocation = (location: string) =>
+    normalizeLocation(location).includes("ufal");
+
+  const getRideStartMinutes = (time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  };
+
   // Filtrar caronas com base nos filtros aplicados
   const filteredRides = mockRides.filter((ride) => {
-  // // origem
-  // if (
-  //   origin &&
-  //   !ride.origin.toLowerCase().includes(origin.toLowerCase())
-  // ) {
-  //   return false;
-  // }
+  // rota
+  if (isReversed) {
+    if (
+      !isUfalLocation(ride.origin) ||
+      !locationMatches(ride.destination, origin)
+    ) {
+      return false;
+    }
+  } else if (
+    !locationMatches(ride.origin, origin) ||
+    !isUfalLocation(ride.destination)
+  ) {
+    return false;
+  }
 
   // preço
   if (maxPrice && ride.price > parseFloat(maxPrice)) {
@@ -118,13 +161,9 @@ export function FindRide() {
 
   // horário inicial
   if (timeStart) {
-    const rideMinutes =
-      parseInt(ride.departureTimeStart.split(":")[0]) * 60 +
-      parseInt(ride.departureTimeStart.split(":")[1]);
+    const rideMinutes = getRideStartMinutes(ride.departureTimeStart);
 
-    const filterMinutes =
-      parseInt(timeStart.split(":")[0]) * 60 +
-      parseInt(timeStart.split(":")[1]);
+    const filterMinutes = getRideStartMinutes(timeStart);
 
     if (rideMinutes < filterMinutes) {
       return false;
@@ -133,13 +172,9 @@ export function FindRide() {
 
   // horário final
   if (timeEnd) {
-    const rideMinutes =
-      parseInt(ride.departureTimeStart.split(":")[0]) * 60 +
-      parseInt(ride.departureTimeStart.split(":")[1]);
+    const rideMinutes = getRideStartMinutes(ride.departureTimeStart);
 
-    const filterMinutes =
-      parseInt(timeEnd.split(":")[0]) * 60 +
-      parseInt(timeEnd.split(":")[1]);
+    const filterMinutes = getRideStartMinutes(timeEnd);
 
     if (rideMinutes > filterMinutes) {
       return false;
@@ -150,13 +185,21 @@ export function FindRide() {
 });
 
 const sortedRides = [...filteredRides].sort((a, b) => {
-  const [ah, am] = a.departureTimeStart.split(":").map(Number);
-  const [bh, bm] = b.departureTimeStart.split(":").map(Number);
+  if (rideSortOrder === "price-asc") return a.price - b.price;
+  if (rideSortOrder === "price-desc") return b.price - a.price;
+  if (rideSortOrder === "seats-desc") {
+    return b.availableSeats - a.availableSeats;
+  }
+  if (rideSortOrder === "seats-asc") {
+    return a.availableSeats - b.availableSeats;
+  }
 
-  const minutesA = ah * 60 + am;
-  const minutesB = bh * 60 + bm;
+  const minutesA = getRideStartMinutes(a.departureTimeStart);
+  const minutesB = getRideStartMinutes(b.departureTimeStart);
 
-  return minutesA - minutesB;
+  return rideSortOrder === "time-desc"
+    ? minutesB - minutesA
+    : minutesA - minutesB;
 });
 
   const handleRequestRide = (rideId: string) => {
@@ -451,13 +494,35 @@ const sortedRides = [...filteredRides].sort((a, b) => {
         {/* Results */}
         {showResults && (
           <div className="flex-1 px-6 py-6 lg:px-0 lg:py-0 lg:overflow-y-auto">
-            <div className="mb-4">
-              <h2 className="text-foreground font-semibold text-lg">
-                {filteredRides.length} caronas disponíveis
-              </h2>
-              <p className="text-gray-600 text-sm mt-1">
-                {originValue || "Sua origem"} → {destinationValue}
-              </p>
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h2 className="text-foreground font-semibold text-lg">
+                  {filteredRides.length} caronas disponíveis
+                </h2>
+                <p className="text-gray-600 text-sm mt-1">
+                  {originValue || "Sua origem"} → {destinationValue}
+                </p>
+              </div>
+
+              {filteredRides.length > 0 && (
+                <label className="flex items-center gap-2 text-sm text-gray-600 sm:justify-end">
+                  <span>Ordenar</span>
+                  <select
+                    value={rideSortOrder}
+                    onChange={(event) =>
+                      setRideSortOrder(event.target.value as RideSortOrder)
+                    }
+                    className="rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-gray-700 shadow-sm outline-none transition-colors hover:border-gray-300 focus:border-primary"
+                  >
+                    <option value="time-asc">Mais cedo</option>
+                    <option value="time-desc">Mais tarde</option>
+                    <option value="price-asc">Menor preço</option>
+                    <option value="price-desc">Maior preço</option>
+                    <option value="seats-desc">Mais vagas</option>
+                    <option value="seats-asc">Menos vagas</option>
+                  </select>
+                </label>
+              )}
             </div>
 
             {/* Ride Cards */}
@@ -488,7 +553,11 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                   >
                     {/* Driver Info */}
                     <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/user/${ride.driver.id}`)}
+                        className="flex items-center gap-3 text-left hover:opacity-80 transition-opacity"
+                      >
                         <div className="w-12 h-12 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
                           <User className="w-6 h-6 text-primary-foreground" />
                         </div>
@@ -506,7 +575,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                             </span>
                           </div>
                         </div>
-                      </div>
+                      </button>
 
                       <div className="text-right">
                         <p className="text-accent font-bold text-lg">
@@ -618,7 +687,15 @@ const sortedRides = [...filteredRides].sort((a, b) => {
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!selectedRide) return;
+                    setShowModal(false);
+                    navigate(`/user/${selectedRide.driver.id}`);
+                  }}
+                  className="flex items-center gap-3 text-left hover:opacity-80 transition-opacity"
+                >
                   <div className="w-12 h-12 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
                     <User className="w-6 h-6 text-primary-foreground" />
                   </div>
@@ -636,7 +713,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                       </span>
                     </div>
                   </div>
-                </div>
+                </button>
 
                 <div className="flex items-center gap-3">
                   <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
@@ -715,7 +792,15 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                 </p>
 
                 <div className="w-full bg-gray-50 rounded-xl p-4 mb-6">
-                  <div className="flex items-center gap-3 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!selectedRide) return;
+                      setShowSuccessMessage(false);
+                      navigate(`/user/${selectedRide.driver.id}`);
+                    }}
+                    className="flex items-center gap-3 mb-3 text-left hover:opacity-80 transition-opacity"
+                  >
                     <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center flex-shrink-0">
                       <User className="w-5 h-5 text-primary-foreground" />
                     </div>
@@ -730,7 +815,7 @@ const sortedRides = [...filteredRides].sort((a, b) => {
                         </span>
                       </div>
                     </div>
-                  </div>
+                  </button>
 
                   <div className="space-y-2 text-left">
                     <div className="flex items-center gap-2">

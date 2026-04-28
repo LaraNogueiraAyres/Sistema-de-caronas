@@ -180,6 +180,8 @@ export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
     departureTimeStart: "07:00",
     departureTimeEnd: "07:30",
     price: 7.0,
+    totalSeats: 4,
+    availableSeats: 1,
     routeName: "Via BR-104",
     status: "confirmed",
     sameGenderOnly: false,
@@ -190,6 +192,20 @@ export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
       totalRatings: 128,
       phone: "(82) 99345-6789",
     },
+    otherPassengers: [
+      {
+        id: "user-3",
+        name: "Maria Oliveira",
+        gender: "Feminino",
+        rating: 4.7,
+      },
+      {
+        id: "user-6",
+        name: "Pedro Almeida",
+        gender: "Masculino",
+        rating: 4.5,
+      },
+    ],
     requestedAt: "2026-04-15T10:00:00Z",
   },
   {
@@ -200,6 +216,8 @@ export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
     departureTimeStart: "13:00",
     departureTimeEnd: "13:30",
     price: 5.0,
+    totalSeats: 3,
+    availableSeats: 0,
     routeName: "Via Menino Marcelo",
     status: "confirmed",
     sameGenderOnly: true,
@@ -210,6 +228,14 @@ export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
       totalRatings: 154,
       phone: "(82) 99567-8901",
     },
+    otherPassengers: [
+      {
+        id: "user-7",
+        name: "Ana Lima",
+        gender: "Feminino",
+        rating: 4.8,
+      },
+    ],
     requestedAt: "2026-04-16T14:00:00Z",
   },
   {
@@ -220,6 +246,8 @@ export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
     departureTimeStart: "08:00",
     departureTimeEnd: "08:30",
     price: 6.0,
+    totalSeats: 4,
+    availableSeats: 2,
     routeName: "Via Avenida Gustavo Paiva",
     status: "pending",
     sameGenderOnly: false,
@@ -230,6 +258,14 @@ export const mockMyRidesAsPassenger: MyRideAsPassenger[] = [
       totalRatings: 76,
       phone: "(82) 99678-9012",
     },
+    otherPassengers: [
+      {
+        id: "user-10",
+        name: "Juliana Oliveira",
+        gender: "Feminino",
+        rating: 4.7,
+      },
+    ],
     requestedAt: "2026-04-17T09:00:00Z",
   },
 ];

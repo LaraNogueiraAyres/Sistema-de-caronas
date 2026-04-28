@@ -1,6 +1,7 @@
 export type Gender = "Masculino" | "Feminino" | "Outro";
 
 export interface Driver {
+  id: string;
   name: string;
   rating: number;
   totalRatings: number;

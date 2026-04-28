@@ -89,6 +89,7 @@ export function MyRides() {
     useState<MyRideAsPassenger | null>(null);
   const [modalType, setModalType] = useState<ModalType>(null);
   const [expandedRides, setExpandedRides] = useState<Set<string>>(new Set());
+  const [showPassengers, setShowPassengers] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatUser, setChatUser] = useState<{
     id: string;
@@ -165,18 +166,6 @@ export function MyRides() {
     return true;
   };
 
-  const matchesOfferedStatusFilter = (ride: MyRide) => {
-    if (statusFilter === "confirmed") {
-      return ride.confirmedPassengers.length > 0;
-    }
-
-    if (statusFilter === "pending") {
-      return ride.requests.length > 0;
-    }
-
-    return true;
-  };
-
   const matchesReceivedStatusFilter = (ride: MyRideAsPassenger) => {
     if (statusFilter === "confirmed") return ride.status === "confirmed";
     if (statusFilter === "pending") return ride.status === "pending";
@@ -188,7 +177,6 @@ export function MyRides() {
     rideList.filter(
       (ride) =>
         (!sameGenderFilter || ride.sameGenderOnly) &&
-        matchesOfferedStatusFilter(ride) &&
         matchesTimeFilter(ride.departureTimeStart) &&
         matchesDirectionFilter(ride),
     );
@@ -204,7 +192,7 @@ export function MyRides() {
 
   const hasActiveFilters =
     sameGenderFilter ||
-    statusFilter !== "all" ||
+    (activeTab === "received" && statusFilter !== "all") ||
     Boolean(timeStartFilter) ||
     Boolean(timeEndFilter) ||
     directionFilter !== "all";
@@ -496,10 +484,37 @@ export function MyRides() {
     setChatOpen(true);
   };
 
+  const openOfferedRideDetails = (ride: MyRide) => {
+    setSelectedPassengerRide(null);
+    setSelectedRide(ride);
+    setShowPassengers(false);
+    setModalType("details");
+  };
+
+  const openReceivedRideDetails = (ride: MyRideAsPassenger) => {
+    setSelectedRide(null);
+    setSelectedPassengerRide(ride);
+    setShowPassengers(false);
+    setModalType("details");
+  };
+
+  const closeDetailsModal = () => {
+    setModalType(null);
+    setSelectedRide(null);
+    setSelectedPassengerRide(null);
+    setShowPassengers(false);
+  };
+
   const displayedOfferedRides = sortRidesByDate(filterOfferedRides(rides));
   const displayedReceivedRides = sortRidesByDate(
     filterReceivedRides(ridesAsPassenger),
   );
+  const selectedDetailsRide = selectedRide ?? selectedPassengerRide;
+  const selectedDetailsOccupiedSeats = selectedRide
+    ? selectedRide.confirmedPassengers.length
+    : selectedPassengerRide
+      ? selectedPassengerRide.totalSeats - selectedPassengerRide.availableSeats
+      : 0;
 
   return (
     <div className="min-h-screen bg-secondary flex flex-col overflow-hidden">
@@ -590,20 +605,22 @@ export function MyRides() {
             {showFilters && (
               <div className="rounded-xl bg-background p-4 shadow-sm border border-gray-100">
                 <div className="grid gap-3 sm:grid-cols-3">
-                  <label className="space-y-1 text-sm text-gray-600">
-                    <span>Status</span>
-                    <select
-                      value={statusFilter}
-                      onChange={(event) =>
-                        setStatusFilter(event.target.value as StatusFilter)
-                      }
-                      className="w-full rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-primary"
-                    >
-                      <option value="all">Todas</option>
-                      <option value="confirmed">Confirmadas</option>
-                      <option value="pending">Pendentes</option>
-                    </select>
-                  </label>
+                  {activeTab === "received" && (
+                    <label className="space-y-1 text-sm text-gray-600">
+                      <span>Status</span>
+                      <select
+                        value={statusFilter}
+                        onChange={(event) =>
+                          setStatusFilter(event.target.value as StatusFilter)
+                        }
+                        className="w-full rounded-lg border border-gray-200 bg-background px-3 py-2 text-sm text-gray-700 outline-none transition-colors hover:border-gray-300 focus:border-primary"
+                      >
+                        <option value="all">Todas</option>
+                        <option value="confirmed">Confirmadas</option>
+                        <option value="pending">Pendentes</option>
+                      </select>
+                    </label>
+                  )}
 
                   <div className="space-y-1 text-sm text-gray-600">
                     <span>Horário</span>
@@ -724,7 +741,17 @@ export function MyRides() {
               displayedOfferedRides.map((ride) => (
                   <div
                     key={ride.id}
-                    className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => openOfferedRideDetails(ride)}
+                    onKeyDown={(event) => {
+                      if (event.target !== event.currentTarget) return;
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        openOfferedRideDetails(ride);
+                      }
+                    }}
+                    className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer"
                   >
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
@@ -747,21 +774,13 @@ export function MyRides() {
                         {/* <p className="text-gray-600 text-sm">
                           {ride.routeName}
                         </p> */}
-                        <button
-                          onClick={() => {
-                            setSelectedRide(ride);
-                            setModalType("details");
-                          }}
-                          className="text-xs text-accent font-medium flex items-center gap-1 hover:text-accent-hover"
-                        >
-                          Ver detalhes
-                        </button>
                       </div>
 
                       <div className="flex gap-2">
                         {ride.status !== "completed" && (
                           <button
-                            onClick={() => {
+                            onClick={(event) => {
+                              event.stopPropagation();
                               setSelectedRide(ride);
                               setModalType("delete");
                             }}
@@ -824,7 +843,8 @@ export function MyRides() {
                     {/* Requests Badge */}
                     {ride.requests.length > 0 && (
                       <button
-                        onClick={() => {
+                        onClick={(event) => {
+                          event.stopPropagation();
                           setSelectedRide(ride);
                           setModalType("requests");
                         }}
@@ -844,7 +864,10 @@ export function MyRides() {
                     {ride.confirmedPassengers.length > 0 && (
                       <div className="mt-4">
                         <button
-                          onClick={() => toggleRideExpansion(ride.id)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleRideExpansion(ride.id);
+                          }}
                           className="w-full flex items-center justify-between p-3 bg-success border border-success-border rounded-lg hover:bg-success-hover transition-colors"
                         >
                           <div className="flex items-center gap-2">
@@ -869,9 +892,10 @@ export function MyRides() {
                                 className="flex items-center justify-between p-3 bg-background border border-gray-200 rounded-lg"
                               >
                                 <button
-                                  onClick={() =>
-                                    navigate(`/user/${passenger.passenger.id}`)
-                                  }
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    navigate(`/user/${passenger.passenger.id}`);
+                                  }}
                                   className="flex items-center gap-3 flex-1 text-left hover:opacity-80 transition-opacity"
                                 >
                                   <div className="w-10 h-10 bg-gradient-to-br from-[#1D3557] to-[#2d4a6f] rounded-full flex items-center justify-center">
@@ -892,7 +916,8 @@ export function MyRides() {
                                 {ride.status !== "completed" && (
                                   <div className="flex gap-2">
                                     <button
-                                      onClick={() =>
+                                      onClick={(event) => {
+                                        event.stopPropagation();
                                         openChat(
                                           {
                                             id: passenger.passenger.id,
@@ -904,14 +929,15 @@ export function MyRides() {
                                             origin: ride.origin,
                                             destination: ride.destination,
                                           },
-                                        )
-                                      }
+                                        );
+                                      }}
                                       className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
                                     >
                                       <MessageCircle className="w-4 h-4 text-blue-600" />
                                     </button>
                                     <button
-                                      onClick={() => {
+                                      onClick={(event) => {
+                                        event.stopPropagation();
                                         setSelectedRide(ride);
                                         setSelectedPassengerToRemove(passenger);
                                         setModalType("remove-passenger");
@@ -935,7 +961,10 @@ export function MyRides() {
                       !ride.driverRatingsGiven && (
                         <div className="mt-4">
                           <button
-                            onClick={() => handleCompleteRide(ride)}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleCompleteRide(ride);
+                            }}
                             className="w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                           >
                             <CheckCircle2 className="w-5 h-5" />
@@ -989,7 +1018,17 @@ export function MyRides() {
               displayedReceivedRides.map((ride) => (
                 <div
                   key={ride.id}
-                  className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openReceivedRideDetails(ride)}
+                  onKeyDown={(event) => {
+                    if (event.target !== event.currentTarget) return;
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openReceivedRideDetails(ride);
+                    }
+                  }}
+                  className="bg-background rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-all cursor-pointer"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
@@ -1020,21 +1059,13 @@ export function MyRides() {
                         )}
                       </div>
                       {/* <p className="text-gray-600 text-sm">{ride.routeName}</p> */}
-                      <button
-                        onClick={() => {
-                          setSelectedRide(selectedRide);
-                          setModalType("details");
-                        }}
-                        className="text-xs text-accent font-medium flex items-center gap-1 hover:text-accent-hover"
-                      >
-                        Ver detalhes
-                      </button>
                     </div>
 
                     {(ride.status === "confirmed" ||
                       ride.status === "pending") && (
                       <button
-                        onClick={() => {
+                        onClick={(event) => {
+                          event.stopPropagation();
                           setSelectedPassengerRide(ride);
                           setModalType("cancel-passenger");
                         }}
@@ -1135,7 +1166,10 @@ export function MyRides() {
                     !ride.passengerRatingGiven && (
                       <div className="mt-4">
                         <button
-                          onClick={() => handleCompletePassengerRide(ride)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleCompletePassengerRide(ride);
+                          }}
                           className="w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <CheckCircle2 className="w-5 h-5" />
@@ -1172,64 +1206,207 @@ export function MyRides() {
         </div>
       )}
       {/* Modal de detalhes da carona */}
-      {modalType === "details" && selectedRide && (
+      {modalType === "details" && selectedDetailsRide && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
-          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-5">
               <h2 className="text-lg font-semibold">Detalhes da carona</h2>
-              <button onClick={() => setModalType(null)}>
+              <button onClick={closeDetailsModal}>
                 <X className="w-5 h-5" />
               </button>
-            </div>
-
-            <div className="space-y-3 text-sm mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
-                <p className="text-sm text-gray-700">{selectedRide.origin}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-                <p className="text-sm text-gray-700">
-                  {selectedRide.destination}
-                </p>
-              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-6 pb-4 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-700">
-                  {formatDate(selectedRide.date)}
+                <span className="text-sm">
+                  {formatDate(selectedDetailsRide.date)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-700">
-                  {selectedRide.departureTimeStart} -{" "}
-                  {selectedRide.departureTimeEnd}
+                <span className="text-sm">
+                  {selectedDetailsRide.departureTimeStart} -{" "}
+                  {selectedDetailsRide.departureTimeEnd}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-700">
-                  R$ {selectedRide.price.toFixed(2)} por passageiro
+                <span className="text-sm">
+                  R$ {selectedDetailsRide.price.toFixed(2)}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-700">
-                  {selectedRide.availableSeats}/{selectedRide.totalSeats} vagas
-                  disponíveis
-                </span>
+              {(selectedRide || selectedPassengerRide) && (
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-gray-500" />
+                  <span className="text-sm">
+                    {selectedDetailsOccupiedSeats}/
+                    {selectedDetailsRide.totalSeats} ocupados
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Navigation className="w-5 h-5 text-foreground" />
+                <h3 className="text-sm font-semibold text-foreground">
+                  {selectedDetailsRide.routeName}
+                </h3>
+              </div>
+
+              <p className="text-xs text-secondary-foreground mb-3 font-medium">
+                Pontos de passagem:
+              </p>
+              <div className="space-y-2">
+                {[selectedDetailsRide.origin, selectedDetailsRide.destination].map(
+                  (waypoint, index, waypoints) => (
+                    <div key={waypoint} className="flex items-center gap-3">
+                      {index === 0 ? (
+                        <div className="w-3 h-3 bg-primary rounded-full" />
+                      ) : index === waypoints.length - 1 ? (
+                        <MapPin className="w-3 h-3 text-accent" />
+                      ) : (
+                        <div className="w-2 h-2 bg-gray-400 rounded-full ml-0.5" />
+                      )}
+                      <span className="text-sm text-gray-700">{waypoint}</span>
+                    </div>
+                  ),
+                )}
               </div>
             </div>
-            {/* 
-            <button
-              onClick={() => handleCompleteRide(selectedRide)}
-              className="w-full py-3 bg-accent text-white rounded-xl"
-            >
-              Concluir carona
-            </button> */}
+
+            {selectedPassengerRide && (
+              <div className="mt-6 p-4 bg-primary/5 rounded-xl">
+                <p className="text-xs text-secondary-foreground mb-2 font-medium">
+                  Motorista
+                </p>
+                <button
+                  onClick={() => navigate(`/user/${selectedPassengerRide.driver.id}`)}
+                  className="w-full flex items-center gap-3 text-left hover:bg-primary/10 p-2 rounded-xl transition"
+                >
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {selectedPassengerRide.driver.name}
+                    </p>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-500 text-warning-foreground" />
+                      <span className="text-sm font-medium text-gray-700">
+                        {selectedPassengerRide.driver.rating}
+                      </span>
+                      <span className="text-xs text-secondary-foreground">
+                        ({selectedPassengerRide.driver.totalRatings})
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            )}
+
+            {selectedRide && selectedRide.confirmedPassengers.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-gray-100">
+                <button
+                  onClick={() => setShowPassengers((current) => !current)}
+                  className="w-full flex items-center justify-between p-3 bg-secondary rounded-xl hover:bg-secondary/80 transition-colors"
+                >
+                  <span className="text-sm font-semibold text-foreground">
+                    Passageiros ({selectedRide.confirmedPassengers.length})
+                  </span>
+                  {showPassengers ? (
+                    <ChevronUp className="w-5 h-5 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                  )}
+                </button>
+
+                {showPassengers && (
+                  <div className="space-y-2 mt-3">
+                    {selectedRide.confirmedPassengers.map((passenger) => (
+                      <button
+                        key={passenger.id}
+                        onClick={() =>
+                          navigate(`/user/${passenger.passenger.id}`)
+                        }
+                        className="w-full flex items-center gap-3 p-3 bg-secondary rounded-xl hover:bg-gray-100 transition text-left"
+                      >
+                        <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                          <User className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">
+                            {passenger.passenger.name}
+                          </p>
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-yellow-500 text-warning-foreground" />
+                            <span className="text-xs text-gray-700 font-medium">
+                              {passenger.passenger.rating}
+                            </span>
+                            <span className="text-xs text-gray-500">
+                              • {passenger.passenger.gender}
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedPassengerRide &&
+              selectedPassengerRide.otherPassengers.length > 0 && (
+                <div className="mt-4 pt-3 border-t border-gray-100">
+                  <button
+                    onClick={() => setShowPassengers((current) => !current)}
+                    className="w-full flex items-center justify-between p-3 bg-secondary rounded-xl hover:bg-secondary/80 transition-colors"
+                  >
+                    <span className="text-sm font-semibold text-foreground">
+                      Outros passageiros (
+                      {selectedPassengerRide.otherPassengers.length})
+                    </span>
+                    {showPassengers ? (
+                      <ChevronUp className="w-5 h-5 text-gray-500" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-gray-500" />
+                    )}
+                  </button>
+
+                  {showPassengers && (
+                    <div className="space-y-2 mt-3">
+                      {selectedPassengerRide.otherPassengers.map(
+                        (passenger) => (
+                          <button
+                            key={passenger.id}
+                            onClick={() => navigate(`/user/${passenger.id}`)}
+                            className="w-full flex items-center gap-3 p-3 bg-secondary rounded-xl hover:bg-gray-100 transition text-left"
+                          >
+                            <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
+                              <User className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900">
+                                {passenger.name}
+                              </p>
+                              <div className="flex items-center gap-1">
+                                <Star className="w-3 h-3 fill-yellow-500 text-warning-foreground" />
+                                <span className="text-xs text-gray-700 font-medium">
+                                  {passenger.rating}
+                                </span>
+                                <span className="text-xs text-gray-500">
+                                  • {passenger.gender}
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ),
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
         </div>
       )}
