@@ -1,138 +1,269 @@
-import type { HistoryRideAsPassenger, HistoryRideAsDriver } from '../types/history';
+import type {
+  HistoryRideAsPassenger,
+  HistoryRideAsDriver,
+} from "../types/history";
+
+/* =====================================
+   HISTORY AS PASSENGER
+   Usuária logada participou como passageira
+===================================== */
 
 export const mockHistoryAsPassenger: HistoryRideAsPassenger[] = [
   {
-    id: '1',
-    date: '2026-04-10',
-    departureTimeStart: '07:00',
-    departureTimeEnd: '07:30',
-    origin: 'Centro, Maceió',
-    destination: 'UFAL - Campus A.C. Simões',
+    id: "history-passenger-1",
+    date: "2026-04-10",
+    departureTimeStart: "07:00",
+    departureTimeEnd: "07:30",
+    origin: "Centro, Maceió",
+    destination: "UFAL - Campus A.C. Simões",
+
     driver: {
-      name: 'Carlos Alberto Silva',
-      rating: 4.9,
-      totalRatings: 87,
-      gender: 'Masculino',
-      phone: '(82) 99999-1234',
+      id: "user-7",
+      name: "Lucas Ferreira",
+      rating: 4.8,
+      totalRatings: 110,
+      gender: "Masculino",
+      phone: "(82) 99333-2222",
     },
-    price: 8.50,
+
+    price: 8.5,
+
     otherPassengers: [
-      { id: 'p1', name: 'Mariana Costa', gender: 'Feminino' },
-      { id: 'p2', name: 'João Pedro', gender: 'Masculino' },
+      {
+        id: "user-3",
+        name: "Maria Oliveira",
+        gender: "Feminino",
+        rating: 4.7
+      },
+      {
+        id: "user-8",
+        name: "Rafael Mendonça",
+        gender: "Masculino",
+        rating: 4.6
+      },
     ],
+
     sameGenderOnly: false,
+
     route: {
-      name: 'Via BR-104',
-      distance: '12.5 km',
-      duration: '25 min',
-      waypoints: ['Centro', 'Av. Fernandes Lima', 'BR-104', 'UFAL'],
+      name: "Via BR-104",
+      distance: "12.5 km",
+      duration: "25 min",
+      waypoints: ["Centro", "Av. Fernandes Lima", "BR-104", "UFAL"],
     },
-    status: 'completed',
+
+    status: "completed",
   },
+
   {
-    id: '2',
-    date: '2026-04-08',
-    departureTimeStart: '07:15',
-    departureTimeEnd: '07:45',
-    origin: 'Ponta Verde, Maceió',
-    destination: 'UFAL - Campus A.C. Simões',
+    id: "history-passenger-2",
+    date: "2026-04-08",
+    departureTimeStart: "07:15",
+    departureTimeEnd: "07:45",
+    origin: "Ponta Verde, Maceió",
+    destination: "UFAL - Campus A.C. Simões",
+
     driver: {
-      name: 'Ana Paula Santos',
+      id: "user-9",
+      name: "Juliana Nascimento",
       rating: 5.0,
-      totalRatings: 124,
-      gender: 'Feminino',
-      phone: '(82) 98888-5678',
+      totalRatings: 201,
+      gender: "Feminino",
+      phone: "(82) 98111-3344",
     },
-    price: 10.00,
+
+    price: 10.0,
+
     otherPassengers: [
-      { id: 'p3', name: 'Beatriz Lima', gender: 'Feminino' },
+      {
+        id: "user-10",
+        name: "Camila Rodrigues",
+        gender: "Feminino",
+        rating:4.7,
+      },
     ],
+
     sameGenderOnly: true,
+
     route: {
-      name: 'Via Av. Álvaro Otacílio',
-      distance: '15.2 km',
-      duration: '30 min',
-      waypoints: ['Ponta Verde', 'Av. Álvaro Otacílio', 'Tabuleiro', 'UFAL'],
+      name: "Via Av. Álvaro Otacílio",
+      distance: "15.2 km",
+      duration: "30 min",
+      waypoints: [
+        "Ponta Verde",
+        "Av. Álvaro Otacílio",
+        "Tabuleiro",
+        "UFAL",
+      ],
     },
-    status: 'completed',
+
+    status: "completed",
   },
+
   {
-    id: '3',
-    date: '2026-04-05',
-    departureTimeStart: '06:45',
-    departureTimeEnd: '07:15',
-    origin: 'Farol, Maceió',
-    destination: 'UFAL - Campus A.C. Simões',
+    id: "history-passenger-3",
+    date: "2026-04-05",
+    departureTimeStart: "06:45",
+    departureTimeEnd: "07:15",
+    origin: "Farol, Maceió",
+    destination: "UFAL - Campus A.C. Simões",
+
     driver: {
-      name: 'Roberto Mendes',
-      rating: 4.7,
-      totalRatings: 56,
-      gender: 'Masculino',
-      phone: '(82) 97777-9012',
+      id: "user-2",
+      name: "Carlos Silva",
+      rating: 4.9,
+      totalRatings: 128,
+      gender: "Masculino",
+      phone: "(82) 99888-7777",
     },
-    price: 12.00,
+
+    price: 12.0,
+
     otherPassengers: [],
+
     sameGenderOnly: false,
+
     route: {
-      name: 'Via Av. Gustavo Paiva',
-      distance: '18.3 km',
-      duration: '35 min',
-      waypoints: ['Farol', 'Av. Gustavo Paiva', 'Mangabeiras', 'UFAL'],
+      name: "Via Av. Gustavo Paiva",
+      distance: "18.3 km",
+      duration: "35 min",
+      waypoints: ["Farol", "Mangabeiras", "Av. Gustavo Paiva", "UFAL"],
     },
-    status: 'completed',
+
+    status: "completed",
   },
 ];
 
+/* =====================================
+   HISTORY AS DRIVER
+   Usuária logada ofereceu caronas
+===================================== */
+
 export const mockHistoryAsDriver: HistoryRideAsDriver[] = [
   {
-    id: '1',
-    date: '2026-04-09',
-    departureTimeStart: '07:00',
-    departureTimeEnd: '07:30',
-    origin: 'Jatiúca, Maceió',
-    destination: 'UFAL - Campus A.C. Simões',
-    routeName: 'Via Av. Fernandes Lima',
-    price: 9.00,
+    id: "history-driver-1",
+    date: "2026-04-09",
+    departureTimeStart: "07:00",
+    departureTimeEnd: "07:30",
+    origin: "Jatiúca, Maceió",
+    destination: "UFAL - Campus A.C. Simões",
+
+    route: {
+      name: "Via Av. Fernandes Lima",
+      distance: "8.3 km",
+      duration: "30 min",
+      waypoints: [
+        "Jatiúca",
+        "Av. Fernandes Lima",
+        "Farol",
+        "UFAL",
+      ],
+    },
+
+    price: 9.0,
     totalSeats: 3,
+
     passengers: [
-      { id: 'p1', name: 'Lucas Oliveira', rating: 4.8, gender: 'Masculino' },
-      { id: 'p2', name: 'Fernanda Costa', rating: 5.0, gender: 'Feminino' },
-      { id: 'p3', name: 'Pedro Santos', rating: 4.9, gender: 'Masculino' },
+      {
+        id: "user-3",
+        name: "Maria Oliveira",
+        rating: 4.7,
+        gender: "Feminino",
+      },
+      {
+        id: "user-8",
+        name: "Rafael Mendonça",
+        rating: 4.6,
+        gender: "Masculino",
+      },
+      {
+        id: "user-4",
+        name: "João Santos",
+        rating: 4.6,
+        gender: "Masculino",
+      },
     ],
+
     sameGenderOnly: false,
-    status: 'completed',
+    status: "completed",
   },
+
   {
-    id: '2',
-    date: '2026-04-07',
-    departureTimeStart: '06:30',
-    departureTimeEnd: '07:00',
-    origin: 'Pajuçara, Maceió',
-    destination: 'UFAL - Campus A.C. Simões',
-    routeName: 'Via BR-104',
-    price: 7.50,
+    id: "history-driver-2",
+    date: "2026-04-07",
+    departureTimeStart: "06:30",
+    departureTimeEnd: "07:00",
+    origin: "Pajuçara, Maceió",
+    destination: "UFAL - Campus A.C. Simões",
+
+    route: {
+      name: "Via BR-104",
+      distance: "11.7 km",
+      duration: "30 min",
+      waypoints: [
+        "Pajuçara",
+        "Av. Álvaro Otacílio",
+        "BR-104",
+        "Tabuleiro",
+        "UFAL",
+      ],
+    },
+
+    price: 7.5,
     totalSeats: 4,
+
     passengers: [
-      { id: 'p4', name: 'Julia Martins', rating: 4.7, gender: 'Feminino' },
-      { id: 'p5', name: 'Rafael Lima', rating: 5.0, gender: 'Masculino' },
+      {
+        id: "user-10",
+        name: "Camila Rodrigues",
+        rating: 4.7,
+        gender: "Feminino",
+      },
+      {
+        id: "user-6",
+        name: "Pedro Almeida",
+        rating: 4.5,
+        gender: "Masculino",
+      },
     ],
+
     sameGenderOnly: false,
-    status: 'completed',
+    status: "completed",
   },
+
   {
-    id: '3',
-    date: '2026-04-03',
-    departureTimeStart: '07:15',
-    departureTimeEnd: '07:45',
-    origin: 'Gruta de Lourdes, Maceió',
-    destination: 'UFAL - Campus A.C. Simões',
-    routeName: 'Via Av. Menino Marcelo',
-    price: 8.00,
+    id: "history-driver-3",
+    date: "2026-04-03",
+    departureTimeStart: "07:15",
+    departureTimeEnd: "07:45",
+    origin: "Gruta de Lourdes, Maceió",
+    destination: "UFAL - Campus A.C. Simões",
+
+    route: {
+      name: "Via Av. Menino Marcelo",
+      distance: "6.1 km",
+      duration: "30 min",
+      waypoints: [
+        "Gruta de Lourdes",
+        "Av. Menino Marcelo",
+        "Serraria",
+        "UFAL",
+      ],
+    },
+
+    price: 8.0,
     totalSeats: 2,
+
     passengers: [
-      { id: 'p6', name: 'Amanda Silva', rating: 4.9, gender: 'Feminino' },
+      {
+        id: "user-5",
+        name: "Beatriz Costa",
+        rating: 4.9,
+        gender: "Feminino",
+      },
     ],
+
     sameGenderOnly: false,
-    status: 'completed',
+    status: "completed",
   },
 ];

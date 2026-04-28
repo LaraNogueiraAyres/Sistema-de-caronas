@@ -53,7 +53,7 @@ export const mockUsers: User[] = [
     rating: 4.7,
     totalRatings: 93,
     bio: "Estudante de Medicina. Costumo pegar caronas pela manhã e oferecer no fim da tarde. Amo música e conversas interessantes!",
-    privateMode: true, // Modo privado ativado
+    privateMode: true,
   },
   {
     id: "user-4",
@@ -91,6 +91,107 @@ export const mockUsers: User[] = [
     rating: 4.5,
     totalRatings: 62,
     bio: "Estudante de Direito. Prefiro viagens tranquilas e gosto de respeitar o espaço de cada um. Sempre disponível para ajudar!",
-    privateMode: true, // Modo privado ativado
+    privateMode: true,
+  },
+  // — Novos perfis —
+  {
+    id: "user-7",
+    name: "Lucas Ferreira",
+    email: "lucas.ferreira@gmail.com",
+    phone: "(82) 99333-2222",
+    pix: "lucas.ferreira@gmail.com",
+    gender: "Masculino",
+    birthDate: "1994-06-05",
+    rating: 4.8,
+    totalRatings: 110,
+    bio: "Arquiteto e ciclista nas horas vagas. Ofereço caronas no trajeto Jatiúca - UFAL de segunda a sexta. Carro espaçoso e ar-condicionado garantido! 😄",
+    privateMode: false,
+    savedAddresses: [
+      {
+        id: "addr-7-1",
+        label: "Casa",
+        address: "Rua Deputado José Lages, 45 - Jatiúca, Maceió - AL",
+      },
+      {
+        id: "addr-7-2",
+        label: "Escritório",
+        address: "Av. Fernandes Lima, 1200 - Farol, Maceió - AL",
+      },
+    ],
+  },
+  {
+    id: "user-8",
+    name: "Rafael Mendonça",
+    email: "rafael.mendonca@gmail.com",
+    phone: "(82) 99222-1111",
+    pix: "rafael.mendonca@gmail.com",
+    gender: "Masculino",
+    birthDate: "2001-02-17",
+    rating: 4.6,
+    totalRatings: 38,
+    bio: "Estudante de Ciência da Computação na UFAL, segundo período. Pego carona todo dia cedo saindo do Benedito Bentes. Tranquilo e pontual!",
+    privateMode: false,
+    savedAddresses: [
+      {
+        id: "addr-8-1",
+        label: "Casa",
+        address: "Rua Olho D'Água, 78 - Benedito Bentes, Maceió - AL",
+      },
+      {
+        id: "addr-8-2",
+        label: "Faculdade",
+        address: "UFAL - Campus A.C. Simões, Maceió - AL",
+      },
+    ],
+  },
+  {
+    id: "user-9",
+    name: "Juliana Nascimento",
+    email: "juliana.nascimento@gmail.com",
+    phone: "(82) 98111-3344",
+    pix: "juliana.nascimento@gmail.com",
+    gender: "Feminino",
+    birthDate: "1997-08-23",
+    rating: 5.0,
+    totalRatings: 201,
+    bio: "Nutricionista e professora de yoga. Ofereço caronas saindo de Pajuçara todas as manhãs. Ambiente tranquilo, música suave e sempre no horário. 🌿",
+    privateMode: false,
+    savedAddresses: [
+      {
+        id: "addr-9-1",
+        label: "Casa",
+        address: "Av. Robert Kennedy, 320 - Pajuçara, Maceió - AL",
+      },
+      {
+        id: "addr-9-2",
+        label: "Studio",
+        address: "Rua Sá e Albuquerque, 55 - Jaraguá, Maceió - AL",
+      },
+    ],
+  },
+  {
+    id: "user-10",
+    name: "Camila Rodrigues",
+    email: "camila.rodrigues@gmail.com",
+    phone: "(82) 98222-4455",
+    pix: "(82) 98222-4455",
+    gender: "Feminino",
+    birthDate: "2000-12-03",
+    rating: 4.7,
+    totalRatings: 65,
+    bio: "Estudante de Psicologia e amante de podcasts. Prefiro caronas apenas com mulheres. Saio do Gruta de Lourdes em direção à UFAL toda manhã! 🎧",
+    privateMode: false,
+    savedAddresses: [
+      {
+        id: "addr-10-1",
+        label: "Casa",
+        address: "Rua Comendador Leão, 210 - Gruta de Lourdes, Maceió - AL",
+      },
+      {
+        id: "addr-10-2",
+        label: "Faculdade",
+        address: "UFAL - Campus A.C. Simões, Maceió - AL",
+      },
+    ],
   },
 ];

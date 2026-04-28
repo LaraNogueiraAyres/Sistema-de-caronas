@@ -17,6 +17,7 @@ export interface HistoryRideAsPassenger {
     id: string;
     name: string;
     gender: string;
+    rating: number;
   }[];
   sameGenderOnly: boolean;
   route: {
@@ -27,7 +28,6 @@ export interface HistoryRideAsPassenger {
   };
   status: 'completed' | 'cancelled';
 }
-
 export interface HistoryRideAsDriver {
   id: string;
   date: string;
@@ -35,7 +35,12 @@ export interface HistoryRideAsDriver {
   departureTimeEnd: string;
   origin: string;
   destination: string;
-  routeName: string;
+  route: {
+    name: string;
+    distance: string;
+    duration: string;
+    waypoints: string[];
+  };
   price: number;
   totalSeats: number;
   passengers: {
