@@ -1,4 +1,13 @@
-import { ArrowLeft, Star, User as UserIcon, MapPin, Phone, CreditCard, Calendar as CalendarIcon } from "lucide-react";
+import {
+  ArrowLeft,
+  Menu,
+  Star,
+  User as UserIcon,
+  MapPin,
+  Phone,
+  CreditCard,
+  Calendar as CalendarIcon,
+} from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 import { useState, useEffect } from "react";
 import type { User } from "../types/user";
@@ -63,10 +72,7 @@ export function PublicProfile() {
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(
-          <Star
-            key={i}
-            className="w-5 h-5 text-yellow-500 fill-yellow-500"
-          />,
+          <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />,
         );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
@@ -90,15 +96,21 @@ export function PublicProfile() {
   return (
     <div className="min-h-screen bg-[#F5F5F5]">
       {/* Header */}
-      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground">
-        <div className="flex items-center gap-4 max-w-4xl mx-auto">
+      <div className="w-full px-6 pt-12 pb-6 bg-primary text-primary-foreground flex-shrink-0 lg:px-8 lg:pt-8 lg:pb-5">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors lg:hidden"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-background/10 rounded-lg transition-colors"
+            className="p-2 hover:bg-background/10 rounded-lg transition-colors hidden lg:block"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-xl font-semibold">Perfil do Usuário</h1>
+          <h1 className="text-xl font-semibold">Perfil</h1>
         </div>
       </div>
 
@@ -302,16 +314,6 @@ export function PublicProfile() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Back Button */}
-        <div className="mt-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="w-full py-4 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-[#2d4a6f] transition-colors"
-          >
-            Voltar
-          </button>
         </div>
       </div>
     </div>

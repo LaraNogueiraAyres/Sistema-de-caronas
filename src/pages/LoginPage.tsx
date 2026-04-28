@@ -65,18 +65,19 @@ export function LoginPage() {
       lg:justify-center lg:px-20 lg:py-12"
       >
         {/* BOTÃO VOLTAR */}
-        <div className="mb-6 lg:mb-8">
+        <div className="mb-6 lg:mb-8 flex flex-row gap-4">
           <Link to="/">
             <button className="p-2 -ml-2 hover:bg-gray-100 rounded-full transition">
               <ArrowLeft className="w-6 h-6 text-foreground" />
             </button>
           </Link>
-        </div>
-
-        <div className="w-full max-w-md mx-auto">
           <h1 className="text-foreground text-3xl font-semibold mb-2 lg:text-3xl">
             Entrar ou criar conta
           </h1>
+        </div>
+
+        <div className="w-full max-w-md mx-auto">
+          
 
           <p className="text-gray-600 mb-8 text-base lg:text-base">
             Insira seu e-mail e senha para começar
@@ -127,6 +128,7 @@ export function LoginPage() {
             <button
               type="button"
               className="text-sm text-accent mb-6 hover:underline"
+              onClick={() => navigate("/forgot-password")}
             >
               Esqueceu a senha?
             </button>

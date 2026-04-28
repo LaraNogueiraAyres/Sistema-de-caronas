@@ -252,15 +252,18 @@ export function MyRides() {
     );
 
     if (hoursUntilRide < 6 && hoursUntilRide > 0) {
-      // Aplicar penalidade de -0.1 na nota do usuário
       console.log(
         "Penalidade aplicada: -0.1 na nota do usuário por cancelamento de carona recebida",
       );
     }
 
     setRidesAsPassenger(ridesAsPassenger.filter((r) => r.id !== rideId));
+
     setModalType(null);
     setSelectedPassengerRide(null);
+
+    setRatingSuccessText("Carona cancelada com sucesso!");
+    setShowRatingSuccess(true);
   };
 
   const handleAcceptRequest = (rideId: string, requestId: string) => {
@@ -493,7 +496,7 @@ export function MyRides() {
                             setSelectedRide(ride);
                             setModalType("details");
                           }}
-                          className="text-xs text-foreground font-medium flex items-center gap-1"
+                          className="text-xs text-accent font-medium flex items-center gap-1 hover:text-accent-hover"
                         >
                           Ver detalhes
                         </button>
@@ -697,14 +700,20 @@ export function MyRides() {
               <div className="flex items-center justify-center h-full">
                 <div className="text-center">
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Navigation className="w-10 h-10 text-gray-400" />
+                    <Navigation className="w-10 h-10 text-foreground" />
                   </div>
                   <h3 className="text-foreground font-semibold text-lg mb-2">
-                    Nenhuma carona recebida
+                    Nenhuma carona no momento
                   </h3>
                   <p className="text-gray-600 text-sm mb-6">
-                    Você ainda não recebeu nenhuma carona
+                    Você ainda não está participando de nenhuma carona
                   </p>
+                  <button
+                    onClick={() => navigate("/find-ride")}
+                    className="px-6 py-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors"
+                  >
+                    Buscar carona
+                  </button>
                 </div>
               </div>
             ) : (
@@ -741,7 +750,16 @@ export function MyRides() {
                           </span>
                         )}
                       </div>
-                      <p className="text-gray-600 text-sm">{ride.routeName}</p>
+                      {/* <p className="text-gray-600 text-sm">{ride.routeName}</p> */}
+                      <button
+                        onClick={() => {
+                          setSelectedRide(selectedRide);
+                          setModalType("details");
+                        }}
+                        className="text-xs text-accent font-medium flex items-center gap-1 hover:text-accent-hover"
+                      >
+                        Ver detalhes
+                      </button>
                     </div>
 
                     {(ride.status === "confirmed" ||
@@ -771,8 +789,13 @@ export function MyRides() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Info Grid */}
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm text-gray-700">
+                      {ride.departureTimeStart} - {ride.departureTimeEnd}
+                    </span>
+                  </div>
+                  {/* Info Grid
                   <div className="grid grid-cols-2 gap-4 mb-4 pb-4 border-b border-gray-100">
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
@@ -786,9 +809,9 @@ export function MyRides() {
                         R$ {ride.price.toFixed(2)}
                       </span>
                     </div>
-                  </div>
+                  </div> */}
 
-                  {/* Driver Info */}
+                  {/* Driver Info
                   <div className="mt-4">
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
                       Motorista
@@ -835,7 +858,7 @@ export function MyRides() {
                         </button>
                       )}
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Complete Ride Button for Passenger */}
                   {ride.status === "confirmed" &&
@@ -847,7 +870,7 @@ export function MyRides() {
                           className="w-full p-3 bg-accent text-accent-foreground font-medium rounded-lg hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
                         >
                           <CheckCircle2 className="w-5 h-5" />
-                          Concluir carona e avaliar motorista
+                          Concluir carona
                         </button>
                       </div>
                     )}
@@ -920,7 +943,7 @@ export function MyRides() {
               <div className="flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-gray-500" />
                 <span className="text-sm text-gray-700">
-                  R$ {selectedRide.price.toFixed(2)}
+                  R$ {selectedRide.price.toFixed(2)} por passageiro
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -931,7 +954,7 @@ export function MyRides() {
                 </span>
               </div>
             </div>
-{/* 
+            {/* 
             <button
               onClick={() => handleCompleteRide(selectedRide)}
               className="w-full py-3 bg-accent text-white rounded-xl"
@@ -1240,7 +1263,7 @@ ${
               </div>
               <div>
                 <h2 className="text-foreground font-semibold text-lg">
-                  Cancelar carona
+                  Desistir de carona
                 </h2>
                 <p className="text-gray-600 text-sm">
                   Esta ação não pode ser desfeita
@@ -1319,7 +1342,7 @@ ${
                   setModalType(null);
                   setSelectedPassengerRide(null);
                 }}
-                className="flex-1 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+                className="flex-1 py-3 bg-muted text-muted-foreground font-medium rounded-lg hover:bg-muted-hover transition-colors"
               >
                 Voltar
               </button>
@@ -1329,7 +1352,7 @@ ${
                 }
                 className="flex-1 py-3 bg-destructive text-primary-foreground font-medium rounded-lg hover:bg-red-700 transition-colors"
               >
-                Sim, cancelar
+                Sim, desistir
               </button>
             </div>
           </div>
