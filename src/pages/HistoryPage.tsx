@@ -22,6 +22,7 @@ import type {
   HistoryRideAsPassenger,
   HistoryRideAsDriver,
 } from "../types/history";
+import { formatLocalDate } from "../utils/date";
 
 // — Types —
 
@@ -66,7 +67,7 @@ export function History() {
   // — Helpers —
 
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("pt-BR", {
+    formatLocalDate(dateString, {
       day: "2-digit",
       month: "long",
       year: "numeric",

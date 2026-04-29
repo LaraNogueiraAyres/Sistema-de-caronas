@@ -30,6 +30,7 @@ import type {
 } from "../types/my-ride";
 import { ChatModal } from "./ChatModal";
 import { RatingModal } from "./RatingModal";
+import { formatLocalDate } from "../utils/date";
 import { getMyRides } from "../utils/rides";
 
 interface LayoutContext {
@@ -455,8 +456,7 @@ export function MyRides() {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR", {
+    return formatLocalDate(dateString, {
       day: "2-digit",
       month: "long",
       year: "numeric",

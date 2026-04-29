@@ -1,6 +1,7 @@
 import { ArrowLeft, Star, User as UserIcon, MapPin, Menu, Phone, CreditCard, Calendar as CalendarIcon } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { getCurrentUser } from "../utils/auth";
+import { formatLocalDate, parseLocalDate } from "../utils/date";
 
 interface LayoutContext {
   sidebarOpen: boolean;
@@ -14,7 +15,7 @@ export function Profile() {
   const user = getCurrentUser();
 
   const calculateAge = (birthDate: string) => {
-    const birth = new Date(birthDate);
+    const birth = parseLocalDate(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
@@ -209,7 +210,7 @@ export function Profile() {
                       Membro desde
                     </p>
                     <p className="text-base font-semibold text-foreground">
-                      {new Date(user.birthDate).toLocaleDateString("pt-BR", {
+                      {formatLocalDate(user.birthDate, {
                         month: "long",
                         year: "numeric",
                       })}

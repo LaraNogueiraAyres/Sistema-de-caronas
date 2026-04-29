@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { getCurrentUser } from "../utils/auth";
+import { formatLocalDate, parseLocalDate } from "../utils/date";
 import type { SavedAddress } from "../types/user";
 
 interface LayoutContext {
@@ -144,7 +145,7 @@ export function Settings() {
   };
 
   const calculateAge = (birthDate: string) => {
-    const birth = new Date(birthDate);
+    const birth = parseLocalDate(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
@@ -297,7 +298,7 @@ export function Settings() {
                 </>
               ) : (
                 <p className="text-gray-700 px-4 py-3">
-                  {new Date(birthDate).toLocaleDateString("pt-BR")} •{" "}
+                  {formatLocalDate(birthDate)} •{" "}
                   {calculateAge(birthDate)} anos
                 </p>
               )}

@@ -12,6 +12,7 @@ import { useNavigate, useParams, useOutletContext } from "react-router";
 import { useState, useEffect } from "react";
 import type { User } from "../types/user";
 import { mockUsers } from "../mocks/user";
+import { formatLocalDate, parseLocalDate } from "../utils/date";
 
 export function PublicProfile() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export function PublicProfile() {
   }, [userId]);
 
   const calculateAge = (birthDate: string) => {
-    const birth = new Date(birthDate);
+    const birth = parseLocalDate(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
@@ -248,7 +249,7 @@ export function PublicProfile() {
                       Membro desde
                     </p>
                     <p className="text-base font-semibold text-foreground">
-                      {new Date(user.birthDate).toLocaleDateString("pt-BR", {
+                      {formatLocalDate(user.birthDate, {
                         month: "long",
                         year: "numeric",
                       })}

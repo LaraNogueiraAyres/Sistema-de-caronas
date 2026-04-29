@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, User } from 'lucide-react';
+import { formatLocalDate } from "../utils/date";
 
 interface Message {
   id: string;
@@ -76,8 +77,7 @@ export function ChatModal({ isOpen, onClose, otherUser, rideInfo }: ChatModalPro
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
+    return formatLocalDate(dateString, {
       day: '2-digit',
       month: 'short',
     });

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Star, X, User as UserIcon, AlertTriangle } from "lucide-react";
+import { formatLocalDate } from "../utils/date";
 
 interface RatingModalProps {
   isOpen: boolean;
@@ -59,8 +60,7 @@ export function RatingModal({
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR", {
+    return formatLocalDate(dateString, {
       day: "2-digit",
       month: "long",
       year: "numeric",
