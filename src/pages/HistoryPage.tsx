@@ -519,7 +519,7 @@ function RideCard({
     >
       {/* Card header */}
       <div className="flex items-center gap-2 mb-4 flex-wrap">
-        <h3 className="text-foreground font-semibold text-lg">{date}</h3>
+        <h3 className="text-foreground text-lg">{date}</h3>
         {sameGenderOnly && (
           <span className="px-2 py-0.5 bg-info text-info-foreground text-xs font-medium rounded-full">
             Mesmo gênero
@@ -534,18 +534,18 @@ function RideCard({
       <div className="mb-4 space-y-2">
         <div className="flex items-center gap-3">
           <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0" />
-          <p className="text-sm text-gray-700">{origin}</p>
+          <p className="text-sm text-muted-foreground">{origin}</p>
         </div>
         <div className="flex items-center gap-3">
           <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-          <p className="text-sm text-gray-700">{destination}</p>
+          <p className="text-sm text-muted-foreground">{destination}</p>
         </div>
       </div>
 
       {/* Horário */}
       <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
         <Clock className="w-4 h-4 text-secondary-foreground" />
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-muted-foreground">
           {timeStart} - {timeEnd}
         </span>
       </div>
@@ -597,7 +597,7 @@ function DriverRideDetails({
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-3">
           <Navigation className="w-5 h-5 text-foreground" />
-          <h3 className="text-sm font-semibold text-foreground">
+          <h3 className="text-sm  text-foreground">
             {ride.route.name}
           </h3>
         </div>
@@ -640,7 +640,7 @@ function DriverRideDetails({
             onClick={onTogglePassengers}
             className="w-full flex items-center justify-between p-3 bg-secondary rounded-xl hover:bg-secondary/80 transition-colors"
           >
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-sm text-foreground">
               Passageiros ({ride.passengers.length})
             </span>
             {showPassengers ? (
@@ -722,7 +722,7 @@ function PassengerRideDetails({
       <div className="mb-4">
         <div className="flex items-center gap-2 mb-3">
           <Navigation className="w-5 h-5 text-foreground" />
-          <h3 className="text-sm font-semibold text-foreground">
+          <h3 className="text-sm text-foreground">
             {ride.route.name}
           </h3>
         </div>
@@ -771,7 +771,7 @@ function PassengerRideDetails({
             <User className="w-6 h-6 text-primary-foreground" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-gray-900">
+            <p className="text-sm text-gray-900">
               {ride.driver.name}
             </p>
             <div className="flex items-center gap-1">
@@ -794,7 +794,7 @@ function PassengerRideDetails({
             onClick={() => setShowPassengers((p) => !p)}
             className="w-full flex items-center justify-between p-3 bg-secondary rounded-xl hover:bg-secondary/80 transition-colors"
           >
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-sm  text-foreground">
               Outros passageiros ({ride.otherPassengers.length})
             </span>
             {showPassengers ? (

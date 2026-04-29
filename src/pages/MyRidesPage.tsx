@@ -796,18 +796,18 @@ export function MyRides() {
                     <div className="mb-4 space-y-2">
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
-                        <p className="text-sm text-gray-700">{ride.origin}</p>
+                        <p className="text-sm text-muted-foreground">{ride.origin}</p>
                       </div>
                       <div className="flex items-center gap-3">
                         <MapPin className="w-3 h-3 text-accent flex-shrink-0" />
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-muted-foreground">
                           {ride.destination}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-gray-500" />
-                      <span className="text-sm text-gray-700">
+                      <span className="text-sm text-muted-foreground">
                         {ride.departureTimeStart} - {ride.departureTimeEnd}
                       </span>
                     </div>

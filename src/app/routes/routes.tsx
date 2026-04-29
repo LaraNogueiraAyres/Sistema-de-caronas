@@ -12,6 +12,7 @@ import { History } from "../../pages/HistoryPage";
 import { PublicProfile } from "../../pages/PublicProfilePage";
 import { Settings } from "../../pages/SettingsPage";
 import { ForgotPassword } from "../../pages/ForgotPasswordPage";
+import { RatingsPage } from "../../pages/RatingsPage";
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +58,14 @@ export const router = createBrowserRouter([
        {
         path: "/user/:userId",
         Component: PublicProfile,
+      },
+      {
+        path: "/user/:userId/ratings",
+        Component: RatingsPage,
+      },
+      {
+        path: "/profile/ratings",
+        Component: RatingsPage,
       },
       {
         path: "/settings",

@@ -139,24 +139,29 @@ export function PublicProfile() {
           </div>
 
           {/* User Info */}
-          <div className="pt-20 px-6 pb-6 text-center">
-            {/* Name */}
-            <h2 className="text-2xl font-bold text-foreground mb-2">
-              {user.name}
-            </h2>
 
-            {/* Rating */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="flex items-center gap-1">
-                {renderStars(user.rating)}
-              </div>
-              <span className="text-lg font-semibold text-gray-900">
-                {user.rating.toFixed(1)}
-              </span>
-              <span className="text-sm text-gray-500">
-                ({user.totalRatings}{" "}
-                {user.totalRatings === 1 ? "avaliação" : "avaliações"})
-              </span>
+          <div className="pt-20 px-6 pb-6">
+            <div className="flex flex-col items-center justify-center">
+              {/* Name */}
+              <h2 className="text-2xl font-bold text-foreground mb-2 text-center">
+                {user.name}
+              </h2>
+              {/* Rating - Clickable */}
+              <button
+                onClick={() => navigate(`/user/${userId}/ratings`)}
+                className="flex items-center justify-center gap-2 mb-4 hover:bg-gray-50 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-1">
+                  {renderStars(user.rating)}
+                </div>
+                <span className="text-lg font-semibold text-gray-900">
+                  {user.rating.toFixed(1)}
+                </span>
+                <span className="text-sm text-gray-500">
+                  ({user.totalRatings}{" "}
+                  {user.totalRatings === 1 ? "avaliação" : "avaliações"})
+                </span>
+              </button>
             </div>
 
             {/* Divider */}
