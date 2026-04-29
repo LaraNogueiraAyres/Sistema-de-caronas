@@ -290,7 +290,7 @@ export function PublicProfile() {
               </h3>
               <div className="flex flex-wrap gap-2">
                 <div className="px-4 py-2 bg-success border border-success-border rounded-full flex items-center gap-2">
-                  <div className="w-2 h-2 bg-success0 rounded-full"></div>
+                  <div className="w-2 h-2 bg-success-foreground rounded-full"></div>
                   <span className="text-sm font-medium text-success-foreground">
                     E-mail verificado
                   </span>
