@@ -19,6 +19,7 @@ import {
   Briefcase,
   Plus,
   Trash2,
+  CheckCircle2,
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
 import { getCurrentUser, updateCurrentUser } from "../utils/auth";
@@ -68,6 +69,9 @@ export function Settings() {
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>(
     currentUser.savedAddresses || [],
   );
+  const [addressToDelete, setAddressToDelete] = useState<SavedAddress | null>(
+    null,
+  );
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [newAddressLabel, setNewAddressLabel] = useState("");
   const [newAddressValue, setNewAddressValue] = useState("");
@@ -95,21 +99,11 @@ export function Settings() {
     setTimeout(() => setSavedMessage(false), 3000);
   };
 
-  const handleSavePrivacy = () => {
-    updateCurrentUser({
-      privateMode,
-    });
-    setSavedMessage(true);
-    setTimeout(() => setSavedMessage(false), 3000);
-  };
-
   const handleTogglePrivateMode = () => {
     const nextPrivateMode = !privateMode;
 
     setPrivateMode(nextPrivateMode);
     updateCurrentUser({ privateMode: nextPrivateMode });
-    setSavedMessage(true);
-    setTimeout(() => setSavedMessage(false), 3000);
   };
 
   const handleAddAddress = () => {
@@ -130,12 +124,15 @@ export function Settings() {
     }
   };
 
-  const handleDeleteAddress = (addressId: string) => {
+  const handleDeleteAddress = () => {
+    if (!addressToDelete) return;
+
     const nextSavedAddresses = savedAddresses.filter(
-      (addr) => addr.id !== addressId,
+      (addr) => addr.id !== addressToDelete.id,
     );
     setSavedAddresses(nextSavedAddresses);
     updateCurrentUser({ savedAddresses: nextSavedAddresses });
+    setAddressToDelete(null);
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };
@@ -194,10 +191,89 @@ export function Settings() {
         </div>
       </div>
 
+      {savedMessage && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-8 h-8 text-success-foreground" />
+              </div>
+
+              <h2 className="text-xl font-semibold text-foreground mb-2">
+                Alterações salvas!
+              </h2>
+
+              <p className="text-sm text-muted-foreground mb-6">
+                Suas configurações foram atualizadas com sucesso.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setSavedMessage(false)}
+                className="w-full py-3 bg-accent text-accent-foreground rounded-lg font-medium hover:bg-accent-hover transition-colors"
+              >
+                Ok
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {addressToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-6">
+          <div className="bg-background rounded-2xl p-6 max-w-md w-full">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <Trash2 className="w-6 h-6 text-destructive" />
+              </div>
+              <div>
+                <h2 className="text-foreground font-semibold text-lg">
+                  Excluir endereço
+                </h2>
+
+                <p className="text-gray-600 text-sm">
+                  Esta ação não pode ser desfeita
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {addressToDelete.label}
+                  </p>
+                  <p className="text-sm text-gray-700 mt-1">
+                    {addressToDelete.address}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setAddressToDelete(null)}
+                className="flex-1 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAddress}
+                className="flex-1 py-3 bg-destructive text-primary-foreground font-medium rounded-lg hover:bg-destructive-hover transition-colors"
+              >
+                Sim, excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
-        {/* Success Message */}
-        {savedMessage && (
+        {false && (
           <div className="bg-success border border-success-border rounded-xl p-4 flex items-center gap-3">
             <div className="w-10 h-10 bg-success-foreground rounded-full flex items-center justify-center">
               <Save className="w-5 h-5 text-primary-foreground" />
@@ -261,7 +337,7 @@ export function Settings() {
                   className="w-full px-4 py-3 rounded-xl bg-secondary border border-transparent focus:border-primary focus: transition-all outline-none"
                 />
               ) : (
-                <p className="text-foreground font-semibold text-base px-4 py-3">
+                <p className="text-muted-foreground text-base px-4 py-3">
                   {name}
                 </p>
               )}
@@ -269,7 +345,7 @@ export function Settings() {
 
             {/* Gender */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Gênero
               </label>
               {isEditingProfile ? (
@@ -287,19 +363,19 @@ export function Settings() {
                   <option value="Outro">Outro</option>
                 </select>
               ) : (
-                <p className="text-gray-700 px-4 py-3">{gender}</p>
+                <p className="text-muted-foreground px-4 py-3">{gender}</p>
               )}
             </div>
 
             {/* Birth Date */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Data de nascimento
               </label>
               {isEditingProfile ? (
                 <>
                   <div className="relative">
-                    <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                     <input
                       type="date"
                       value={birthDate}
@@ -307,12 +383,12 @@ export function Settings() {
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border border-transparent focus:border-[#1D3557] focus:bg-background transition-all outline-none"
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Idade: {calculateAge(birthDate)} anos
                   </p>
                 </>
               ) : (
-                <p className="text-gray-700 px-4 py-3">
+                <p className="text-muted-foreground px-4 py-3">
                   {formatLocalDate(birthDate)} •{" "}
                   {calculateAge(birthDate)} anos
                 </p>
@@ -321,7 +397,7 @@ export function Settings() {
 
             {/* Bio */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Sobre mim
               </label>
               {isEditingProfile ? (
@@ -334,12 +410,12 @@ export function Settings() {
                     placeholder="Conte um pouco sobre você..."
                     className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border border-transparent focus:border-[#1D3557] focus:bg-background transition-all outline-none resize-none"
                   />
-                  <p className="text-xs text-gray-400 mt-1 text-right">
+                  <p className="text-xs text-muted-foreground mt-1 text-right">
                     {bio.length}/200 caracteres
                   </p>
                 </>
               ) : (
-                <p className="text-gray-700 px-4 py-3 leading-relaxed">
+                <p className="text-muted-foreground px-4 py-3 leading-relaxed">
                   {bio || "Nenhuma descrição adicionada."}
                 </p>
               )}
@@ -395,12 +471,12 @@ export function Settings() {
           <div className="space-y-4">
             {/* Email */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 E-mail
               </label>
               {isEditingAccount ? (
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     type="email"
                     value={email}
@@ -410,20 +486,20 @@ export function Settings() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 px-4 py-3">
-                  <Mail className="w-4 h-4 text-gray-400" />
-                  <p className="text-gray-700">{email}</p>
+                  <Mail className="w-4 h-4 text-muted-foreground" />
+                  <p className="text-muted-foreground">{email}</p>
                 </div>
               )}
             </div>
 
             {/* Phone */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Número de celular
               </label>
               {isEditingAccount ? (
                 <div className="relative">
-                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <input
                     type="tel"
                     value={phone}
@@ -434,21 +510,21 @@ export function Settings() {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 px-4 py-3">
-                  <Phone className="w-4 h-4 text-gray-400" />
-                  <p className="text-gray-700">{phone || "Não informado"}</p>
+                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <p className="text-muted-foreground">{phone || "Não informado"}</p>
                 </div>
               )}
             </div>
 
             {/* PIX */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Chave PIX
               </label>
               {isEditingAccount ? (
                 <>
                   <div className="relative">
-                    <CreditCard className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <CreditCard className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                       type="text"
                       value={pix}
@@ -457,14 +533,14 @@ export function Settings() {
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-[#F5F5F5] border border-transparent focus:border-[#1D3557] focus:bg-background transition-all outline-none"
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Para receber pagamentos de caronas
                   </p>
                 </>
               ) : (
                 <div className="flex items-center gap-2 px-4 py-3">
-                  <CreditCard className="w-4 h-4 text-gray-400" />
-                  <p className="text-gray-700">{pix || "Não informado"}</p>
+                  <CreditCard className="w-4 h-4 text-muted-foreground" />
+                  <p className="text-muted-foreground">{pix || "Não informado"}</p>
                 </div>
               )}
             </div>
@@ -505,7 +581,7 @@ export function Settings() {
             {savedAddresses.length === 0 && !isAddingAddress && (
               <div className="text-center py-8">
                 <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 text-sm">
+                <p className="text-muted-foreground text-sm">
                   Nenhum endereço salvo ainda
                 </p>
                 <button
@@ -531,12 +607,12 @@ export function Settings() {
                     <p className="text-sm font-semibold text-foreground mb-1">
                       {address.label}
                     </p>
-                    <p className="text-sm text-gray-600 break-words">
+                    <p className="text-sm text-muted-foreground break-words">
                       {address.address}
                     </p>
                   </div>
                   <button
-                    onClick={() => handleDeleteAddress(address.id)}
+                    onClick={() => setAddressToDelete(address)}
                     className="p-2 hover:bg-destructive-muted rounded-lg transition-colors flex-shrink-0"
                     title="Remover"
                   >
@@ -621,7 +697,7 @@ export function Settings() {
                 <h3 className="text-base font-semibold text-info-foreground mb-1">
                   Modo Privado
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   Quando ativado, suas informações sensíveis (número de celular,
                   PIX e idade) ficarão ocultas para outros usuários
                 </p>
@@ -654,14 +730,6 @@ export function Settings() {
               </div>
             )}
           </div>
-
-          <button
-            onClick={handleSavePrivacy}
-            className="w-full mt-6 py-3 bg-accent text-accent-foreground font-semibold rounded-xl hover:bg-accent-hover transition-colors flex items-center justify-center gap-2"
-          >
-            <Save className="w-5 h-5" />
-            Salvar Configuração
-          </button>
         </div>
 
         {/* Change Password */}
@@ -678,11 +746,11 @@ export function Settings() {
           <div className="space-y-4">
             {/* Current Password */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Senha atual
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                   type={showCurrentPassword ? "text" : "password"}
                   value={currentPassword}
@@ -693,7 +761,7 @@ export function Settings() {
                 <button
                   type="button"
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   {showCurrentPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -706,11 +774,11 @@ export function Settings() {
 
             {/* New Password */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Nova senha
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                   type={showNewPassword ? "text" : "password"}
                   value={newPassword}
@@ -721,7 +789,7 @@ export function Settings() {
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   {showNewPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -734,11 +802,11 @@ export function Settings() {
 
             {/* Confirm Password */}
             <div>
-              <label className="text-sm text-gray-600 mb-2 block font-medium">
+              <label className="text-sm text-muted-foreground mb-2 block font-medium">
                 Confirmar nova senha
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
@@ -749,7 +817,7 @@ export function Settings() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                 >
                   {showConfirmPassword ? (
                     <EyeOff className="w-4 h-4" />
