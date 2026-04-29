@@ -8,14 +8,15 @@ const genderOptions: Gender[] = [
   "Feminino",
   "Masculino",
   "Outro",
-  "Prefiro nao declarar",
+  "Prefiro não declarar",
 ];
 
 export function RegisterPage() {
   const [name, setName] = useState("");
-  const [gender, setGender] = useState<Gender>("Prefiro nao declarar");
+  const [gender, setGender] = useState<Gender>("Prefiro não declarar");
   const [birthDate, setBirthDate] = useState("");
   const [cpf, setCpf] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [focusedField, setFocusedField] = useState("");
@@ -35,6 +36,20 @@ export function RegisterPage() {
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  };
+
+  const formatPhone = (value: string) => {
+    const digits = onlyDigits(value).slice(0, 11);
+
+    if (digits.length <= 10) {
+      return digits
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+    }
+
+    return digits
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -61,6 +76,11 @@ export function RegisterPage() {
       return;
     }
 
+    if (onlyDigits(phone).length < 10) {
+      setError("Digite um telefone valido");
+      return;
+    }
+
     if (password.length < 6) {
       setError("A senha deve ter pelo menos 6 caracteres");
       return;
@@ -70,6 +90,7 @@ export function RegisterPage() {
       id: `user-${Date.now()}`,
       name: name.trim(),
       email: email.trim(),
+      phone,
       gender,
       birthDate,
       rating: 0,
@@ -83,6 +104,7 @@ export function RegisterPage() {
       JSON.stringify({
         ...newUser,
         cpf: onlyDigits(cpf),
+        phone,
         password,
       }),
     );
@@ -95,7 +117,8 @@ export function RegisterPage() {
       focusedField === field ? "border-primary" : "border-gray-200"
     }`;
 
-  const isDisabled = !name || !gender || !birthDate || !cpf || !email || !password;
+  const isDisabled =
+    !name || !gender || !birthDate || !cpf || !phone || !email || !password;
 
   return (
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
@@ -121,7 +144,7 @@ export function RegisterPage() {
         </div>
 
         <div className="w-full max-w-md mx-auto">
-          <p className="text-gray-600 mb-8 text-base lg:text-base">
+          <p className="text-muted-foreground mb-8 text-base lg:text-base">
             Preencha seus dados para criar sua conta
           </p>
 
@@ -162,7 +185,7 @@ export function RegisterPage() {
             <div className="mb-4 lg:mb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-2 text-foreground">
-                  Genero
+                  Gênero
                 </label>
                 <select
                   value={gender}
@@ -210,7 +233,23 @@ export function RegisterPage() {
             </div>
 
             <div className="mb-4 lg:mb-5">
-              <label className="block text-base font-medium mb-2 text-foreground">
+              <label className="block text-sm font-medium mb-2 text-foreground">
+                Celular / telefone
+              </label>
+              <input
+                type="tel"
+                inputMode="tel"
+                value={phone}
+                onChange={(e) => setPhone(formatPhone(e.target.value))}
+                onFocus={() => setFocusedField("phone")}
+                onBlur={() => setFocusedField("")}
+                className={inputClass("phone")}
+                placeholder="(00) 00000-0000"
+              />
+            </div>
+
+            <div className="mb-4 lg:mb-5">
+              <label className="block text-sm font-medium mb-2 text-foreground">
                 Senha
               </label>
               <input
@@ -241,7 +280,7 @@ export function RegisterPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-muted-foreground">
             Ja tem conta?{" "}
             <Link to="/login" className="font-semibold text-accent hover:underline">
               Entrar
