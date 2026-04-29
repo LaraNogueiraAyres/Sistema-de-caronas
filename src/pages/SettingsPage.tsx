@@ -21,7 +21,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useNavigate, useOutletContext } from "react-router";
-import { getCurrentUser } from "../utils/auth";
+import { getCurrentUser, updateCurrentUser } from "../utils/auth";
 import { formatLocalDate, parseLocalDate } from "../utils/date";
 import type { SavedAddress } from "../types/user";
 
@@ -73,7 +73,7 @@ export function Settings() {
   const [newAddressValue, setNewAddressValue] = useState("");
 
   const handleSaveProfile = () => {
-    console.log("Salvar perfil:", {
+    updateCurrentUser({
       name,
       bio,
       birthDate,
@@ -85,7 +85,7 @@ export function Settings() {
   };
 
   const handleSaveAccount = () => {
-    console.log("Salvar conta:", {
+    updateCurrentUser({
       email,
       phone,
       pix,
@@ -96,9 +96,18 @@ export function Settings() {
   };
 
   const handleSavePrivacy = () => {
-    console.log("Salvar privacidade:", {
+    updateCurrentUser({
       privateMode,
     });
+    setSavedMessage(true);
+    setTimeout(() => setSavedMessage(false), 3000);
+  };
+
+  const handleTogglePrivateMode = () => {
+    const nextPrivateMode = !privateMode;
+
+    setPrivateMode(nextPrivateMode);
+    updateCurrentUser({ privateMode: nextPrivateMode });
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };
@@ -110,7 +119,9 @@ export function Settings() {
         label: newAddressLabel,
         address: newAddressValue,
       };
-      setSavedAddresses([...savedAddresses, newAddress]);
+      const nextSavedAddresses = [...savedAddresses, newAddress];
+      setSavedAddresses(nextSavedAddresses);
+      updateCurrentUser({ savedAddresses: nextSavedAddresses });
       setNewAddressLabel("");
       setNewAddressValue("");
       setIsAddingAddress(false);
@@ -120,7 +131,11 @@ export function Settings() {
   };
 
   const handleDeleteAddress = (addressId: string) => {
-    setSavedAddresses(savedAddresses.filter((addr) => addr.id !== addressId));
+    const nextSavedAddresses = savedAddresses.filter(
+      (addr) => addr.id !== addressId,
+    );
+    setSavedAddresses(nextSavedAddresses);
+    updateCurrentUser({ savedAddresses: nextSavedAddresses });
     setSavedMessage(true);
     setTimeout(() => setSavedMessage(false), 3000);
   };
@@ -613,7 +628,7 @@ export function Settings() {
               </div>
               <button
                 type="button"
-                onClick={() => setPrivateMode(!privateMode)}
+                onClick={handleTogglePrivateMode}
                 className={`ml-3 relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-info-border focus:ring-offset-2 flex-shrink-0 ${
                   privateMode ? "bg-info-foreground" : "bg-muted"
                 }`}

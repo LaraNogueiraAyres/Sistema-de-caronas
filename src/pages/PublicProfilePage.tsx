@@ -12,6 +12,7 @@ import { useNavigate, useParams, useOutletContext } from "react-router";
 import { useState, useEffect } from "react";
 import type { User } from "../types/user";
 import { mockUsers } from "../mocks/user";
+import { getCurrentUser } from "../utils/auth";
 import { formatLocalDate, parseLocalDate } from "../utils/date";
 
 export function PublicProfile() {
@@ -25,7 +26,11 @@ export function PublicProfile() {
   useEffect(() => {
     // Buscar usuário pelo ID
     if (userId) {
-      const foundUser = mockUsers.find((u) => u.id === userId);
+      const currentUser = getCurrentUser();
+      const foundUser =
+        currentUser?.id === userId
+          ? currentUser
+          : mockUsers.find((u) => u.id === userId);
       setUser(foundUser || null);
     }
   }, [userId]);

@@ -14,6 +14,13 @@ export function Profile() {
   const { setSidebarOpen } = useOutletContext<LayoutContext>();
   const user = getCurrentUser();
 
+  if (!user) {
+    navigate("/");
+    return null;
+  }
+
+  const isPrivateMode = user.privateMode ?? false;
+
   const calculateAge = (birthDate: string) => {
     const birth = parseLocalDate(birthDate);
     const today = new Date();
@@ -150,24 +157,26 @@ export function Profile() {
               </div>
 
               {/* Age */}
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
-                    <CalendarIcon className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 font-medium uppercase mb-1">
-                      Idade
-                    </p>
-                    <p className="text-base font-semibold text-foreground">
-                      {calculateAge(user.birthDate)} anos
-                    </p>
+              {!isPrivateMode && (
+                <div className="bg-[#F5F5F5] rounded-xl p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
+                      <CalendarIcon className="w-6 h-6 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium uppercase mb-1">
+                        Idade
+                      </p>
+                      <p className="text-base font-semibold text-foreground">
+                        {calculateAge(user.birthDate)} anos
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Phone */}
-              {user.phone && (
+              {!isPrivateMode && user.phone && (
                 <div className="bg-[#F5F5F5] rounded-xl p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
@@ -186,7 +195,7 @@ export function Profile() {
               )}
 
               {/* PIX */}
-              {user.pix && (
+              {!isPrivateMode && user.pix && (
                 <div className="bg-[#F5F5F5] rounded-xl p-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
