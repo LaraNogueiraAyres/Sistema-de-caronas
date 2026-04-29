@@ -29,10 +29,20 @@ export function LoginPage() {
       return;
     }
 
+    const registeredUser = localStorage.getItem("registeredAuthUser");
+    const parsedRegisteredUser = registeredUser
+      ? JSON.parse(registeredUser)
+      : null;
+
     const user = authUsers.find(
       (user) =>
         user.email.toLowerCase() === email.toLowerCase() &&
         user.password === password,
+    ) ?? (
+      parsedRegisteredUser?.email?.toLowerCase() === email.toLowerCase() &&
+      parsedRegisteredUser?.password === password
+        ? parsedRegisteredUser
+        : null
     );
 
     if (!user) {
@@ -72,7 +82,7 @@ export function LoginPage() {
             </button>
           </Link>
           <h1 className="text-foreground text-3xl font-semibold mb-2 lg:text-3xl">
-            Entrar ou criar conta
+            Entrar
           </h1>
         </div>
 
@@ -147,6 +157,16 @@ export function LoginPage() {
               Entrar
             </button>
           </form>
+
+          <p className="mt-6 text-center text-sm text-gray-600">
+            Ainda nao tem conta?{" "}
+            <Link
+              to="/register"
+              className="font-semibold text-accent hover:underline"
+            >
+              Criar conta
+            </Link>
+          </p>
         </div>
       </div>
     </div>

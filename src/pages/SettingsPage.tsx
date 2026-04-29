@@ -353,7 +353,11 @@ export function Settings() {
                   value={gender}
                   onChange={(e) =>
                     setGender(
-                      e.target.value as "Masculino" | "Feminino" | "Outro",
+                      e.target.value as
+                        | "Masculino"
+                        | "Feminino"
+                        | "Outro"
+                        | "Prefiro nao declarar",
                     )
                   }
                   className="w-full px-4 py-3 rounded-xl bg-[#F5F5F5] border border-transparent focus:border-[#1D3557] focus:bg-background transition-all outline-none"
@@ -361,6 +365,9 @@ export function Settings() {
                   <option value="Masculino">Masculino</option>
                   <option value="Feminino">Feminino</option>
                   <option value="Outro">Outro</option>
+                  <option value="Prefiro nao declarar">
+                    Prefiro nao declarar
+                  </option>
                 </select>
               ) : (
                 <p className="text-muted-foreground px-4 py-3">{gender}</p>

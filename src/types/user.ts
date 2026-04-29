@@ -1,4 +1,8 @@
-export type Gender = "Masculino" | "Feminino" | "Outro";
+export type Gender =
+  | "Feminino"
+  | "Masculino"
+  | "Outro"
+  | "Prefiro nao declarar";
 
 export interface SavedAddress {
   id: string;

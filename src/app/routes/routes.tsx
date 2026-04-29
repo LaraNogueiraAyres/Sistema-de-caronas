@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import { Onboarding } from "../../pages/Onboarding";
 import { LoginPage } from "../../pages/LoginPage";
+import { RegisterPage } from "../../pages/RegisterPage";
 import { Layout } from "../../layout/layout";
 import { HomePage } from "../../pages/HomePage";
 import { FindRide } from "../../pages/FindRidePage";
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     Component: LoginPage,
+  },
+  {
+    path: "/register",
+    Component: RegisterPage,
   },
   {
         path: "/forgot-password",
